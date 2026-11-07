@@ -17,6 +17,7 @@ import numpy as np
 from PIL import Image
 
 from pixel import OUTLINE, Canvas, hexc, shade
+import small_icons
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 UI = os.path.join(ROOT, "assets", "ui")
@@ -39,11 +40,31 @@ BEIGE = hexc("#e9d4b0")
 WHITE = (255, 255, 255, 255)
 
 
+def downsample2(px):
+    """2×2 블록마다 불투명 픽셀이 2개 이상이면 가장 많은 색, 아니면 투명."""
+    h, w = px.shape[0] // 2, px.shape[1] // 2
+    out = np.zeros((h, w, 4), dtype=np.uint8)
+    for y in range(h):
+        for x in range(w):
+            blk = px[y * 2:y * 2 + 2, x * 2:x * 2 + 2].reshape(-1, 4)
+            op = [tuple(p) for p in blk if p[3] > 0]
+            if len(op) >= 2:
+                counts = {}
+                for p in op:
+                    counts[p] = counts.get(p, 0) + 1
+                best = max(counts.items(), key=lambda kv: (kv[1], -int(kv[0][0]) - int(kv[0][1]) - int(kv[0][2])))[0]
+                out[y, x] = best
+    return out
+
+
 def icon(size, fn):
+    """원래 크기로 그리고 절반으로 줄인 뒤 외곽선을 칠한다(저해상도 도트)."""
     c = Canvas(size, size)
     fn(c)
-    c.outline()
-    return c.px
+    small = Canvas(size // 2, size // 2)
+    small.px = downsample2(c.px)
+    small.outline()
+    return small.px
 
 
 # ---------------------------------------------------------------- 품목 32px
@@ -392,13 +413,14 @@ GROUPS = [("가문", g_family), ("부족", g_tribe), ("마을", g_village), ("�
 
 def atlas(entries, size):
     cols = 8
+    out_size = size // 2
     rows = (len(entries) + cols - 1) // cols
-    a = np.zeros((rows * size, cols * size, 4), dtype=np.uint8)
+    a = np.zeros((rows * out_size, cols * out_size, 4), dtype=np.uint8)
     idx = {}
     for k, (name, fn) in enumerate(entries):
         px = icon(size, fn)
-        x, y = (k % cols) * size, (k // cols) * size
-        a[y:y + size, x:x + size] = px
+        x, y = (k % cols) * out_size, (k // cols) * out_size
+        a[y:y + out_size, x:x + out_size] = px
         idx[name] = k
     return a, idx
 
@@ -427,6 +449,35 @@ def frame(color, gem=None):
     return c.px
 
 
+def small_frame(color, gem=None):
+    """초상화 테두리 20×20, 안쪽 16×16 투명(8×8 얼굴을 2배로 넣는다)."""
+    c = Canvas(20, 20)
+    c.fill(c.mask(lambda d: d.rectangle([0, 0, 19, 19], fill=1)), OUTLINE)
+    c.fill(c.mask(lambda d: d.rectangle([1, 1, 18, 18], fill=1)), color, 0.3, 0.25)
+    c.px[2:18, 2:18] = 0
+    if gem:
+        c.put(9, 0, gem)
+        c.put(10, 0, gem)
+        c.put(9, 19, gem)
+        c.put(10, 19, gem)
+    return c.px
+
+
+def small_cursor(interact=False):
+    c = Canvas(10, 10)
+    rows = ["W.........", "WW........", "WWW.......", "WWWW......", "WWWWW.....", "WWWWWW....",
+            "WWW.......", "W..W......", "....W.....", ".........."]
+    for y, r in enumerate(rows):
+        for x, ch in enumerate(r):
+            if ch == "W":
+                c.put(x, y, WHITE)
+    c.outline()
+    if interact:
+        for x, y in ((8, 1), (8, 3), (7, 2), (9, 2)):
+            c.put(x, y, GOLD)
+    return c.px
+
+
 def cursor(interact=False):
     c = Canvas(32, 32)
     c.fill(c.mask(lambda d: d.polygon([(1, 1), (1, 20), (6, 15), (10, 23), (13, 22), (9, 14), (16, 14)], fill=1)), WHITE, 0.0, 0.15)
@@ -445,24 +496,35 @@ def save(px, name):
 def main():
     os.makedirs(UI, exist_ok=True)
     meta = {}
-    for name, entries, size in (("icons_items", ITEMS, 32), ("icons_status", STATUS, 24), ("icons_class", CLASSES, 24),
-                                ("icons_group", GROUPS, 32)):
+    for name, entries, size in (("icons_items", ITEMS, 32), ("icons_group", GROUPS, 32)):
         a, idx = atlas(entries, size)
         save(a, name + ".png")
-        meta[name] = {"cell": size, "columns": 8, "index": idx}
-    save(rounded_panel(48, 48, CREAM, WOOD_L), "panel_light.png")
-    save(rounded_panel(48, 48, hexc("#8a5a36"), WOOD_D), "panel_dark.png")
-    save(rounded_panel(48, 24, hexc("#ffe98a"), WOOD, r=4, bw=2), "button_normal.png")
-    save(rounded_panel(48, 24, hexc("#f2cf5a"), WOOD_D, r=4, bw=2), "button_pressed.png")
-    save(rounded_panel(48, 24, hexc("#e2ddd4"), hexc("#a8a29a"), r=4, bw=2), "button_disabled.png")
-    save(frame(WOOD), "frame_commoner.png")
-    save(frame(hexc("#dfe7ee"), hexc("#5f9ad6")), "frame_noble.png")
-    save(frame(GOLD, RED), "frame_royal.png")
-    save(cursor(False), "cursor_default.png")
-    save(cursor(True), "cursor_interact.png")
-    save(rounded_panel(32, 8, hexc("#5a4040"), hexc("#3b2a2a"), r=2, bw=1), "bar_bg.png")
-    save(rounded_panel(32, 8, hexc("#8fd16a"), hexc("#4f9e3f"), r=2, bw=1), "bar_fill.png")
-    meta["nine_slice"] = {"panel": 16, "button": 8, "bar": 3}
+        meta[name] = {"cell": size // 2, "columns": 8, "index": idx}
+    for name, table in (("icons_status", small_icons.STATUS), ("icons_class", small_icons.CLASSES)):
+        cols = 8
+        rows = (len(table) + cols - 1) // cols
+        a = np.zeros((rows * 12, cols * 12, 4), dtype=np.uint8)
+        idx = {}
+        for k, (n, grid) in enumerate(table.items()):
+            x, y = (k % cols) * 12, (k // cols) * 12
+            a[y:y + 12, x:x + 12] = small_icons.draw(n, grid)
+            idx[n] = k
+        save(a, name + ".png")
+        meta[name] = {"cell": 12, "columns": 8, "index": idx}
+    save(rounded_panel(16, 16, CREAM, WOOD_L, r=2, bw=2), "panel_light.png")
+    save(rounded_panel(16, 16, hexc("#8a5a36"), WOOD_D, r=2, bw=2), "panel_dark.png")
+    save(rounded_panel(16, 8, hexc("#ffe98a"), WOOD, r=2, bw=1), "button_normal.png")
+    save(rounded_panel(16, 8, hexc("#f2cf5a"), WOOD_D, r=2, bw=1), "button_pressed.png")
+    save(rounded_panel(16, 8, hexc("#e2ddd4"), hexc("#a8a29a"), r=2, bw=1), "button_disabled.png")
+    save(small_frame(WOOD), "frame_commoner.png")
+    save(small_frame(hexc("#dfe7ee"), hexc("#5f9ad6")), "frame_noble.png")
+    save(small_frame(GOLD, RED), "frame_royal.png")
+    save(small_cursor(False), "cursor_default.png")
+    save(small_cursor(True), "cursor_interact.png")
+    save(rounded_panel(8, 4, hexc("#5a4040"), hexc("#3b2a2a"), r=1, bw=1), "bar_bg.png")
+    save(rounded_panel(8, 4, hexc("#8fd16a"), hexc("#4f9e3f"), r=1, bw=1), "bar_fill.png")
+    meta["nine_slice"] = {"panel": 4, "button": 3, "bar": 1}
+    meta["ui_scale"] = "480×270 내부 해상도에서 1배로 그린다. 화면에서는 정수배 확대"
     json.dump(meta, open(os.path.join(ROOT, "data", "visual", "ui_atlas.json"), "w", encoding="utf-8"),
               ensure_ascii=False, indent=2)
     print("아이콘", len(ITEMS) + len(STATUS) + len(CLASSES) + len(GROUPS), "개, UI 틀 12장")

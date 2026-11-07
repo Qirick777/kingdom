@@ -8,6 +8,7 @@ python3 make_materials.py   # 팔레트, 재료 텍스처 31종 × 2 → assets/
 python3 make_faces.py       # 얼굴 그림 31개 → assets/faces/face_atlas.png
 python3 make_icons.py       # 아이콘 51개, UI 틀 12장 → assets/ui/
 python3 preview_faces.py ../../docs/images/art_faces.png   # 얼굴 조립 미리보기
+python3 mockup.py ../../docs/images/mockup_village.png      # 480×270 장면 목업(정면)
 ```
 
 필요: Python 3, Pillow, numpy.
@@ -23,3 +24,5 @@ python3 preview_faces.py ../../docs/images/art_faces.png   # 얼굴 조립 미�
 얼굴 그림의 회색 약속(셰이더가 바꿈):
 - #808080, #606060 → 유전자 눈색 × (회색 밝기 / 128)
 - #404040 → 머리색 × 0.7 (눈썹)
+
+저해상도 규칙(17_visual_procgen.md 1-2): 텍스처 8×8, 얼굴 8×8, 아이콘 16/12. 12픽셀 아이콘은 `small_icons.py`에 격자로 직접 찍는다. 16픽셀 아이콘은 32픽셀로 그린 뒤 2×2 최빈색으로 줄이고 외곽선을 다시 칠한다.
