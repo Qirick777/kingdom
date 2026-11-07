@@ -1,0 +1,2229 @@
+{
+  "proposed": {
+    "vars": {
+      "econ.estate_rule": {
+        "label": "재산 상속법(값: 균분, 장자, 장자우대, 말자)",
+        "unit": "set",
+        "ref": "15 3-2"
+      },
+      "econ.estate_heirs": {
+        "label": "재산 상속 순위에 넣는 대상(인자: 딸, 인지 사생아)",
+        "unit": "set true",
+        "ref": "15 3-2"
+      },
+      "group.punishment_allowed": {
+        "label": "형벌 종류 사용 가능(인자: 형벌 이름)",
+        "unit": "set true",
+        "ref": "09 5절"
+      },
+      "group.scope_allowed": {
+        "label": "적용 범위 인자(특정 신분, 수장 가문, 수장 1인)를 집중도 조건 없이 허용",
+        "unit": "set true",
+        "ref": "04 3-1"
+      },
+      "demo.interclass_child_status": {
+        "label": "다른 신분 부모 사이 자녀의 신분",
+        "unit": "set(값: 낮은 쪽, 높은 쪽, 아버지)",
+        "ref": "08 법"
+      },
+      "group.consort_rank_order": {
+        "label": "후궁 자녀의 승계 순서를 어머니 서열로 정함(15 S1 후보 순서)",
+        "unit": "set true",
+        "ref": "08 법"
+      },
+      "group.succession_war": {
+        "label": "승계 내전 발생 확률 배수(15 S6 내전 조건을 채웠을 때)",
+        "unit": "배수",
+        "ref": "15 S6"
+      },
+      "group.rank_grievance": {
+        "label": "후궁 자녀가 서열 1단계 낮을 때마다 수장과 서열 1위에게 갖는 원한",
+        "unit": "가산",
+        "ref": "08 법"
+      },
+      "char.max_spouses": {
+        "label": "최대 배우자 수(0이면 무제한)",
+        "unit": "set",
+        "ref": "08 법"
+      },
+      "demo.emancipate_all": {
+        "label": "채택 즉시 모든 노예 해방(해방노예 이력 부여)",
+        "unit": "set true",
+        "ref": "08 법"
+      },
+      "rel.grievance_to_head": {
+        "label": "특성 채택 때 수장에 대한 원한 가산(1회)",
+        "unit": "가산",
+        "ref": "03 1절"
+      },
+      "econ.military_service_weeks": {
+        "label": "병역(징집된 성인 남성 연 주)",
+        "unit": "set",
+        "ref": "15 2-2"
+      },
+      "econ.prostitution_tax": {
+        "label": "매춘 수입 세율",
+        "unit": "set(비율)",
+        "ref": "09 7절"
+      },
+      "econ.debt_cancel": {
+        "label": "채택 즉시 모든 곡식 빚 탕감",
+        "unit": "set true",
+        "ref": "14 7-3"
+      },
+      "group.fief_hereditary": {
+        "label": "봉토 자동 세습(기사 상속인이 봉토를 이음)",
+        "unit": "set true",
+        "ref": "15 4-17"
+      },
+      "group.verdict_legitimacy": {
+        "label": "공정한 판결 1건당 정통성 배수(기본 +1)",
+        "unit": "배수",
+        "ref": "14 8-3"
+      },
+      "group.confession_challenge": {
+        "label": "고문으로 받은 자백의 무효 주장 가능",
+        "unit": "set true",
+        "ref": "09 4절"
+      },
+      "econ.watch_cost": {
+        "label": "치안대 연 유지비(은화, 읍 이상 토지 1곳당)",
+        "unit": "set",
+        "ref": "09 2절"
+      },
+      "rel.pardon_debt": {
+        "label": "사면받은 자가 사면한 수장에게 지는 빚",
+        "unit": "set(빚 수치)",
+        "ref": "03 1절"
+      },
+      "group.standing_army": {
+        "label": "평시 상비군 유지(녹봉 은화로 병사를 고용해 해산하지 않음)",
+        "unit": "set true",
+        "ref": "14 9-4"
+      },
+      "group.bandit_amnesty": {
+        "label": "항복한 도적을 처벌 없이 병사로 편입",
+        "unit": "set true",
+        "ref": "08 법"
+      },
+      "group.privateer_vassals": {
+        "label": "도적단을 공개 봉신(사략단)으로 받음",
+        "unit": "set true",
+        "ref": "04 7절"
+      }
+    },
+    "metrics": {
+      "cond.any": "인자로 준 해금 조건 목록 중 하나라도 참이면 1(0/1)",
+      "head.house_grade": "수장 집 등급(0 노숙, 1 움막, 2 가옥, 3 저택, 4 왕궁)",
+      "group.years_since_repeal": "인자 특성을 폐지한 뒤 지난 연수(가진 적 없으면 0)",
+      "group.treasury_item": "금고의 인자 품목 수량",
+      "group.trade_route_lands": "교역로 특성 토지 보유 수",
+      "group.fiefs": "기사에게 준 봉토 수",
+      "group.silver_income": "연 은화 수입"
+    },
+    "predicates": {
+      "is_landlord": "대상이 실질 계층 지주(가구 노동력보다 많은 필지를 소작 줌)",
+      "owns_slaves": "대상이 노예를 1명 이상 소유",
+      "is_lender": "대상이 받을 곡식 빚이 있음",
+      "is_debtor": "대상이 갚을 곡식 빚이 있음"
+    }
+  },
+  "traits": [
+    {
+      "id": "law.primogeniture",
+      "name": "장자 상속",
+      "kind": "법",
+      "tier": "기본",
+      "uses_slot": "succession",
+      "exclusive": [
+        "law.partible",
+        "law.elective",
+        "law.ultimogeniture"
+      ],
+      "likes": [
+        "야심",
+        "탐욕"
+      ],
+      "dislikes": [
+        "관대"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.succession_rule_allowed",
+          "op": "set",
+          "value": true,
+          "arg": "장자"
+        },
+        {
+          "type": "mod",
+          "var": "econ.estate_rule",
+          "op": "set",
+          "value": "장자"
+        },
+        {
+          "type": "mod",
+          "var": "econ.pre_gift",
+          "op": "set",
+          "value": false
+        }
+      ],
+      "note": "승계 슬롯에 장자 규칙을 허용하고 재산은 맏아들이 전부 받는다(15번 3-2). 장자 규칙의 사용 조건(집중도 0.4 이상 또는 성문법, 15번 4-3)은 승계 슬롯이 검사한다. 장단점은 S1~S7이 낸다(내전 0, 부친 살해 0.20)"
+    },
+    {
+      "id": "law.partible",
+      "name": "분할 상속",
+      "kind": "법",
+      "tier": "기본",
+      "uses_slot": "succession",
+      "exclusive": [
+        "law.primogeniture",
+        "law.elective",
+        "law.ultimogeniture"
+      ],
+      "likes": [
+        "관대"
+      ],
+      "dislikes": [
+        "야심",
+        "탐욕"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.succession_rule_allowed",
+          "op": "set",
+          "value": true,
+          "arg": "분할"
+        },
+        {
+          "type": "mod",
+          "var": "econ.estate_rule",
+          "op": "set",
+          "value": "균분"
+        },
+        {
+          "type": "mod",
+          "var": "econ.pre_gift",
+          "op": "set",
+          "value": true
+        }
+      ],
+      "note": "승계 슬롯에 분할 규칙을 허용한다. 재산은 아들들이 균분하고 혼인 분가 때 생전 분재를 받는다(15번 3-3). 영토 쪼개짐은 S7 직할령 분할과 S5 대등 봉신 -40이 낸다(영토 유지 29%)"
+    },
+    {
+      "id": "law.elective",
+      "name": "선출 상속",
+      "kind": "법",
+      "tier": "기본",
+      "uses_slot": "succession",
+      "exclusive": [
+        "law.primogeniture",
+        "law.partible",
+        "law.ultimogeniture"
+      ],
+      "likes": [
+        "야심",
+        "탐욕"
+      ],
+      "dislikes": [
+        "충직",
+        "겁많음"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.succession_rule_allowed",
+          "op": "set",
+          "value": true,
+          "arg": "가문 내 선출"
+        },
+        {
+          "type": "mod",
+          "var": "group.succession_rule_allowed",
+          "op": "set",
+          "value": true,
+          "arg": "공개 선출"
+        }
+      ],
+      "note": "'유력자 투표로 수장 선출'을 가문 내 선출과 공개 선출 둘 다로 연다. 재산 상속법은 바꾸지 않는다(가훈, 마을 관습을 따름). 뇌물과 암살은 S1 득표와 S3 매수가 낸다(공개 선출 암살 성공 3.05)"
+    },
+    {
+      "id": "law.ultimogeniture",
+      "name": "말자 상속",
+      "kind": "법",
+      "tier": "기본",
+      "uses_slot": "succession",
+      "exclusive": [
+        "law.primogeniture",
+        "law.partible",
+        "law.elective"
+      ],
+      "likes": [
+        "만족",
+        "인내"
+      ],
+      "dislikes": [
+        "야심",
+        "복수심"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.succession_rule_allowed",
+          "op": "set",
+          "value": true,
+          "arg": "말자"
+        },
+        {
+          "type": "mod",
+          "var": "econ.estate_rule",
+          "op": "set",
+          "value": "말자"
+        },
+        {
+          "type": "mod",
+          "var": "econ.pre_gift",
+          "op": "set",
+          "value": false
+        }
+      ],
+      "note": "승계 슬롯에 말자 규칙을 허용하고 재산은 막내아들이 전부 받는다. 형들의 원한과 긴 교체 주기는 S1, S3가 낸다(형제 살해 0.32, 승계 6.7회). 15번 3-3은 균분, 장자우대에서만 분재하므로 분재를 끈다"
+    },
+    {
+      "id": "law.female_inheritance",
+      "name": "여성 상속 허용",
+      "kind": "법",
+      "tier": "기본",
+      "uses_slot": "succession",
+      "likes": [
+        "관대",
+        "관용"
+      ],
+      "dislikes": [
+        "야심"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.succession_rule_allowed",
+          "op": "set",
+          "value": true,
+          "arg": "성별:남성 우선"
+        },
+        {
+          "type": "mod",
+          "var": "group.succession_rule_allowed",
+          "op": "set",
+          "value": true,
+          "arg": "성별:평등"
+        },
+        {
+          "type": "mod",
+          "var": "econ.estate_heirs",
+          "op": "set",
+          "value": true,
+          "arg": "딸"
+        }
+      ],
+      "note": "보조 규칙 성별에 남성 우선과 평등을 허용한다(15번 4-9). 재산 상속에서 딸이 아들과 같은 순위에 들고, 받은 지참금은 몫에서 뺀다(15번 3-5)"
+    },
+    {
+      "id": "law.bastard_rights",
+      "name": "서자 상속권",
+      "kind": "법",
+      "tier": "해금",
+      "uses_slot": "succession",
+      "unlock": [
+        {
+          "metric": "group.concentration",
+          "op": ">=",
+          "value": 0.5
+        }
+      ],
+      "likes": [
+        "색욕",
+        "관대"
+      ],
+      "dislikes": [
+        "독실",
+        "절제"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.succession_rule_allowed",
+          "op": "set",
+          "value": true,
+          "arg": "사생아:인지하면 인정"
+        },
+        {
+          "type": "mod",
+          "var": "econ.estate_heirs",
+          "op": "set",
+          "value": true,
+          "arg": "인지 사생아"
+        },
+        {
+          "type": "mod",
+          "var": "group.secret_weight",
+          "op": "mul",
+          "value": 0.5,
+          "arg": "사생아"
+        },
+        {
+          "type": "mod",
+          "var": "rel.grievance_to_head",
+          "op": "add",
+          "value": 10,
+          "who": "head_family"
+        }
+      ],
+      "note": "보조 규칙 사생아에 '인지하면 인정'을 허용한다. 인지한 사생아는 같은 세대 정실 자녀 뒤에 선다. 사생아 비밀 무게 × 0.5, 정실 자녀 원한 +10(1회, 15번 4-9)"
+    },
+    {
+      "id": "law.monogamy",
+      "name": "일부일처법",
+      "kind": "법",
+      "tier": "기본",
+      "exclusive": [
+        "law.polygamy"
+      ],
+      "likes": [
+        "정직",
+        "절제"
+      ],
+      "dislikes": [
+        "색욕",
+        "야심"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "multiple_wives",
+          "status": "forbidden",
+          "severity": 30,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "multiple_husbands",
+          "status": "forbidden",
+          "severity": 30,
+          "who": "members"
+        }
+      ],
+      "note": "국내 혼인을 1인 1배우자로 묶는다(severity 30 = 일부일처 교리). 첩은 다루지 않고 교리에 맡긴다. 국교 교리와 다르면 04번 5절 충돌(교단 수장 호감 -10/년)이 따로 돈다"
+    },
+    {
+      "id": "law.class_system",
+      "name": "신분제",
+      "kind": "법",
+      "tier": "기본",
+      "exclusive": [
+        "law.equality"
+      ],
+      "likes": [
+        "야심",
+        "충직"
+      ],
+      "dislikes": [
+        "관대",
+        "자비"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.status_rigid",
+          "op": "set",
+          "value": true
+        },
+        {
+          "type": "mod",
+          "var": "demo.slave_offspring_free",
+          "op": "set",
+          "value": false
+        },
+        {
+          "type": "mod",
+          "var": "group.scope_allowed",
+          "op": "set",
+          "value": true,
+          "arg": "특정 신분"
+        },
+        {
+          "type": "enable",
+          "action": "knight",
+          "who": "head"
+        }
+      ],
+      "note": "통과 시점의 관습 귀족, 기사, 영주 가문을 법적 귀족으로 고정한다(14번 12-3). 노예 신분도 자녀에게 세습한다(14번 11-1). 신분 상승 길은 수장의 서임과 작위 매매만 남는다"
+    },
+    {
+      "id": "law.no_interclass_marriage",
+      "name": "귀천상혼 금지",
+      "kind": "법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.has_trait",
+          "arg": "law.class_system",
+          "op": "==",
+          "value": 1
+        }
+      ],
+      "exclusive": [
+        "law.sale_of_titles"
+      ],
+      "likes": [
+        "야심"
+      ],
+      "dislikes": [
+        "색욕",
+        "탐욕"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "interclass_marriage",
+          "status": "forbidden",
+          "severity": 30,
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "demo.interclass_child_status",
+          "op": "set",
+          "value": "낮은 쪽"
+        }
+      ],
+      "note": "다른 신분 혼인을 범죄로 만든다(severity 30, 05번 혼외 관계 무게에 맞춤). 어기고 낳은 자녀는 낮은 쪽 신분이 된다. 몰락 귀족과 부유 평민의 위신-지참금 거래(14번 12-3, 12-4)를 막는다"
+    },
+    {
+      "id": "law.harem",
+      "name": "후궁 제도",
+      "kind": "법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.has_trait",
+          "arg": "law.polygamy",
+          "op": "==",
+          "value": 1
+        },
+        {
+          "metric": "head.house_grade",
+          "op": ">=",
+          "value": 4
+        }
+      ],
+      "likes": [
+        "색욕",
+        "야심"
+      ],
+      "dislikes": [
+        "절제",
+        "정직"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.max_spouses",
+          "op": "set",
+          "value": 0,
+          "who": "head"
+        },
+        {
+          "type": "event",
+          "event": "harem_plot",
+          "chance_per_year": 0.05,
+          "who": "head"
+        }
+      ],
+      "note": "수장 배우자 상한을 없앤다(0 = 무제한). 후궁의 식량, 의류는 수장 가구 소비(02번 4절)로 나간다. 음모 사건 연 0.05는 근거 수치가 없어 정한 시작값이다. 하렘의 형제 살해 증가(15번 4-8)는 S3가 따로 낸다. 해금의 '일부다처법 [범위: 왕족 또는 수장]'에서 범위 조건은 지표로 못 쓴다"
+    },
+    {
+      "id": "law.concubine_ranking",
+      "name": "첩 자녀 서열",
+      "kind": "법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.has_trait",
+          "arg": "law.harem",
+          "op": "==",
+          "value": 1
+        }
+      ],
+      "likes": [
+        "충직",
+        "인내"
+      ],
+      "dislikes": [
+        "야심",
+        "복수심"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.consort_rank_order",
+          "op": "set",
+          "value": true
+        },
+        {
+          "type": "mod",
+          "var": "group.succession_war",
+          "op": "mul",
+          "value": 0.5
+        },
+        {
+          "type": "mod",
+          "var": "group.rank_grievance",
+          "op": "add",
+          "value": 10
+        }
+      ],
+      "note": "후궁 자녀의 승계 순서를 어머니 서열로 정한다. 승계 내전 확률 × 0.5. 서열이 한 단계 낮을 때마다 원한 +10(§5 보통)"
+    },
+    {
+      "id": "law.slavery",
+      "name": "노예제",
+      "kind": "법",
+      "tier": "기본",
+      "exclusive": [
+        "law.abolition"
+      ],
+      "likes": [
+        "탐욕",
+        "잔인"
+      ],
+      "dislikes": [
+        "자비",
+        "관대"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "own_slaves",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        },
+        {
+          "type": "enable",
+          "action": "slave_trade",
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "group.punishment_allowed",
+          "op": "set",
+          "value": true,
+          "arg": "노예화"
+        },
+        {
+          "type": "norm",
+          "behavior": "desert",
+          "status": "forbidden",
+          "severity": 20,
+          "who": "slaves"
+        }
+      ],
+      "note": "노예 소유와 매매를 합법으로 만들고 노예화 형벌을 연다(09번 5절). 노예 탈주는 범죄다(severity 20, 09번 탈주: 반환 + 태형). 노예 자녀의 신분 세습은 신분제가 정한다"
+    },
+    {
+      "id": "law.serfdom",
+      "name": "농노제",
+      "kind": "법",
+      "tier": "기본",
+      "exclusive": [
+        "law.free_peasants"
+      ],
+      "likes": [
+        "탐욕",
+        "잔인"
+      ],
+      "dislikes": [
+        "자비",
+        "관대"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "serf_flight",
+          "status": "forbidden",
+          "severity": 20,
+          "who": "serfs"
+        },
+        {
+          "type": "mod",
+          "var": "demo.serf_bound",
+          "op": "set",
+          "value": true
+        },
+        {
+          "type": "mod",
+          "var": "econ.rent_cap",
+          "op": "set",
+          "value": 0.7
+        },
+        {
+          "type": "mod",
+          "var": "econ.corvee_days",
+          "op": "set",
+          "value": 2
+        },
+        {
+          "type": "enable",
+          "action": "corvee",
+          "who": "head"
+        }
+      ],
+      "note": "소작료 상한 0.5 → 0.7(14번 7-4), 소작농 이주 금지, 부역 주 2일(15번 2-2 범위 1~3). 봉기 확률 증가는 따로 넣지 않는다: 높은 소작료와 막힌 도주가 경작자 몫을 생존선 아래로 내려 14번 6절 봉기 확률(생존선 아래 2년)을 올린다"
+    },
+    {
+      "id": "law.free_peasants",
+      "name": "자유민",
+      "kind": "법",
+      "tier": "기본",
+      "exclusive": [
+        "law.serfdom"
+      ],
+      "likes": [
+        "관대",
+        "자비"
+      ],
+      "dislikes": [
+        "탐욕"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "serf_flight",
+          "status": "allowed",
+          "severity": 0,
+          "who": "serfs"
+        },
+        {
+          "type": "mod",
+          "var": "demo.serf_bound",
+          "op": "set",
+          "value": false
+        },
+        {
+          "type": "mod",
+          "var": "demo.migration_in",
+          "op": "mul",
+          "value": 1.25
+        },
+        {
+          "type": "mod",
+          "var": "group.loyalty",
+          "op": "add",
+          "value": -10,
+          "who": "members",
+          "if": [
+            "is_landlord"
+          ]
+        }
+      ],
+      "note": "소작농 이주를 풀어 14번 7-4 도주 선택지를 살린다. 인구 유입 × 1.25(§5 보통). 지주 충성 -10"
+    },
+    {
+      "id": "law.abolition",
+      "name": "노예 해방령",
+      "kind": "법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.years_since_repeal",
+          "arg": "law.slavery",
+          "op": ">=",
+          "value": 5
+        }
+      ],
+      "exclusive": [
+        "law.slavery"
+      ],
+      "likes": [
+        "자비",
+        "관대",
+        "정직"
+      ],
+      "dislikes": [
+        "탐욕",
+        "잔인"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "demo.emancipate_all",
+          "op": "set",
+          "value": true
+        },
+        {
+          "type": "norm",
+          "behavior": "own_slaves",
+          "status": "forbidden",
+          "severity": 40,
+          "who": "members"
+        },
+        {
+          "type": "disable",
+          "action": "slave_trade",
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "group.loyalty",
+          "op": "add",
+          "value": 30,
+          "who": "members",
+          "if": [
+            "has_history:해방노예"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "rel.grievance_to_head",
+          "op": "add",
+          "value": 30,
+          "who": "members",
+          "if": [
+            "owns_slaves"
+          ]
+        }
+      ],
+      "note": "채택 즉시 모든 노예를 해방한다(해방노예 이력, 해방한 수장에게 빚 +3, 01번 5-1). 해방민 충성 +30, 노예주 원한 +30(채택 시점 판정). 이후 노예 소유는 중죄다(severity 40, §5 큼)"
+    },
+    {
+      "id": "law.noble_privilege",
+      "name": "귀족 특권",
+      "kind": "법",
+      "tier": "기본",
+      "exclusive": [
+        "law.equality"
+      ],
+      "likes": [
+        "야심",
+        "탐욕"
+      ],
+      "dislikes": [
+        "정직",
+        "자비"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.noble_punishment_step",
+          "op": "add",
+          "value": 1
+        },
+        {
+          "type": "mod",
+          "var": "econ.land_tax_exempt",
+          "op": "set",
+          "value": 0.5,
+          "who": "nobles"
+        },
+        {
+          "type": "mod",
+          "var": "econ.house_tax",
+          "op": "set",
+          "value": false,
+          "who": "nobles"
+        },
+        {
+          "type": "mod",
+          "var": "group.loyalty",
+          "op": "add",
+          "value": 10,
+          "who": "nobles"
+        },
+        {
+          "type": "mod",
+          "var": "group.loyalty",
+          "op": "add",
+          "value": -5,
+          "who": "commoners"
+        }
+      ],
+      "note": "귀족 범죄 형벌 1단계 경감. 귀족 필지 토지세 절반(15번 2-6), 가옥세 면제(15번 2-2). 귀족 충성 +10, 평민 -5"
+    },
+    {
+      "id": "law.equality",
+      "name": "법 앞의 평등",
+      "kind": "법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.has_trait",
+          "arg": "law.written_law",
+          "op": "==",
+          "value": 1
+        }
+      ],
+      "exclusive": [
+        "law.noble_privilege",
+        "law.class_system"
+      ],
+      "likes": [
+        "정직",
+        "자비"
+      ],
+      "dislikes": [
+        "야심",
+        "탐욕"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.noble_punishment_step",
+          "op": "set",
+          "value": 0
+        },
+        {
+          "type": "mod",
+          "var": "group.loyalty",
+          "op": "add",
+          "value": 10,
+          "who": "commoners"
+        },
+        {
+          "type": "mod",
+          "var": "group.loyalty",
+          "op": "add",
+          "value": -15,
+          "who": "nobles"
+        }
+      ],
+      "note": "신분별 형벌 차이를 없앤다. 평민 충성 +10, 귀족 -15"
+    },
+    {
+      "id": "law.conscription",
+      "name": "징병제",
+      "kind": "법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.has_trait",
+          "arg": "law.census",
+          "op": "==",
+          "value": 1
+        }
+      ],
+      "likes": [
+        "용감",
+        "야심"
+      ],
+      "dislikes": [
+        "겁많음",
+        "만족"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "levy",
+          "who": "head"
+        },
+        {
+          "type": "mod",
+          "var": "group.levy_ratio",
+          "op": "set",
+          "value": 0.3
+        },
+        {
+          "type": "mod",
+          "var": "econ.military_service_weeks",
+          "op": "set",
+          "value": 6
+        }
+      ],
+      "note": "징집 가능 성인 남성 비율 0.3: 평민 징집이 없는 기본값 0.1(가정)의 3배. 병역 연 6주(15번 2-2 범위 4~8)가 노동을 빼서 생산이 준다. 수확기에 걸리면 손실이 더 크다"
+    },
+    {
+      "id": "law.flat_tax",
+      "name": "정률세",
+      "kind": "법",
+      "tier": "기본",
+      "exclusive": [
+        "law.poll_tax"
+      ],
+      "likes": [
+        "관대",
+        "자비"
+      ],
+      "dislikes": [
+        "탐욕"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "econ.land_tax",
+          "op": "set",
+          "value": 0.1
+        }
+      ],
+      "note": "토지세 = 필지 순수확의 0.10(15번 2-8 계산값, 범위 0.05~0.30). 징세권자 AI가 매년 15번 2-3 공식으로 다시 정한다. 흉년에 세수가 수확과 같이 준다"
+    },
+    {
+      "id": "law.poll_tax",
+      "name": "정액세",
+      "kind": "법",
+      "tier": "기본",
+      "exclusive": [
+        "law.flat_tax"
+      ],
+      "likes": [
+        "탐욕"
+      ],
+      "dislikes": [
+        "자비",
+        "관대"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "econ.poll_tax",
+          "op": "set",
+          "value": 8
+        }
+      ],
+      "note": "인두세 = 성인 1인당 곡식 8/년(범위 4~12의 중간). 흉년에도 같아서 경작자 몫이 생존선 아래로 내려가고 14번 3-3, 6절 봉기 확률이 오른다"
+    },
+    {
+      "id": "law.minting",
+      "name": "주조권",
+      "kind": "법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.treasury_item",
+          "arg": "금속",
+          "op": ">=",
+          "value": 1
+        },
+        {
+          "metric": "group.concentration",
+          "op": ">=",
+          "value": 0.3
+        }
+      ],
+      "likes": [
+        "탐욕",
+        "근면"
+      ],
+      "dislikes": [],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "mint",
+          "who": "head"
+        },
+        {
+          "type": "mod",
+          "var": "econ.mint_ratio",
+          "op": "set",
+          "value": 6
+        }
+      ],
+      "note": "금속 1 → 은화 6(02번 5절). 은화는 이 법이 있는 나라에서만 새로 생긴다. 풀린 은화가 14번 9-4 화폐화율을 올려 녹봉, 상비군 길을 연다"
+    },
+    {
+      "id": "law.tariffs",
+      "name": "관세",
+      "kind": "법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.trade_route_lands",
+          "op": ">=",
+          "value": 1
+        }
+      ],
+      "likes": [
+        "야심"
+      ],
+      "dislikes": [
+        "탐욕"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "econ.tariff",
+          "op": "set",
+          "value": 0.1
+        },
+        {
+          "type": "enable",
+          "action": "toll",
+          "who": "head"
+        },
+        {
+          "type": "norm",
+          "behavior": "smuggle",
+          "status": "forbidden",
+          "severity": 20,
+          "who": "members"
+        }
+      ],
+      "note": "관세 = 교역 물품 가치의 0.10(범위 0.05~0.20). 상단 수입이 그만큼 준다. 관세를 피하는 밀수가 범죄가 된다(09번 밀수: 몰수)"
+    },
+    {
+      "id": "law.state_brothels",
+      "name": "공창",
+      "kind": "법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.lands_stage",
+          "arg": "정착지",
+          "op": ">=",
+          "value": 3
+        }
+      ],
+      "exclusive": [
+        "law.prostitution_ban"
+      ],
+      "likes": [
+        "색욕",
+        "탐욕"
+      ],
+      "dislikes": [
+        "독실",
+        "절제"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "prostitution",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "econ.prostitution_tax",
+          "op": "set",
+          "value": 0.2
+        },
+        {
+          "type": "mod",
+          "var": "char.marriage_value",
+          "op": "add",
+          "value": 15,
+          "who": "members",
+          "if": [
+            "has_history:매춘 경력"
+          ]
+        }
+      ],
+      "note": "매춘이 합법이 되고 비밀 무게가 × 0.3으로 준다(05번 2절). 매춘 수입의 0.20을 과세한다(근거 수치 없음, 관세 상한에 맞춤). 매춘 경력 혼인 판정 -20 → -5(01번 5-1)"
+    },
+    {
+      "id": "law.confiscation",
+      "name": "재산 몰수",
+      "kind": "법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.has_trait",
+          "arg": "law.written_law",
+          "op": "==",
+          "value": 1
+        }
+      ],
+      "likes": [
+        "잔인",
+        "야심"
+      ],
+      "dislikes": [
+        "탐욕",
+        "자비"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "confiscate",
+          "who": "head"
+        },
+        {
+          "type": "mod",
+          "var": "group.punishment_allowed",
+          "op": "set",
+          "value": true,
+          "arg": "재산 몰수"
+        }
+      ],
+      "note": "재산 몰수 형벌을 연다(09번 5절). 중범죄자 재산이 국고로 간다. 빚진 상단을 몰수해 빚을 지우는 길(11번)도 이것이다"
+    },
+    {
+      "id": "law.debt_slavery",
+      "name": "채무 노예 허용",
+      "kind": "법",
+      "tier": "기본",
+      "exclusive": [
+        "law.debt_jubilee"
+      ],
+      "likes": [
+        "탐욕",
+        "잔인"
+      ],
+      "dislikes": [
+        "자비",
+        "관대"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "debt_slavery",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        }
+      ],
+      "note": "빚 담보 순위의 마지막에 몸을 넣는다(14번 7-3: 필지 → 도구, 가재 → 노동 → 몸). 2회 미상환이면 채무 노예가 된다"
+    },
+    {
+      "id": "law.debt_jubilee",
+      "name": "채무 탕감령",
+      "kind": "법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "cond.any",
+          "arg": [
+            {
+              "metric": "region.famine_recent",
+              "op": "==",
+              "value": 1
+            },
+            {
+              "metric": "region.revolt_won_recent",
+              "op": "==",
+              "value": 1
+            }
+          ],
+          "op": "==",
+          "value": 1
+        }
+      ],
+      "exclusive": [
+        "law.debt_slavery"
+      ],
+      "likes": [
+        "관대",
+        "자비"
+      ],
+      "dislikes": [
+        "탐욕"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "econ.debt_cancel",
+          "op": "set",
+          "value": true
+        },
+        {
+          "type": "mod",
+          "var": "group.loyalty",
+          "op": "add",
+          "value": 30,
+          "who": "members",
+          "if": [
+            "is_debtor"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "rel.grievance_to_head",
+          "op": "add",
+          "value": 40,
+          "who": "members",
+          "if": [
+            "is_lender"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "ai.lend_rate",
+          "op": "add",
+          "value": 0.1,
+          "who": "members"
+        }
+      ],
+      "note": "채택 즉시 곡식 빚을 모두 지운다. 채무자 충성 +30, 대여자 원한 +40(채택 시점 판정). 법이 남아 있는 동안 대여 이자율 +0.10(14번 7-3 기본 30% → 40%, 근거 수치 없음)"
+    },
+    {
+      "id": "law.commons_protection",
+      "name": "공유지 보호",
+      "kind": "법",
+      "tier": "기본",
+      "exclusive": [
+        "law.enclosure"
+      ],
+      "likes": [
+        "자비",
+        "관대"
+      ],
+      "dislikes": [
+        "탐욕"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "land.commons_protected",
+          "op": "set",
+          "value": true
+        },
+        {
+          "type": "norm",
+          "behavior": "enclosure",
+          "status": "forbidden",
+          "severity": 20,
+          "who": "members"
+        }
+      ],
+      "note": "마을 공유지 점유를 범죄로 만든다(severity 20, §5 보통). 공유지가 남아 가난한 가구의 채집, 사냥 부업(14번 7-1)이 유지된다"
+    },
+    {
+      "id": "law.enclosure",
+      "name": "인클로저 허가",
+      "kind": "법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.free_land_index",
+          "op": "<",
+          "value": 0.3
+        }
+      ],
+      "exclusive": [
+        "law.commons_protection"
+      ],
+      "likes": [
+        "탐욕",
+        "야심"
+      ],
+      "dislikes": [
+        "자비",
+        "관대"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "land.commons_protected",
+          "op": "set",
+          "value": false
+        },
+        {
+          "type": "norm",
+          "behavior": "enclosure",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        },
+        {
+          "type": "enable",
+          "action": "enclose",
+          "who": "members",
+          "if": [
+            "is_landlord"
+          ]
+        }
+      ],
+      "note": "지주가 공유지를 사유지로 편입한다. 부업 터가 사라져 땅 없는 가구가 는다(14번 4절 공유지 점유)"
+    },
+    {
+      "id": "law.hereditary_fiefs",
+      "name": "봉토 세습",
+      "kind": "법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.fiefs",
+          "op": ">=",
+          "value": 10
+        }
+      ],
+      "likes": [
+        "용감",
+        "충직"
+      ],
+      "dislikes": [
+        "야심"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.fief_hereditary",
+          "op": "set",
+          "value": true
+        },
+        {
+          "type": "mod",
+          "var": "econ.inheritance_tax",
+          "op": "set",
+          "value": 1.0,
+          "arg": "봉토"
+        },
+        {
+          "type": "mod",
+          "var": "group.loyalty",
+          "op": "add",
+          "value": 20,
+          "who": "knights"
+        },
+        {
+          "type": "mod",
+          "var": "group.concentration",
+          "op": "add",
+          "value": -0.1
+        }
+      ],
+      "note": "기사 상속인이 봉토를 잇고 상속세로 봉토 1년 수익(값 1.0 = 연 수익 배수)을 영주에게 낸다(15번 4-17). 기사 충성 +20, 권력 집중도 -0.10"
+    },
+    {
+      "id": "law.secularization",
+      "name": "세속화",
+      "kind": "법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.church_land_share",
+          "op": ">=",
+          "value": 0.2
+        }
+      ],
+      "exclusive": [
+        "doctrine.theocracy"
+      ],
+      "likes": [
+        "탐욕",
+        "냉소"
+      ],
+      "dislikes": [
+        "독실"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "seize_church_land",
+          "who": "head"
+        },
+        {
+          "type": "mod",
+          "var": "group.loyalty",
+          "op": "add",
+          "value": -20,
+          "who": "members",
+          "if": [
+            "has_personality:독실"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "group.relation",
+          "op": "add",
+          "value": -30,
+          "arg": "교단"
+        }
+      ],
+      "note": "교단 토지 몰수 행동을 연다. 몰수한 땅은 면세가 풀려(15번 2-6) 영주 수입이 된다. 독실 국민 충성 -20, 교단과 관계 -30(§5 큼). 배타 '신정'은 국교 교단의 교리다: 국교 교단이 신정을 가지면 이 법을 넣을 수 없다"
+    },
+    {
+      "id": "law.sale_of_titles",
+      "name": "작위 매매",
+      "kind": "법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.has_trait",
+          "arg": "law.class_system",
+          "op": "==",
+          "value": 1
+        },
+        {
+          "metric": "group.has_trait",
+          "arg": "law.minting",
+          "op": "==",
+          "value": 1
+        }
+      ],
+      "exclusive": [
+        "law.no_interclass_marriage"
+      ],
+      "likes": [
+        "탐욕",
+        "야심"
+      ],
+      "dislikes": [
+        "정직"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "sell_title",
+          "who": "head"
+        },
+        {
+          "type": "mod",
+          "var": "group.loyalty",
+          "op": "add",
+          "value": -10,
+          "who": "nobles"
+        }
+      ],
+      "note": "은화로 귀족 신분을 판다. 판 값은 국고로 간다. 기존 귀족 충성 -10. 작위 값은 아직 정하지 않았다"
+    },
+    {
+      "id": "law.customary_law",
+      "name": "관습법",
+      "kind": "법",
+      "tier": "기본",
+      "exclusive": [
+        "law.written_law"
+      ],
+      "likes": [
+        "탐욕",
+        "기만"
+      ],
+      "dislikes": [
+        "정직"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.trial_bribe",
+          "op": "add",
+          "value": 15
+        }
+      ],
+      "note": "형벌을 고정하지 않아 판관(영주)이 사건마다 고른다(09번 5절). 판결 뇌물 판정 +15"
+    },
+    {
+      "id": "law.written_law",
+      "name": "성문법",
+      "kind": "법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "cond.any",
+          "arg": [
+            {
+              "metric": "head.skill",
+              "arg": "학문",
+              "op": ">=",
+              "value": 50
+            },
+            {
+              "metric": "group.officials",
+              "op": ">=",
+              "value": 3
+            }
+          ],
+          "op": "==",
+          "value": 1
+        }
+      ],
+      "exclusive": [
+        "law.customary_law"
+      ],
+      "likes": [
+        "정직",
+        "인내"
+      ],
+      "dislikes": [
+        "탐욕",
+        "기만"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.trial_bribe",
+          "op": "add",
+          "value": -15
+        },
+        {
+          "type": "mod",
+          "var": "group.verdict_legitimacy",
+          "op": "mul",
+          "value": 1.25
+        },
+        {
+          "type": "mod",
+          "var": "econ.inheritance_tax",
+          "op": "set",
+          "value": 0.1
+        },
+        {
+          "type": "mod",
+          "var": "group.punishment",
+          "op": "set",
+          "value": "배상 + 태형",
+          "arg": "도둑질"
+        },
+        {
+          "type": "mod",
+          "var": "group.punishment",
+          "op": "set",
+          "value": "배상 + 태형",
+          "arg": "소매치기"
+        },
+        {
+          "type": "mod",
+          "var": "group.punishment",
+          "op": "set",
+          "value": "투옥 또는 신체형",
+          "arg": "강도"
+        },
+        {
+          "type": "mod",
+          "var": "group.punishment",
+          "op": "set",
+          "value": "배상 + 낙인",
+          "arg": "사기"
+        },
+        {
+          "type": "mod",
+          "var": "group.punishment",
+          "op": "set",
+          "value": "배상 + 해고 + 투옥",
+          "arg": "횡령"
+        },
+        {
+          "type": "mod",
+          "var": "group.punishment",
+          "op": "set",
+          "value": "몰수",
+          "arg": "밀수"
+        },
+        {
+          "type": "mod",
+          "var": "group.punishment",
+          "op": "set",
+          "value": "벌금",
+          "arg": "장물 거래"
+        },
+        {
+          "type": "mod",
+          "var": "group.punishment",
+          "op": "set",
+          "value": "관직 박탈",
+          "arg": "뇌물 수수"
+        },
+        {
+          "type": "mod",
+          "var": "group.punishment",
+          "op": "set",
+          "value": "벌금 또는 태형",
+          "arg": "폭행"
+        },
+        {
+          "type": "mod",
+          "var": "group.punishment",
+          "op": "set",
+          "value": "처형 또는 노예화",
+          "arg": "살인"
+        },
+        {
+          "type": "mod",
+          "var": "group.punishment",
+          "op": "set",
+          "value": "처형",
+          "arg": "독살"
+        },
+        {
+          "type": "mod",
+          "var": "group.punishment",
+          "op": "set",
+          "value": "노예화 또는 처형",
+          "arg": "납치"
+        },
+        {
+          "type": "mod",
+          "var": "group.punishment",
+          "op": "set",
+          "value": "처형",
+          "arg": "방화"
+        },
+        {
+          "type": "mod",
+          "var": "group.punishment",
+          "op": "set",
+          "value": "벌금 + 투옥",
+          "arg": "매춘 알선"
+        },
+        {
+          "type": "mod",
+          "var": "group.punishment",
+          "op": "set",
+          "value": "낙인 + 투옥",
+          "arg": "위조"
+        },
+        {
+          "type": "mod",
+          "var": "group.punishment",
+          "op": "set",
+          "value": "반환 + 태형",
+          "arg": "탈주"
+        },
+        {
+          "type": "mod",
+          "var": "group.punishment",
+          "op": "set",
+          "value": "처형 + 연좌",
+          "arg": "반역"
+        }
+      ],
+      "note": "범죄별 형벌을 09번 2절 기본 형벌로 고정한다(입법으로 바꿀 수 있음. 노예화, 연좌는 노예제, 연좌제가 있어야 집행). 뇌물 판정 -15, 공정 판결 정통성 × 1.25(§5 보통, 14번 8-3 기본 +1). 상속세 0.10(15번 2-2 범위 0~0.20)"
+    },
+    {
+      "id": "law.trial_by_combat",
+      "name": "결투 재판",
+      "kind": "법",
+      "tier": "기본",
+      "likes": [
+        "용감",
+        "성급"
+      ],
+      "dislikes": [
+        "겁많음"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "trial_by_combat",
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "group.confession_challenge",
+          "op": "set",
+          "value": true
+        }
+      ],
+      "note": "분쟁을 결투로 가린다. 고문으로 받은 자백은 무효를 주장할 수 있다(09번 4절 자백 강도 60)"
+    },
+    {
+      "id": "law.adultery_crime",
+      "name": "간통죄",
+      "kind": "법",
+      "tier": "기본",
+      "likes": [
+        "정직",
+        "절제"
+      ],
+      "dislikes": [
+        "색욕"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "adultery",
+          "status": "forbidden",
+          "severity": 30,
+          "who": "members"
+        }
+      ],
+      "note": "불륜이 국가 범죄가 된다(severity 30 = 05번 불륜 무게, 비밀 무게 × 1.5). 피해 배우자의 고발은 09번 3절 고발 → 재판 흐름을 탄다"
+    },
+    {
+      "id": "law.prostitution_ban",
+      "name": "매춘 금지법",
+      "kind": "법",
+      "tier": "기본",
+      "exclusive": [
+        "law.state_brothels"
+      ],
+      "likes": [
+        "독실",
+        "절제"
+      ],
+      "dislikes": [
+        "색욕"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "prostitution",
+          "status": "forbidden",
+          "severity": 20,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "pimping",
+          "status": "forbidden",
+          "severity": 30,
+          "who": "members"
+        }
+      ],
+      "note": "매춘 severity 20, 알선 30(§5 보통). 위반은 국가 범죄다(09번 7절)"
+    },
+    {
+      "id": "law.collective_punishment",
+      "name": "연좌제",
+      "kind": "법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.concentration",
+          "op": ">=",
+          "value": 0.5
+        }
+      ],
+      "likes": [
+        "잔인"
+      ],
+      "dislikes": [
+        "자비",
+        "관용"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.collective_punishment",
+          "op": "set",
+          "value": true,
+          "arg": "반역"
+        },
+        {
+          "type": "mod",
+          "var": "group.collective_punishment",
+          "op": "set",
+          "value": true,
+          "arg": "살인"
+        },
+        {
+          "type": "mod",
+          "var": "char.secret_detect",
+          "op": "mul",
+          "value": 1.25,
+          "who": "members",
+          "if": [
+            "kin"
+          ]
+        }
+      ],
+      "note": "반역, 살인에 가문원도 같은 형벌을 한 단계 낮춰 받는다(09번 5절). 가문원끼리 감시해서 친족 비밀 인지 × 1.25(§5 보통)"
+    },
+    {
+      "id": "law.watch",
+      "name": "치안대",
+      "kind": "법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.lands_stage",
+          "arg": "읍",
+          "op": ">=",
+          "value": 1
+        }
+      ],
+      "likes": [
+        "정직",
+        "겁많음"
+      ],
+      "dislikes": [
+        "기만"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.crime_witness",
+          "op": "mul",
+          "value": 1.3
+        },
+        {
+          "type": "mod",
+          "var": "econ.watch_cost",
+          "op": "set",
+          "value": 52
+        }
+      ],
+      "note": "범죄 목격률 × 1.3(09번 2절). 유지비 = 읍 이상 토지 1곳당 연 은화 52(대원 1명, 하인 대가 은화 1/주, 02번 6절)"
+    },
+    {
+      "id": "law.census",
+      "name": "호적",
+      "kind": "법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.has_trait",
+          "arg": "law.bureaucracy",
+          "op": "==",
+          "value": 1
+        }
+      ],
+      "likes": [
+        "근면",
+        "정직"
+      ],
+      "dislikes": [
+        "기만",
+        "탐욕"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.tax_base",
+          "op": "mul",
+          "value": 1.2
+        },
+        {
+          "type": "mod",
+          "var": "econ.house_tax",
+          "op": "set",
+          "value": true
+        },
+        {
+          "type": "mod",
+          "var": "group.secret_weight",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "혈통 위조"
+        },
+        {
+          "type": "mod",
+          "var": "char.track_fugitive",
+          "op": "mul",
+          "value": 1.25,
+          "who": "members"
+        }
+      ],
+      "note": "과세 기반 × 1.2, 가옥세 부과(움막 0, 가옥 2, 저택 10/년, 15번 2-2). 혈통 위조 무게 × 2. 도주 노예 추적 × 1.25(§5 보통)"
+    },
+    {
+      "id": "law.pardon",
+      "name": "사면권",
+      "kind": "법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.concentration",
+          "op": ">=",
+          "value": 0.4
+        }
+      ],
+      "likes": [
+        "자비",
+        "관대"
+      ],
+      "dislikes": [
+        "복수심"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "pardon",
+          "who": "head"
+        },
+        {
+          "type": "mod",
+          "var": "rel.pardon_debt",
+          "op": "set",
+          "value": 3
+        }
+      ],
+      "note": "수장이 형벌을 면제한다. 사면받은 자는 수장에게 빚 +3(03번 1절 빚)"
+    },
+    {
+      "id": "law.noble_council",
+      "name": "귀족 회의",
+      "kind": "법",
+      "tier": "기본",
+      "exclusive": [
+        "law.divine_right"
+      ],
+      "likes": [
+        "야심",
+        "정직"
+      ],
+      "dislikes": [
+        "충직"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.concentration_cap",
+          "op": "set",
+          "value": 0.5
+        },
+        {
+          "type": "mod",
+          "var": "group.veto",
+          "op": "set",
+          "value": true,
+          "arg": "귀족"
+        },
+        {
+          "type": "enable",
+          "action": "veto_law",
+          "who": "nobles"
+        }
+      ],
+      "note": "귀족 동의 없이는 법이 통과되지 않는다(04번 6절 입법에 귀족 거부권). 권력 집중도 상한 0.5"
+    },
+    {
+      "id": "law.standing_army",
+      "name": "상비군",
+      "kind": "법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.concentration",
+          "op": ">=",
+          "value": 0.4
+        },
+        {
+          "metric": "group.silver_income",
+          "op": ">",
+          "value": 0
+        }
+      ],
+      "likes": [
+        "야심",
+        "용감"
+      ],
+      "dislikes": [
+        "탐욕"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.standing_army",
+          "op": "set",
+          "value": true
+        },
+        {
+          "type": "mod",
+          "var": "group.concentration",
+          "op": "add",
+          "value": 0.1
+        }
+      ],
+      "note": "평시 병력을 녹봉 은화로 유지한다(14번 9-4). 권력 집중도 +0.10"
+    },
+    {
+      "id": "law.bureaucracy",
+      "name": "관료제",
+      "kind": "법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.officials",
+          "op": ">=",
+          "value": 5
+        },
+        {
+          "metric": "group.members_with_skill",
+          "arg": [
+            "학문",
+            30
+          ],
+          "op": ">=",
+          "value": 5
+        }
+      ],
+      "likes": [
+        "근면",
+        "인내"
+      ],
+      "dislikes": [
+        "야심"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.officials_cap",
+          "op": "mul",
+          "value": 1.25
+        }
+      ],
+      "note": "관직 수 × 1.25(§5 보통). 관료가 늘어 04번 2절 법 슬롯 조건(관료 5, 15명)을 채우고 호적을 해금한다. 해금의 '학문 30 이상 관리 5명'은 관료 5명과 학문 30 이상 구성원 5명으로 나눠 검사한다"
+    },
+    {
+      "id": "law.bandit_amnesty",
+      "name": "도적 사면",
+      "kind": "법",
+      "tier": "기본",
+      "likes": [
+        "자비",
+        "관용"
+      ],
+      "dislikes": [
+        "복수심"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.bandit_amnesty",
+          "op": "set",
+          "value": true
+        }
+      ],
+      "note": "항복한 도적을 처벌 없이 병사로 편입한다. 편입자에게 도적 출신 이력(정통성 -30)은 남는다"
+    },
+    {
+      "id": "law.letters_of_marque",
+      "name": "사략 허가",
+      "kind": "법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.wars",
+          "op": ">=",
+          "value": 1
+        }
+      ],
+      "likes": [
+        "야심",
+        "탐욕"
+      ],
+      "dislikes": [
+        "정직",
+        "자비"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.privateer_vassals",
+          "op": "set",
+          "value": true
+        }
+      ],
+      "note": "도적단을 공개 봉신으로 받는다. 그 도적단은 사략단 규율로 적국 약탈이 합법이 되고 나라 법(포로, 노예 규정)을 따른다(04번 7절)"
+    },
+    {
+      "id": "law.state_religion",
+      "name": "국교",
+      "kind": "법",
+      "tier": "기본",
+      "exclusive": [
+        "law.religious_tolerance"
+      ],
+      "likes": [
+        "독실",
+        "충직"
+      ],
+      "dislikes": [
+        "냉소"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.state_religion_doctrines",
+          "op": "set",
+          "value": 2
+        },
+        {
+          "type": "mod",
+          "var": "group.loyalty",
+          "op": "add",
+          "value": 10,
+          "who": "members",
+          "if": [
+            "same_religion"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "group.heathen_loyalty_penalty",
+          "op": "set",
+          "value": true
+        },
+        {
+          "type": "mod",
+          "var": "group.vote_weight",
+          "op": "add",
+          "value": 0.1,
+          "arg": "국교 교단"
+        }
+      ],
+      "note": "지정 교단의 교리 2개가 법 슬롯 없이 국내 효력을 가진다(04번 5절). 국교 신도 충성 +10, 이교도 충성 감소 적용. 교단 수장 입법 지분 +0.10(04번 5절은 크기를 정하지 않음, 13-2 제안 문턱 0.05의 2배)"
+    },
+    {
+      "id": "law.religious_tolerance",
+      "name": "종교 관용",
+      "kind": "법",
+      "tier": "기본",
+      "exclusive": [
+        "law.state_religion"
+      ],
+      "likes": [
+        "관용",
+        "냉소"
+      ],
+      "dislikes": [
+        "독실"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.heathen_loyalty_penalty",
+          "op": "set",
+          "value": false
+        }
+      ],
+      "note": "이교도 국민의 충성 감소를 끈다"
+    },
+    {
+      "id": "law.divine_right",
+      "name": "왕권신수",
+      "kind": "법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.has_trait",
+          "arg": "law.state_religion",
+          "op": "==",
+          "value": 1
+        },
+        {
+          "metric": "group.concentration",
+          "op": ">=",
+          "value": 0.7
+        }
+      ],
+      "exclusive": [
+        "law.noble_council"
+      ],
+      "likes": [
+        "독실",
+        "충직"
+      ],
+      "dislikes": [
+        "야심",
+        "냉소"
+      ],
+      "effects": [
+        {
+          "type": "justify",
+          "behavior": "*",
+          "holder": "head",
+          "value": 0.5,
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": -30,
+          "who": "members",
+          "arg": "반란 선동"
+        },
+        {
+          "type": "mod",
+          "var": "group.scope_allowed",
+          "op": "set",
+          "value": true,
+          "arg": "수장 가문"
+        }
+      ],
+      "note": "수장의 모든 위반에 정당화 0.5(16번 3-3). 공개 특권의 불공정 비용이 절반이 된다(16번 3-4). 수장 대상 반란 선동 판정 -30. 수장 가문 범위를 쓸 수 있다(04번 3-1)"
+    }
+  ]
+}

@@ -1,0 +1,1871 @@
+{
+  "proposed": {
+    "vars": {
+      "char.stress_per_year": {
+        "label": "연 스트레스 가산",
+        "unit": "가산(스트레스 0~100 척도)",
+        "ref": "01 7절"
+      },
+      "rel.marriage_alliance_break": {
+        "label": "혼인 동맹 파기 확률 배수",
+        "unit": "배수",
+        "ref": "04 7절"
+      },
+      "group.scope_allowed": {
+        "label": "적용 범위 인자(수장 가문, 수장 1인)를 집중도 조건 없이 허용",
+        "unit": "set true",
+        "ref": "04 3-1"
+      },
+      "group.office_hereditary": {
+        "label": "인자 직위(사제 등)와 거기 딸린 토지가 자녀에게 세습",
+        "unit": "set true",
+        "ref": "14 11-2"
+      },
+      "econ.collateral_seizure": {
+        "label": "미상환 2회째 담보(필지, 도구) 집행",
+        "unit": "set true/false",
+        "ref": "14 7-3"
+      },
+      "char.pilgrimage_conversion": {
+        "label": "순례 완수 시 성격 슬롯 하나가 인자 성격으로 바뀔 확률",
+        "unit": "확률",
+        "ref": "01 4절"
+      },
+      "group.law_conflict": {
+        "label": "국교 교리와 나라 법이 충돌할 때 교단 수장→나라 수장 호감 연 감소(기본 10)",
+        "unit": "set",
+        "ref": "04 5절"
+      }
+    },
+    "predicates": {
+      "children_below": "대상이 혼인 5년 이상이고 자녀 수가 인자 미만",
+      "has_talent": "대상이 인자로 준 재능을 가짐",
+      "owns_slaves": "대상이 노예를 1명 이상 소유",
+      "persecuted": "최근 1년 안에 신도가 신앙 때문에 처형되었거나 교단이 탄압받음",
+      "sacred_site": "성지 특성 토지"
+    },
+    "actions": {
+      "annul_marriage": "혼인 무효(이혼). 사제 승인 필요(03 2절)",
+      "offer_child": "출가: 자녀 1명을 교단에 바친다. 그 자녀는 수도사(사제)가 된다",
+      "buy_office": "은화로 성직을 산다",
+      "found_knight_order": "기사단 창설(10 5절). 기사 5명 필요"
+    },
+    "behaviors": {
+      "withhold_child": "출가 의무 거부(자녀 2명 이상 가정이 1명도 바치지 않음)"
+    },
+    "metrics": {
+      "group.clergy": "사제 수"
+    }
+  },
+  "traits": [
+    {
+      "id": "doctrine.polygyny",
+      "name": "일부다처",
+      "kind": "교리",
+      "tier": "기본",
+      "exclusive": [
+        "doctrine.monogamy",
+        "doctrine.polyandry"
+      ],
+      "likes": [
+        "색욕",
+        "야심"
+      ],
+      "dislikes": [
+        "절제"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "multiple_wives",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "concubinage",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "multiple_husbands",
+          "status": "forbidden",
+          "severity": 30,
+          "who": "members"
+        },
+        {
+          "type": "opinion",
+          "from": "women",
+          "to": "head",
+          "value": -5
+        }
+      ],
+      "note": "남성 다수 배우자, 첩이 합법이라 비밀이 되지 않는다(05번 무게 × 0.3). 여성 다수 배우자는 불륜과 같은 30으로 금지. 여성 신도 호감 -5는 교주를 향한다"
+    },
+    {
+      "id": "doctrine.polyandry",
+      "name": "일처다부",
+      "kind": "교리",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "head.female",
+          "op": "==",
+          "value": 1
+        },
+        {
+          "metric": "group.followers",
+          "op": ">=",
+          "value": 100
+        }
+      ],
+      "exclusive": [
+        "doctrine.monogamy",
+        "doctrine.polygyny"
+      ],
+      "likes": [
+        "색욕",
+        "관용"
+      ],
+      "dislikes": [
+        "절제",
+        "복수심"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "multiple_husbands",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "multiple_wives",
+          "status": "forbidden",
+          "severity": 30,
+          "who": "members"
+        },
+        {
+          "type": "opinion",
+          "from": "members",
+          "to": "head",
+          "value": -5,
+          "if": [
+            "is_male"
+          ]
+        }
+      ],
+      "note": "여성 다수 배우자 합법. 남성 다수 배우자는 30으로 금지. 남성 신도 호감 -5는 교주를 향한다"
+    },
+    {
+      "id": "doctrine.kin_marriage",
+      "name": "근친혼 허용",
+      "kind": "교리",
+      "tier": "기본",
+      "exclusive": [
+        "doctrine.kin_marriage_ban"
+      ],
+      "likes": [
+        "탐욕",
+        "야심"
+      ],
+      "dislikes": [
+        "사교"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "marry_cousin",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "marry_kin6",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        }
+      ],
+      "note": "사촌 이내 혼인이 근친 비밀(05번 무게 40)이 되지 않는다. 열성 형질 발현은 유전 규칙(11번 2절)이 따로 낸다"
+    },
+    {
+      "id": "doctrine.kin_marriage_ban",
+      "name": "근친혼 금지",
+      "kind": "교리",
+      "tier": "기본",
+      "exclusive": [
+        "doctrine.kin_marriage"
+      ],
+      "likes": [
+        "독실",
+        "사교"
+      ],
+      "dislikes": [
+        "탐욕",
+        "야심"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "marry_kin6",
+          "status": "forbidden",
+          "severity": 40,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "marry_cousin",
+          "status": "forbidden",
+          "severity": 40,
+          "who": "members"
+        }
+      ],
+      "note": "6촌 이내 혼인은 교단 범죄. 심각도는 05번 근친 무게 40. 혈통 집중(11번 2절)이 오면 혼인 시장이 막힌다"
+    },
+    {
+      "id": "doctrine.divorce",
+      "name": "이혼 허용",
+      "kind": "교리",
+      "tier": "기본",
+      "exclusive": [
+        "doctrine.marriage_inviolable"
+      ],
+      "likes": [
+        "변덕",
+        "색욕"
+      ],
+      "dislikes": [
+        "충직",
+        "독실"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "divorce",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        },
+        {
+          "type": "enable",
+          "action": "annul_marriage",
+          "who": "members"
+        }
+      ],
+      "note": "03번 혼인 무효 행동을 연다. 성립에는 사제 승인(교단 지도자 호감 40)이 필요하다"
+    },
+    {
+      "id": "doctrine.marriage_inviolable",
+      "name": "혼인 불가침",
+      "kind": "교리",
+      "tier": "기본",
+      "exclusive": [
+        "doctrine.divorce",
+        "doctrine.free_love"
+      ],
+      "likes": [
+        "충직",
+        "독실"
+      ],
+      "dislikes": [
+        "변덕",
+        "색욕"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "divorce",
+          "status": "forbidden",
+          "severity": 20,
+          "who": "members"
+        },
+        {
+          "type": "disable",
+          "action": "annul_marriage",
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "rel.marriage_alliance_break",
+          "op": "mul",
+          "value": 0.5,
+          "who": "group"
+        }
+      ],
+      "note": "이혼 행동을 막는다. 혼인 동맹 안정성 2배 = 파기 확률 × 0.5(04번 7절 동맹)"
+    },
+    {
+      "id": "doctrine.fertility_blessing",
+      "name": "출산 축복",
+      "kind": "교리",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.followers",
+          "op": ">=",
+          "value": 200
+        }
+      ],
+      "exclusive": [
+        "doctrine.asceticism",
+        "doctrine.believer_abstinence"
+      ],
+      "likes": [
+        "색욕",
+        "독실"
+      ],
+      "dislikes": [
+        "절제"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "demo.conception",
+          "op": "mul",
+          "value": 1.15,
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "char.stress_per_year",
+          "op": "add",
+          "value": 10,
+          "who": "members",
+          "if": [
+            "children_below:1"
+          ]
+        }
+      ],
+      "note": "신도 임신 확률 +15%(01번 8절 1회당 3% → 3.45%). 자녀 없는 기혼 신도는 해마다 스트레스 +10"
+    },
+    {
+      "id": "doctrine.endogamy",
+      "name": "신도 간 혼인 의무",
+      "kind": "교리",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.followers",
+          "op": ">=",
+          "value": 500
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "독실",
+        "내향"
+      ],
+      "dislikes": [
+        "사교",
+        "야심"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "interfaith_marriage",
+          "status": "forbidden",
+          "severity": 30,
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "group.leave",
+          "op": "mul",
+          "value": 0.5,
+          "who": "group"
+        }
+      ],
+      "note": "이교도와 혼인은 교단 범죄(30). 신도 이탈 × 0.5. 정략혼 상대가 교단 안으로 좁아진다"
+    },
+    {
+      "id": "doctrine.free_love",
+      "name": "자유 애정",
+      "kind": "교리",
+      "tier": "기본",
+      "exclusive": [
+        "doctrine.monogamy",
+        "doctrine.marriage_inviolable",
+        "doctrine.chastity_vow",
+        "doctrine.believer_abstinence"
+      ],
+      "likes": [
+        "색욕",
+        "관용"
+      ],
+      "dislikes": [
+        "복수심",
+        "절제"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "adultery",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "premarital_sex",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "sex_among_believers",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "group.secret_weight",
+          "op": "set",
+          "value": 0,
+          "who": "members",
+          "arg": "불륜"
+        },
+        {
+          "type": "ai",
+          "action": "adultery",
+          "weight": 1.5,
+          "who": "members"
+        }
+      ],
+      "note": "불륜이 비밀이 되지 않는다(무게 0이라 05번 배우자 원한 +40도 공개로 생기지 않음). 혼외 관계 효용 × 1.5로 생부 불명 아이가 는다. 사생아 비밀(40)은 상속 문제라 남는다"
+    },
+    {
+      "id": "doctrine.believer_abstinence",
+      "name": "신도 간 금욕",
+      "kind": "교리",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.followers",
+          "op": ">=",
+          "value": 100
+        }
+      ],
+      "exclusive": [
+        "doctrine.fertility_blessing",
+        "doctrine.free_love",
+        "doctrine.fertility_duty"
+      ],
+      "likes": [
+        "절제",
+        "독실"
+      ],
+      "dislikes": [
+        "색욕"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "sex_among_believers",
+          "status": "forbidden",
+          "severity": 30,
+          "who": "members"
+        }
+      ],
+      "note": "신도끼리 관계(부부 포함)는 교단 범죄, 심각도 불륜과 같은 30. 범위 [면제: 교주]는 채택 때 exempt: head로 붙고, 수장 1인 범위라 집중도 70% 또는 기적 숭배가 필요하다(04번 3-1). 공개 특권이면 16번 3-4 불공정 비용이 난다"
+    },
+    {
+      "id": "doctrine.communal_raising",
+      "name": "교단 공동 양육",
+      "kind": "교리",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.followers",
+          "op": ">=",
+          "value": 300
+        },
+        {
+          "metric": "group.facility",
+          "arg": "수도원",
+          "op": ">=",
+          "value": 1,
+          "keep": true
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "관대",
+        "독실"
+      ],
+      "dislikes": [
+        "야심"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "communal_raising",
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "group.secret_weight",
+          "op": "set",
+          "value": 0,
+          "who": "members",
+          "arg": "사생아"
+        },
+        {
+          "type": "mod",
+          "var": "group.loyalty",
+          "op": "add",
+          "value": 15,
+          "who": "children_of_members"
+        }
+      ],
+      "note": "공동 양육 행동이 생부 기록을 지운다. 사생아 비밀 무게 0. 아이 충성 +15가 가문 대신 교단으로 간다(루트 1)"
+    },
+    {
+      "id": "doctrine.fertility_duty",
+      "name": "다산 의무",
+      "kind": "교리",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.has_trait",
+          "arg": "doctrine.fertility_blessing",
+          "op": "==",
+          "value": 1,
+          "keep": true
+        }
+      ],
+      "exclusive": [
+        "doctrine.believer_abstinence"
+      ],
+      "likes": [
+        "색욕",
+        "근면"
+      ],
+      "dislikes": [
+        "절제",
+        "게으름"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "fail_childbearing",
+          "status": "forbidden",
+          "severity": 20,
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "char.stress_per_year",
+          "op": "add",
+          "value": 10,
+          "who": "members",
+          "if": [
+            "children_below:3"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "group.growth",
+          "op": "mul",
+          "value": 2.0,
+          "who": "group"
+        }
+      ],
+      "note": "행위 키가 미달 쪽 이름이라 forbidden으로 건다(16번 3-1 의무 규범). 자녀 3명 미만 기혼 신도는 해마다 스트레스 +10. 신도 증가 × 2"
+    },
+    {
+      "id": "doctrine.chastity_vow",
+      "name": "순결 서약",
+      "kind": "교리",
+      "tier": "기본",
+      "exclusive": [
+        "doctrine.free_love"
+      ],
+      "likes": [
+        "절제",
+        "독실"
+      ],
+      "dislikes": [
+        "색욕"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "premarital_sex",
+          "status": "forbidden",
+          "severity": 25,
+          "who": "members"
+        },
+        {
+          "type": "ai",
+          "action": "adultery",
+          "weight": 0.5,
+          "who": "members"
+        }
+      ],
+      "note": "혼전 관계는 교단 범죄(25). 혼외 관계 효용 × 0.5로 불륜 확률이 절반이 되어 생부가 확실해진다(루트 3의 약점)"
+    },
+    {
+      "id": "doctrine.oblation",
+      "name": "출가",
+      "kind": "교리",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.facility",
+          "arg": "수도원",
+          "op": ">=",
+          "value": 1,
+          "keep": true
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "독실",
+        "관대"
+      ],
+      "dislikes": [
+        "탐욕",
+        "야심"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "offer_child",
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "withhold_child",
+          "status": "forbidden",
+          "severity": 20,
+          "who": "members"
+        }
+      ],
+      "note": "자녀 2명 이상 신도 가정은 1명을 바친다. 바친 아이는 수도사(사제)가 되어 교단 인력이 늘고, 그 가문 혈통은 덜 퍼진다"
+    },
+    {
+      "id": "doctrine.clergy_celibacy",
+      "name": "사제 독신",
+      "kind": "교리",
+      "tier": "기본",
+      "exclusive": [
+        "doctrine.hereditary_clergy"
+      ],
+      "likes": [
+        "절제",
+        "독실"
+      ],
+      "dislikes": [
+        "색욕",
+        "야심"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "clergy_marriage",
+          "status": "forbidden",
+          "severity": 40,
+          "who": "clergy"
+        },
+        {
+          "type": "mod",
+          "var": "econ.church_donation",
+          "op": "set",
+          "value": 1.0,
+          "who": "clergy"
+        }
+      ],
+      "note": "사제의 혼인과 출산은 교단 범죄, 아이는 사생아 비밀(무게 40). 사제는 적자가 없어 재산 전부를 교단에 유증한다. 교단 땅이 쪼개지지 않고 쌓인다(14번 11-2)"
+    },
+    {
+      "id": "doctrine.hereditary_clergy",
+      "name": "사제 세습",
+      "kind": "교리",
+      "tier": "기본",
+      "exclusive": [
+        "doctrine.clergy_celibacy"
+      ],
+      "likes": [
+        "야심",
+        "탐욕"
+      ],
+      "dislikes": [
+        "정직"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "clergy_marriage",
+          "status": "allowed",
+          "severity": 0,
+          "who": "clergy"
+        },
+        {
+          "type": "mod",
+          "var": "group.office_hereditary",
+          "op": "set",
+          "value": true,
+          "who": "group",
+          "arg": "사제"
+        },
+        {
+          "type": "mod",
+          "var": "group.succession_rule_allowed",
+          "op": "set",
+          "value": true,
+          "who": "group",
+          "arg": "장자"
+        }
+      ],
+      "note": "사제직과 거기 딸린 토지가 자녀에게 간다. 교단 땅이 사제 가문들 사이에서 쪼개진다(14번 11-2). 승계 슬롯에 장자 허용(15번 4-12). 루트 8의 고위직 독점"
+    },
+    {
+      "id": "doctrine.women_clergy",
+      "name": "여성 사제",
+      "kind": "교리",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "관용"
+      ],
+      "dislikes": [],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "ordain_women",
+          "who": "head"
+        }
+      ],
+      "note": "교주가 여성을 사제로 서임할 수 있다. 여성 사제는 고해, 개종 등 사제 행동을 쓴다"
+    },
+    {
+      "id": "doctrine.confession",
+      "name": "고해",
+      "kind": "교리",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "독실",
+        "정직"
+      ],
+      "dislikes": [
+        "기만"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "confession",
+          "who": "clergy"
+        }
+      ],
+      "note": "사제가 고해 듣기(03번 3절)로 신도 비밀을 증언 수준으로 얻는다. 누설하면 사제 지위 박탈(05번 고해 내용)"
+    },
+    {
+      "id": "doctrine.simony",
+      "name": "성직 매매",
+      "kind": "교리",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.treasury",
+          "op": ">=",
+          "value": 300
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "탐욕",
+        "야심"
+      ],
+      "dislikes": [
+        "독실",
+        "정직"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "sell_office",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        },
+        {
+          "type": "enable",
+          "action": "buy_office",
+          "who": "members"
+        },
+        {
+          "type": "opinion",
+          "from": "members",
+          "to": "head",
+          "value": -10,
+          "if": [
+            "has_personality:독실"
+          ]
+        }
+      ],
+      "note": "은화로 사제직을 산다. 값은 교단 금고로 들어간다. 독실 신도 호감 -10은 교주를 향한다. 해금 조건 은화 300 = 금고 곡식 환산 300(02번 기준가 1)"
+    },
+    {
+      "id": "doctrine.monastery",
+      "name": "수도원",
+      "kind": "교리",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.followers",
+          "op": ">=",
+          "value": 500
+        },
+        {
+          "metric": "group.facility",
+          "arg": "학당",
+          "op": ">=",
+          "value": 1
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "독실",
+        "내향"
+      ],
+      "dislikes": [
+        "색욕"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "monastery",
+          "who": "head"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 2.0,
+          "who": "clergy",
+          "arg": "학문"
+        },
+        {
+          "type": "mod",
+          "var": "group.book_speed",
+          "op": "mul",
+          "value": 2.0,
+          "who": "group"
+        }
+      ],
+      "note": "수도원 운영으로 독신 수도사 집단을 만든다. 사제 학문 습득 × 2, 경전 편찬 속도 × 2(10번 11절 저술)"
+    },
+    {
+      "id": "doctrine.sacred_bloodline",
+      "name": "신성한 혈통",
+      "kind": "교리",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.consecutive_heads_same_dynasty",
+          "op": ">=",
+          "value": 2
+        }
+      ],
+      "exclusive": [
+        "doctrine.elected_leader"
+      ],
+      "likes": [
+        "충직",
+        "독실"
+      ],
+      "dislikes": [
+        "야심"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.succession_rule_allowed",
+          "op": "set",
+          "value": true,
+          "who": "group",
+          "arg": "장자"
+        },
+        {
+          "type": "mod",
+          "var": "char.legitimacy",
+          "op": "add",
+          "value": 30,
+          "who": "head_family"
+        },
+        {
+          "type": "justify",
+          "behavior": "*",
+          "holder": "head_family",
+          "value": 0.5,
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "char.marriage_value",
+          "op": "add",
+          "value": 20,
+          "who": "head_family"
+        },
+        {
+          "type": "mod",
+          "var": "group.scope_allowed",
+          "op": "set",
+          "value": true,
+          "who": "group",
+          "arg": "수장 가문"
+        }
+      ],
+      "note": "승계 규칙이 아니고 장자를 허용하는 특성. 교주 혈족 정통성 +30, 모든 위반 정당화 0.5(16번 3-3). 혼인 효용 +20으로 혈족 혼인 경쟁. [수장 가문] 범위를 연다(04번 3-1, 루트 1 여성 교주 변형). 해금은 교주 자녀가 1회 승계한 뒤라 첫 대는 지명 규칙으로 후계를 고정한다"
+    },
+    {
+      "id": "doctrine.elected_leader",
+      "name": "선출 교주",
+      "kind": "교리",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.clergy",
+          "op": ">=",
+          "value": 20
+        }
+      ],
+      "exclusive": [
+        "doctrine.sacred_bloodline",
+        "doctrine.infallible_leader"
+      ],
+      "likes": [
+        "야심",
+        "정직"
+      ],
+      "dislikes": [
+        "충직"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.succession_rule_allowed",
+          "op": "set",
+          "value": true,
+          "who": "group",
+          "arg": "공개 선출"
+        },
+        {
+          "type": "mod",
+          "var": "group.split_on_death",
+          "op": "mul",
+          "value": 0.5,
+          "who": "group"
+        }
+      ],
+      "note": "승계 규칙이 아니고 공개 선출(사제)을 허용하는 특성(15번 4-12). 교주 사망 시 분열 확률 × 0.5"
+    },
+    {
+      "id": "doctrine.slavery_ban",
+      "name": "노예제 금지",
+      "kind": "교리",
+      "tier": "기본",
+      "exclusive": [
+        "doctrine.heathen_slavery"
+      ],
+      "likes": [
+        "자비",
+        "관대"
+      ],
+      "dislikes": [
+        "탐욕",
+        "잔인"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "enslave_coreligionist",
+          "status": "forbidden",
+          "severity": 40,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "debt_slavery",
+          "status": "forbidden",
+          "severity": 40,
+          "who": "members",
+          "if": [
+            "same_religion"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "group.loyalty",
+          "op": "add",
+          "value": -10,
+          "who": "members",
+          "if": [
+            "owns_slaves"
+          ]
+        }
+      ],
+      "note": "신도를 노예로 삼으면(빚 노예 포함) 교단 범죄 40. 노예 소유 신도 충성 -10"
+    },
+    {
+      "id": "doctrine.heathen_slavery",
+      "name": "이교도 노예화",
+      "kind": "교리",
+      "tier": "기본",
+      "exclusive": [
+        "doctrine.slavery_ban"
+      ],
+      "likes": [
+        "탐욕",
+        "잔인"
+      ],
+      "dislikes": [
+        "자비"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "enslave_heathen",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "enslave_coreligionist",
+          "status": "forbidden",
+          "severity": 40,
+          "who": "members"
+        }
+      ],
+      "note": "이교도 노예화는 비밀도 범죄도 아니다. 같은 신도 노예화는 40으로 금지. 나라 노예제 법이 따로 필요하다(09번 5절)"
+    },
+    {
+      "id": "doctrine.tithe",
+      "name": "헌물 의무",
+      "kind": "교리",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "독실",
+        "관대"
+      ],
+      "dislikes": [
+        "탐욕"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "econ.tithe",
+          "op": "set",
+          "value": 0.1,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "skip_tithe",
+          "status": "forbidden",
+          "severity": 20,
+          "who": "members"
+        }
+      ],
+      "note": "신도 필지 순수확 10%가 교단 금고로(14번 3-1 청구 순서, 15번 2-1). 지부는 그중 30%를 본부로 올린다(15번 2-5). 미납은 교단 범죄 20"
+    },
+    {
+      "id": "doctrine.charity",
+      "name": "자선 의무",
+      "kind": "교리",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "관대",
+        "자비"
+      ],
+      "dislikes": [
+        "탐욕"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.stipend",
+          "op": "add",
+          "value": 10,
+          "who": "members",
+          "if": [
+            "is_poor"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "group.loyalty",
+          "op": "add",
+          "value": 15,
+          "who": "members",
+          "if": [
+            "is_poor"
+          ]
+        }
+      ],
+      "note": "교단 금고에서 가난한 신도 1인에 곡식 10/년 구휼(수치는 척도 '보통'). 가난한 신도 충성 +15. 헌물이 빈민 생존으로 돌아간다"
+    },
+    {
+      "id": "doctrine.tolerance",
+      "name": "이교도 관용",
+      "kind": "교리",
+      "tier": "기본",
+      "exclusive": [
+        "doctrine.holy_war",
+        "doctrine.inquisition"
+      ],
+      "likes": [
+        "관용",
+        "자비"
+      ],
+      "dislikes": [
+        "잔인"
+      ],
+      "effects": [
+        {
+          "type": "opinion",
+          "from": "members",
+          "to": "heathens",
+          "value": 10
+        },
+        {
+          "type": "mod",
+          "var": "group.conversion",
+          "op": "mul",
+          "value": 0.7,
+          "who": "group"
+        }
+      ],
+      "note": "03번 첫인상의 같은 종교 +10을 이교도에게도 준다(이교도 감소 없음). 개종 속도 × 0.7"
+    },
+    {
+      "id": "doctrine.prostitution_ban",
+      "name": "매춘 금지",
+      "kind": "교리",
+      "tier": "기본",
+      "exclusive": [
+        "doctrine.temple_service"
+      ],
+      "likes": [
+        "절제",
+        "독실"
+      ],
+      "dislikes": [
+        "색욕"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "prostitution",
+          "status": "forbidden",
+          "severity": 25,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "pimping",
+          "status": "forbidden",
+          "severity": 30,
+          "who": "members"
+        }
+      ],
+      "note": "신도의 매춘은 교단 범죄. 나라가 공창을 허용해도 교단은 처벌한다(09번 1절)"
+    },
+    {
+      "id": "doctrine.temple_service",
+      "name": "신전 봉사",
+      "kind": "교리",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.followers",
+          "op": ">=",
+          "value": 300
+        },
+        {
+          "metric": "group.facility",
+          "arg": "사당",
+          "op": ">=",
+          "value": 3
+        }
+      ],
+      "exclusive": [
+        "doctrine.prostitution_ban",
+        "doctrine.asceticism"
+      ],
+      "likes": [
+        "색욕",
+        "탐욕"
+      ],
+      "dislikes": [
+        "절제"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "prostitution",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "pimping",
+          "status": "allowed",
+          "severity": 0,
+          "who": "clergy"
+        },
+        {
+          "type": "ai",
+          "action": "prostitution",
+          "weight": 1.5,
+          "who": "clergy"
+        },
+        {
+          "type": "mod",
+          "var": "econ.church_donation",
+          "op": "add",
+          "value": 0.5,
+          "who": "clergy"
+        }
+      ],
+      "note": "신전 매춘이 합법. 신전 봉사자(사제) 매춘 효용 × 1.5, 수입의 50%를 금고에 바친다. 고객이 많아 생부 불명 아이가 는다(09번 7절)"
+    },
+    {
+      "id": "doctrine.indulgence",
+      "name": "면죄부",
+      "kind": "교리",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.followers",
+          "op": ">=",
+          "value": 1000
+        },
+        {
+          "metric": "group.has_trait",
+          "arg": "doctrine.tithe",
+          "op": "==",
+          "value": 1,
+          "keep": true
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "탐욕",
+        "기만"
+      ],
+      "dislikes": [
+        "독실",
+        "정직"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "buy_indulgence",
+          "who": "members"
+        },
+        {
+          "type": "opinion",
+          "from": "members",
+          "to": "head",
+          "value": -5,
+          "if": [
+            "has_personality:독실"
+          ]
+        }
+      ],
+      "note": "은화로 범죄 비밀의 교단 처벌(파문 등)을 면제받는다. 값은 금고로. 독실 신도 호감 -5는 교주를 향한다"
+    },
+    {
+      "id": "doctrine.usury_ban",
+      "name": "고리대금 금지",
+      "kind": "교리",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "관대",
+        "독실"
+      ],
+      "dislikes": [
+        "탐욕"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "usury",
+          "status": "forbidden",
+          "severity": 25,
+          "who": "members",
+          "if": [
+            "same_religion"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "econ.interest_cap",
+          "op": "set",
+          "value": 0,
+          "who": "members",
+          "if": [
+            "same_religion"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "rel.debt",
+          "op": "add",
+          "value": 2,
+          "who": "members",
+          "if": [
+            "same_religion"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "econ.collateral_seizure",
+          "op": "set",
+          "value": false,
+          "who": "members",
+          "if": [
+            "same_religion"
+          ]
+        }
+      ],
+      "note": "같은 신도끼리 이자 0. 대여는 후원이 되어 차입자→대여자 빚 +2, 못 갚아도 땅 대신 추종자가 넘어온다(14번 7-3, econ_sim usury_ban). 이교도 대상 이자는 허용"
+    },
+    {
+      "id": "doctrine.fasting",
+      "name": "금식",
+      "kind": "교리",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "절제",
+        "독실"
+      ],
+      "dislikes": [
+        "탐욕"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "econ.food_need",
+          "op": "mul",
+          "value": 0.96,
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "char.stress_gain",
+          "op": "mul",
+          "value": 0.9,
+          "who": "members"
+        }
+      ],
+      "note": "계절마다 1주 소비 절반 = 연 2주분 절약, 50/52 ≈ 0.96. 스트레스 저항 +10% = 스트레스 증가 × 0.9"
+    },
+    {
+      "id": "doctrine.asceticism",
+      "name": "금욕 수행",
+      "kind": "교리",
+      "tier": "기본",
+      "exclusive": [
+        "doctrine.fertility_blessing",
+        "doctrine.temple_service"
+      ],
+      "likes": [
+        "독실",
+        "절제"
+      ],
+      "dislikes": [
+        "색욕",
+        "탐욕"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "eat_meat",
+          "status": "forbidden",
+          "severity": 20,
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "demo.growth_childhood",
+          "op": "set",
+          "value": 0,
+          "who": "children_of_members",
+          "arg": "체격"
+        },
+        {
+          "type": "mod",
+          "var": "char.stress_gain",
+          "op": "mul",
+          "value": 0.7,
+          "who": "members"
+        }
+      ],
+      "note": "육류 금지. 신도 아이 성장기 체격 보정 0(01번 2절 육류 +2가 사라진다. 문구대로 굶주림 -3도 체격에서는 0). 스트레스 증가 × 0.7"
+    },
+    {
+      "id": "doctrine.ancestor_worship",
+      "name": "조상 숭배",
+      "kind": "교리",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "충직",
+        "독실"
+      ],
+      "dislikes": [
+        "기만",
+        "변덕"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.evidence_strength",
+          "op": "mul",
+          "value": 2.0,
+          "who": "members",
+          "arg": "족보"
+        },
+        {
+          "type": "mod",
+          "var": "group.secret_weight",
+          "op": "mul",
+          "value": 2.0,
+          "who": "members",
+          "arg": "혈통 위조"
+        }
+      ],
+      "note": "족보 문서가 혈통, 상속 분쟁의 증거로 쓰일 때 강도 × 2(09번 4절 문서 50). 혈통 위조 비밀 무게 80 → 160"
+    },
+    {
+      "id": "doctrine.pilgrimage",
+      "name": "순례",
+      "kind": "교리",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.sacred_sites",
+          "op": ">=",
+          "value": 1,
+          "keep": true
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "독실",
+        "사교"
+      ],
+      "dislikes": [
+        "게으름"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "pilgrimage",
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "group.pilgrims",
+          "op": "add",
+          "value": 10,
+          "who": "group"
+        },
+        {
+          "type": "mod",
+          "var": "land.trade",
+          "op": "add",
+          "value": 10,
+          "who": "land",
+          "if": [
+            "sacred_site"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "char.pilgrimage_conversion",
+          "op": "add",
+          "value": 0.2,
+          "who": "members",
+          "arg": "독실"
+        }
+      ],
+      "note": "신도가 순례 행동을 한다(순례자 이력, 같은 교단 첫인상 +10). 순례자 연 10명 유입, 성지 토지 교역 판정 +10. 순례를 마친 신도는 20% 확률로 독실 성격을 얻는다"
+    },
+    {
+      "id": "doctrine.martyr_cult",
+      "name": "순교 숭배",
+      "kind": "교리",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.martyrs",
+          "op": ">=",
+          "value": 1
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "독실",
+        "용감"
+      ],
+      "dislikes": [
+        "겁많음",
+        "냉소"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.growth",
+          "op": "mul",
+          "value": 1.5,
+          "who": "group",
+          "if": [
+            "persecuted"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "char.torture_resist",
+          "op": "add",
+          "value": 20,
+          "who": "members"
+        },
+        {
+          "type": "event",
+          "event": "martyrdom",
+          "chance_per_year": 0.2,
+          "who": "members",
+          "if": [
+            "persecuted"
+          ]
+        },
+        {
+          "type": "enable",
+          "action": "canonize",
+          "who": "head"
+        }
+      ],
+      "note": "박해받는 해에는 신도 증가 × 1.5, 순교 사건 연 20%(순교자 수 +1). 고문 저항 판정 +20. 순교자를 성인으로 선포할 수 있다"
+    },
+    {
+      "id": "doctrine.miracle_worship",
+      "name": "기적 숭배",
+      "kind": "교리",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.miracles",
+          "op": ">=",
+          "value": 1
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "독실",
+        "충직"
+      ],
+      "dislikes": [
+        "냉소"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.legitimacy",
+          "op": "add",
+          "value": 20,
+          "who": "group"
+        },
+        {
+          "type": "justify",
+          "behavior": "*",
+          "holder": "head",
+          "value": 0.5,
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "char.first_impression",
+          "op": "add",
+          "value": 15,
+          "who": "members",
+          "if": [
+            "has_talent:영성"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "group.scope_allowed",
+          "op": "set",
+          "value": true,
+          "who": "group",
+          "arg": "수장 1인"
+        },
+        {
+          "type": "event",
+          "event": "miracle",
+          "chance_per_year": 0.02,
+          "who": "head"
+        },
+        {
+          "type": "enable",
+          "action": "canonize",
+          "who": "head"
+        }
+      ],
+      "note": "교주 정통성 +20, 모든 위반 정당화 0.5(16번 3-3). 영성 재능 신도 첫인상 +15. [수장 1인] 범위를 연다(04번 3-1, 루트 1의 [면제: 교주]). 교주 주변 기적 연 2%가 교주 무오류 해금(기적 2회)으로 이어진다"
+    },
+    {
+      "id": "doctrine.secular",
+      "name": "세속 불간섭",
+      "kind": "교리",
+      "tier": "기본",
+      "exclusive": [
+        "doctrine.theocracy",
+        "doctrine.crusader_order"
+      ],
+      "likes": [
+        "만족",
+        "관용"
+      ],
+      "dislikes": [
+        "야심"
+      ],
+      "effects": [
+        {
+          "type": "disable",
+          "action": "veto_law",
+          "who": "head"
+        },
+        {
+          "type": "mod",
+          "var": "group.vote_weight",
+          "op": "set",
+          "value": 0,
+          "who": "group",
+          "arg": "나라"
+        },
+        {
+          "type": "mod",
+          "var": "group.law_conflict",
+          "op": "set",
+          "value": 0,
+          "who": "group"
+        }
+      ],
+      "note": "국교가 되어도 교단 수장이 나라 입법 지분을 받지 않는다. 교리와 법이 충돌해도 호감 -10/년과 파문 시도(04번 5절)가 없다"
+    },
+    {
+      "id": "doctrine.holy_war",
+      "name": "성전",
+      "kind": "교리",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.followers",
+          "op": ">=",
+          "value": 1000
+        }
+      ],
+      "exclusive": [
+        "doctrine.tolerance"
+      ],
+      "likes": [
+        "용감",
+        "독실"
+      ],
+      "dislikes": [
+        "자비",
+        "관용"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "holy_war",
+          "who": "head"
+        },
+        {
+          "type": "mod",
+          "var": "group.morale",
+          "op": "add",
+          "value": 20,
+          "who": "members",
+          "if": [
+            "in_war",
+            "other_religion"
+          ]
+        },
+        {
+          "type": "opinion",
+          "from": "members",
+          "to": "heathens",
+          "value": -20
+        }
+      ],
+      "note": "교주가 성전을 선포한다. 교전 상대가 이교도면 신도 사기 +20. 신도→이교도 호감 -20"
+    },
+    {
+      "id": "doctrine.crusader_order",
+      "name": "성전 기사단",
+      "kind": "교리",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.has_trait",
+          "arg": "doctrine.holy_war",
+          "op": "==",
+          "value": 1,
+          "keep": true
+        },
+        {
+          "metric": "group.facility",
+          "arg": "대장간",
+          "op": ">=",
+          "value": 1
+        },
+        {
+          "metric": "group.followers",
+          "op": ">=",
+          "value": 2000
+        }
+      ],
+      "exclusive": [
+        "doctrine.secular"
+      ],
+      "likes": [
+        "용감",
+        "야심"
+      ],
+      "dislikes": [
+        "겁많음"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "found_knight_order",
+          "who": "head"
+        }
+      ],
+      "note": "교주가 교단 직속 기사단(10번 5절)을 세운다. 기사단은 교단 명령으로 나라와 무관하게 싸운다. 금고와 토지는 기사단 소유"
+    },
+    {
+      "id": "doctrine.inquisition",
+      "name": "종교재판",
+      "kind": "교리",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.followers",
+          "op": ">=",
+          "value": 1000
+        },
+        {
+          "metric": "group.state_religion_of",
+          "op": ">=",
+          "value": 1,
+          "keep": true
+        }
+      ],
+      "exclusive": [
+        "doctrine.tolerance"
+      ],
+      "likes": [
+        "독실",
+        "잔인"
+      ],
+      "dislikes": [
+        "관용",
+        "기만"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "inquisition",
+          "who": "clergy"
+        },
+        {
+          "type": "norm",
+          "behavior": "apostasy",
+          "status": "forbidden",
+          "severity": 35,
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "char.secret_detect",
+          "op": "mul",
+          "value": 1.3,
+          "who": "clergy",
+          "if": [
+            "same_religion"
+          ]
+        }
+      ],
+      "note": "사제가 배교, 이단을 수사한다(배교는 05번 무게 35의 교단 범죄). 사제의 신도 비밀 인지 × 1.3. 루트 8에서 경쟁 가문을 이단으로 몬다"
+    },
+    {
+      "id": "doctrine.theocracy",
+      "name": "신정",
+      "kind": "교리",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.state_religion_of",
+          "op": ">=",
+          "value": 1,
+          "keep": true
+        },
+        {
+          "metric": "group.religion_share",
+          "op": ">=",
+          "value": 0.7
+        }
+      ],
+      "exclusive": [
+        "doctrine.secular",
+        "law.secularization"
+      ],
+      "likes": [
+        "독실",
+        "야심"
+      ],
+      "dislikes": [
+        "냉소",
+        "관용"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "veto_law",
+          "who": "head"
+        },
+        {
+          "type": "mod",
+          "var": "group.veto",
+          "op": "set",
+          "value": true,
+          "who": "group",
+          "arg": "나라"
+        }
+      ],
+      "note": "교단 수장이 국교로 지정한 나라의 입법을 거부한다. 신도 비율 70%는 그 나라 국민 기준(group.religion_share)"
+    }
+  ]
+}

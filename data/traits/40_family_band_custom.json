@@ -1,0 +1,2206 @@
+{
+  "proposed": {
+    "vars": {
+      "group.loyalty_on_act": {
+        "label": "구성원이 인자 행위를 할 때마다 구성원 전원 충성 1회 가산",
+        "unit": "가산(인자 behavior)",
+        "ref": "08 가훈"
+      },
+      "econ.estate_rule": {
+        "label": "재산 상속법(값: 균분, 장자, 장자우대, 말자)",
+        "unit": "set",
+        "ref": "15 3-2"
+      },
+      "group.succession_war": {
+        "label": "승계 내전 발생 확률 배수(15 S6 내전 조건을 채웠을 때)",
+        "unit": "배수",
+        "ref": "15 S6"
+      },
+      "rel.standing_grievance_to_head": {
+        "label": "조건을 만족하는 동안 구성원이 수장에게 갖는 상시 원한 가산(연 감소와 별개, 1회 가산인 rel.grievance_to_head와 다름)",
+        "unit": "가산",
+        "ref": "15 S3, S4"
+      },
+      "rel.grievance_gain": {
+        "label": "원한 증가 배수(상대는 if로 지정)",
+        "unit": "배수",
+        "ref": "03 1절"
+      },
+      "char.outside_loyalty": {
+        "label": "자기 가문이 아닌 소속 집단(나라, 교단, 도적단 등) 충성 가산",
+        "unit": "가산",
+        "ref": "04 1절"
+      },
+      "char.succession_candidate": {
+        "label": "인자 유형 집단의 승계 후보 자격(S1 후보 목록에 듦)",
+        "unit": "set true",
+        "ref": "15 S1"
+      },
+      "group.branch_needs_consent": {
+        "label": "분가에 가주 허락 필요",
+        "unit": "set true/false",
+        "ref": "04 8절"
+      },
+      "group.score_bastards": {
+        "label": "수장이 아는 사생아 혈족을 가문 점수에 셈",
+        "unit": "set true",
+        "ref": "07 2절"
+      },
+      "group.trait_secret_weight": {
+        "label": "특성 보유 사실 자체가 집단 비밀이 됨(값 = 기본 무게)",
+        "unit": "set",
+        "ref": "05 1절"
+      },
+      "group.mutual_secret": {
+        "label": "구성원 전원이 서로의 인자 종류 비밀을 증언 증거로 앎",
+        "unit": "set true",
+        "ref": "05 3절"
+      },
+      "group.family_residence": {
+        "label": "구성원 가족이 집단 거점(은신처)에 함께 삶",
+        "unit": "set true",
+        "ref": "08 규율"
+      },
+      "group.deputy_succession": {
+        "label": "부수장 자동 승계(S1에서 부수장 p = 1)",
+        "unit": "set true",
+        "ref": "15 S1"
+      },
+      "rel.victim_grievance": {
+        "label": "인자 행동 피해자의 가문이 가해자에게 갖는 원한(1회)",
+        "unit": "가산",
+        "ref": "03 1절"
+      },
+      "group.rumor_inflow": {
+        "label": "외부에서 집단 토지로 들어오는 소문 배수",
+        "unit": "배수",
+        "ref": "05 3절"
+      },
+      "group.tribute_accept": {
+        "label": "공물 요구를 판정 없이 수락(14번 8-1 '공물' 선택)",
+        "unit": "set true",
+        "ref": "14 8-1"
+      },
+      "land.facility_effect": {
+        "label": "인자 시설의 효과 배수",
+        "unit": "배수",
+        "ref": "06 5절"
+      },
+      "group.raid_grudge": {
+        "label": "약탈당하면 약탈한 집단과 영구 적대",
+        "unit": "set true",
+        "ref": "04 7절"
+      }
+    },
+    "behaviors": {
+      "marry_same_dynasty": "같은 가문 인물과 혼인",
+      "marry_other_dynasty": "다른 가문 인물과 혼인"
+    },
+    "actions": {
+      "reconcile": "화해(가문 간 원한 해소 판정)",
+      "retire": "은퇴(탈주가 아닌 정식 탈퇴)"
+    },
+    "metrics": {
+      "group.members_aged": "인자 나이 이상인 생존 구성원 수",
+      "group.titled_members": "작위(법적 귀족 신분) 보유 구성원 수",
+      "group.member_head_years": "구성원(사망자 포함)이 인자 유형 집단의 수장을 지낸 최장 연수",
+      "group.members_canonized": "성인으로 선포된 구성원 수(사망자 포함)",
+      "head.known_bastard_kin": "수장이 아는 사생아 혈족 수",
+      "group.trade_route_lands": "교역로 특성 토지 보유 수",
+      "group.avg_loyalty_years": "구성원 평균 충성이 인자 값 이상으로 이어진 연수"
+    },
+    "predicates": {
+      "parent_children_max": "대상의 가문원 부모가 둔 자녀가 인자 수 이하",
+      "educated": "대상이 학문 스승에게 교육받음(01번 2절 성장기 보정 '교육')",
+      "succession_rule": "집단의 현재 승계 규칙이 인자 규칙",
+      "child_of_head": "대상이 수장의 자녀",
+      "eldest_son": "대상이 부모의 맏아들",
+      "sibling": "대상이 형제자매",
+      "has_talent": "대상이 인자로 준 재능을 가짐",
+      "has_occupation": "대상의 생업이 인자(14번 7-1: 농사, 장인, 상인, 병사, 도적, 사제, 대금업, 채집)",
+      "age_min": "대상이 인자 나이 이상",
+      "retired": "대상이 이 집단에서 은퇴한 옛 구성원"
+    },
+    "events": {}
+  },
+  "traits": [
+    {
+      "id": "family.pure_blood",
+      "name": "혈통 순수",
+      "kind": "가훈",
+      "tier": "기본",
+      "exclusive": [
+        "family.open_marriage"
+      ],
+      "likes": [
+        "충직",
+        "내향"
+      ],
+      "dislikes": [
+        "사교"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "marry_same_dynasty",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "marry_cousin",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "marry_kin6",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "group.loyalty_on_act",
+          "op": "add",
+          "value": -5,
+          "arg": "marry_other_dynasty",
+          "who": "members"
+        }
+      ],
+      "note": "가문 규범에서 같은 가문, 사촌, 6촌 혼인을 허용해 05번 근친 수치(40)를 0으로 만든다. 교단이 근친혼을 금하면 16번 3-2의 최대 심각도 규칙으로 교단 쪽이 남는다. 가문원이 다른 가문과 혼인할 때마다 가문원 전원 충성 -5"
+    },
+    {
+      "id": "family.open_marriage",
+      "name": "혼맥 개방",
+      "kind": "가훈",
+      "tier": "기본",
+      "exclusive": [
+        "family.pure_blood"
+      ],
+      "likes": [
+        "사교",
+        "야심"
+      ],
+      "dislikes": [
+        "내향"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "정략혼 제안",
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "group.loyalty_on_act",
+          "op": "add",
+          "value": -10,
+          "arg": "marry_same_dynasty",
+          "who": "members"
+        }
+      ],
+      "note": "정략혼 제안(03번 3절, 교역 + 권력) 판정 +10. 같은 가문끼리 혼인할 때마다 가문원 전원 충성 -10"
+    },
+    {
+      "id": "family.many_children",
+      "name": "다산 장려",
+      "kind": "가훈",
+      "tier": "기본",
+      "exclusive": [
+        "family.elite_few"
+      ],
+      "likes": [
+        "색욕",
+        "만족"
+      ],
+      "dislikes": [
+        "절제",
+        "탐욕"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "demo.conception",
+          "op": "mul",
+          "value": 1.2,
+          "who": "group"
+        },
+        {
+          "type": "mod",
+          "var": "demo.child_food",
+          "op": "mul",
+          "value": 1.2,
+          "who": "group"
+        }
+      ],
+      "note": "1회당 임신 확률 3% → 3.6%(01번 8절). 아동 식량 0.5/주 → 0.6/주(11번 2절 양육 비용)"
+    },
+    {
+      "id": "family.elite_few",
+      "name": "소수 정예",
+      "kind": "가훈",
+      "tier": "기본",
+      "exclusive": [
+        "family.many_children"
+      ],
+      "likes": [
+        "절제",
+        "야심"
+      ],
+      "dislikes": [
+        "색욕"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.education_bonus",
+          "op": "mul",
+          "value": 2.0,
+          "who": "children_of_members",
+          "if": [
+            "parent_children_max:3"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "demo.growth_childhood",
+          "op": "add",
+          "value": 2,
+          "arg": "지능",
+          "who": "children_of_members",
+          "if": [
+            "parent_children_max:3",
+            "educated"
+          ]
+        }
+      ],
+      "note": "자녀 3명 이하인 가문원의 아이에게만 건다. 스승에게 배우는 습득 배수(01번 6절)를 2배로, 교육 지능 보정 +2(01번 2절)를 +4로 만든다"
+    },
+    {
+      "id": "family.primogeniture",
+      "name": "장자 우대",
+      "kind": "가훈",
+      "tier": "기본",
+      "exclusive": [
+        "family.equal_brothers"
+      ],
+      "likes": [
+        "충직",
+        "인내"
+      ],
+      "dislikes": [
+        "관대"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "econ.estate_rule",
+          "op": "set",
+          "value": "장자우대",
+          "who": "group"
+        },
+        {
+          "type": "mod",
+          "var": "group.succession_war",
+          "op": "set",
+          "value": 0,
+          "who": "group",
+          "if": [
+            "succession_rule:장자"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "rel.standing_grievance_to_head",
+          "op": "add",
+          "value": 10,
+          "who": "head_family",
+          "if": [
+            "child_of_head",
+            "is_male",
+            "!eldest_son"
+          ]
+        }
+      ],
+      "note": "나라 상속법이 없으면 재산을 장자우대(맏아들 절반, 15번 3-2)로 나눈다. 장자 규칙 승계에서 S6 내전 판정을 끈다. 가주의 차남 이하 아들은 가주에게 원한 10을 깔고 시작해 S3 반란 문턱(원한 40)에 가까워진다"
+    },
+    {
+      "id": "family.equal_brothers",
+      "name": "형제 공평",
+      "kind": "가훈",
+      "tier": "기본",
+      "exclusive": [
+        "family.primogeniture"
+      ],
+      "likes": [
+        "관대",
+        "자비"
+      ],
+      "dislikes": [
+        "야심"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "econ.estate_rule",
+          "op": "set",
+          "value": "균분",
+          "who": "group"
+        },
+        {
+          "type": "mod",
+          "var": "rel.grievance_gain",
+          "op": "mul",
+          "value": 0.5,
+          "who": "members",
+          "if": [
+            "sibling"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "group.concentration",
+          "op": "add",
+          "value": -0.1,
+          "who": "group"
+        }
+      ],
+      "note": "나라 상속법이 없으면 재산을 균분한다(15번 3-2). 형제자매 사이에서 생기는 원한(S4 기대 몫, 3-4 가보 +5 등)을 절반만 쌓는다. 가주 권력 지분(권력 집중도) -0.1"
+    },
+    {
+      "id": "family.martial",
+      "name": "무가",
+      "kind": "가훈",
+      "tier": "기본",
+      "exclusive": [
+        "family.merchant"
+      ],
+      "likes": [
+        "용감"
+      ],
+      "dislikes": [
+        "겁많음"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 1.3,
+          "arg": "전투",
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 1.3,
+          "arg": "지휘",
+          "who": "members"
+        }
+      ],
+      "note": "01번 6절 습득량에 전투, 지휘 배수 1.3. 전투 훈련 계수 0.3에도 곱한다(14번 9-1: 60까지 약 5년 → 약 3.8년)"
+    },
+    {
+      "id": "family.merchant",
+      "name": "상인 가문",
+      "kind": "가훈",
+      "tier": "기본",
+      "exclusive": [
+        "family.martial"
+      ],
+      "likes": [
+        "탐욕"
+      ],
+      "dislikes": [
+        "관대"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "교역",
+          "who": "members"
+        }
+      ],
+      "note": "교역 기술을 쓰는 판정(03번 물물교환, 매매, 뇌물, 대출, 외주 계약, 몸값 요구) +10"
+    },
+    {
+      "id": "family.diligent_farmers",
+      "name": "농가의 근면",
+      "kind": "가훈",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "근면"
+      ],
+      "dislikes": [
+        "게으름"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.labor",
+          "op": "mul",
+          "value": 1.15,
+          "who": "members"
+        }
+      ],
+      "note": "가문원 노동량 × 1.15(14번 2절). 경작, 개간 필지 수가 그만큼 는다"
+    },
+    {
+      "id": "family.blood_feud",
+      "name": "피의 복수",
+      "kind": "가훈",
+      "tier": "기본",
+      "exclusive": [
+        "family.forgiving"
+      ],
+      "likes": [
+        "복수심"
+      ],
+      "dislikes": [
+        "관용"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "rel.grievance_share",
+          "op": "add",
+          "value": 50,
+          "who": "members"
+        }
+      ],
+      "note": "가문원이 살해되면 살아 있는 가문원 전원이 가해자에게 원한 +50. 05번 4절 폭로(원한 60), 03번 5절 복수 목표의 재료가 된다. 11번 루트 3(탁란)의 천적"
+    },
+    {
+      "id": "family.forgiving",
+      "name": "관용의 가풍",
+      "kind": "가훈",
+      "tier": "기본",
+      "exclusive": [
+        "family.blood_feud"
+      ],
+      "likes": [
+        "관용"
+      ],
+      "dislikes": [
+        "복수심"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.grievance_decay",
+          "op": "mul",
+          "value": 2.0,
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 15,
+          "arg": "화해",
+          "who": "members"
+        }
+      ],
+      "note": "가문원 원한 감소 × 2(03번 1절). 가문 간 화해 판정 +15. 화해는 제안 행동 reconcile"
+    },
+    {
+      "id": "family.family_first",
+      "name": "가족 우선",
+      "kind": "가훈",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "충직"
+      ],
+      "dislikes": [
+        "변덕"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 15,
+          "arg": "명령",
+          "who": "members",
+          "if": [
+            "same_dynasty"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "char.outside_loyalty",
+          "op": "add",
+          "value": -10,
+          "who": "members"
+        }
+      ],
+      "note": "명령(03번 4절) 판정은 대상이 같은 가문일 때 +15. 가문원이 가문 밖 소속 집단(나라, 교단, 도적단 등)에 갖는 충성 -10"
+    },
+    {
+      "id": "family.oath_of_silence",
+      "name": "침묵의 맹세",
+      "kind": "가훈",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.secrets_kept_years",
+          "op": ">=",
+          "value": 10
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "내향"
+      ],
+      "dislikes": [
+        "사교",
+        "정직"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.secret_leak",
+          "op": "mul",
+          "value": 0.5,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "leak_group_secret",
+          "status": "forbidden",
+          "severity": 40,
+          "who": "members"
+        }
+      ],
+      "note": "05번 4절 발설 확률 × 0.5. 가문 비밀 발설은 가문 범죄(09번 1절)로 심각도 40(16번 5절 큼)"
+    },
+    {
+      "id": "family.scholarly",
+      "name": "학문 숭상",
+      "kind": "가훈",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.members_with_skill",
+          "arg": "학문:50",
+          "op": ">=",
+          "value": 3,
+          "keep": true
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "인내"
+      ],
+      "dislikes": [
+        "성급"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "demo.growth_childhood",
+          "op": "add",
+          "value": 1,
+          "arg": "지능",
+          "who": "children_of_members"
+        },
+        {
+          "type": "mod",
+          "var": "demo.education",
+          "op": "set",
+          "value": true,
+          "who": "group"
+        }
+      ],
+      "note": "가문 아동 성장기 지능 보정 +1(01번 2절 교육 +2에 더한다). 학당(06번 5절) 없이 아동 교육이 된다"
+    },
+    {
+      "id": "family.medicine",
+      "name": "의술 가문",
+      "kind": "가훈",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.members_with_skill",
+          "arg": "의술:50",
+          "op": ">=",
+          "value": 2,
+          "keep": true
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "자비"
+      ],
+      "dislikes": [
+        "잔인"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.maternal_mortality",
+          "op": "mul",
+          "value": 0.5,
+          "who": "women"
+        },
+        {
+          "type": "mod",
+          "var": "demo.infant_survival",
+          "op": "add",
+          "value": 0.075,
+          "who": "group"
+        }
+      ],
+      "note": "출산 사망률(기본 2%) × 0.5. 영아 사망률 기본 15%의 절반만큼 생존율 +0.075(01번 8절)"
+    },
+    {
+      "id": "family.longevity",
+      "name": "장수 가문",
+      "kind": "가훈",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.members_aged",
+          "arg": 70,
+          "op": ">=",
+          "value": 3
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "인내",
+        "만족"
+      ],
+      "dislikes": [
+        "야심"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.aging_start",
+          "op": "add",
+          "value": 5,
+          "who": "members"
+        }
+      ],
+      "note": "노화 시작 45세 → 50세(01번 2절). 장수 형질(+15년)과 더한다"
+    },
+    {
+      "id": "family.prestigious",
+      "name": "명문",
+      "kind": "가훈",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.prestige",
+          "op": ">=",
+          "value": 300,
+          "keep": true
+        },
+        {
+          "metric": "group.titled_members",
+          "op": ">=",
+          "value": 1,
+          "keep": true
+        }
+      ],
+      "exclusive": [
+        "family.bandit_blood"
+      ],
+      "likes": [
+        "야심"
+      ],
+      "dislikes": [
+        "만족"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 20,
+          "arg": "정략혼 제안",
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "char.legitimacy",
+          "op": "add",
+          "value": 10,
+          "who": "members"
+        }
+      ],
+      "note": "정략혼 제안 판정 +20. 가문원 정통성 +10(04번 8절)"
+    },
+    {
+      "id": "family.royal_blood",
+      "name": "왕가의 피",
+      "kind": "가훈",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.member_head_years",
+          "arg": "나라",
+          "op": ">",
+          "value": 0
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "야심",
+        "충직"
+      ],
+      "dislikes": [
+        "겁많음"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.legitimacy",
+          "op": "add",
+          "value": 20,
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "char.succession_candidate",
+          "op": "set",
+          "value": true,
+          "arg": "나라",
+          "who": "members"
+        }
+      ],
+      "note": "가문원 정통성 +20을 세대가 바뀌어도 유지한다(조건에 유지 없음). 가문이 배출한 나라의 승계(15번 S1) 후보 목록에 가문원을 넣는다"
+    },
+    {
+      "id": "family.saint_descendants",
+      "name": "성자의 후예",
+      "kind": "가훈",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.members_canonized",
+          "op": ">=",
+          "value": 1
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "독실"
+      ],
+      "dislikes": [
+        "냉소"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 15,
+          "who": "members",
+          "if": [
+            "same_religion"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "char.first_impression",
+          "op": "add",
+          "value": 10,
+          "who": "members",
+          "if": [
+            "same_religion",
+            "has_personality:독실"
+          ]
+        }
+      ],
+      "note": "대상이 같은 교단일 때 모든 판정 +15(인자 생략 = 전체, char.skill_gain과 같은 규칙). 처음 만나는 상대가 같은 교단 독실 성격이면 첫인상 +10"
+    },
+    {
+      "id": "family.bandit_blood",
+      "name": "도적의 피",
+      "kind": "가훈",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.member_head_years",
+          "arg": "도적단",
+          "op": ">=",
+          "value": 10
+        }
+      ],
+      "exclusive": [
+        "family.prestigious"
+      ],
+      "likes": [
+        "용감",
+        "잔인"
+      ],
+      "dislikes": [
+        "겁많음",
+        "자비"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "전투",
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "위압",
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "char.legitimacy",
+          "op": "add",
+          "value": -10,
+          "who": "members"
+        }
+      ],
+      "note": "전투, 위압 판정 +10. 가문원 정통성 -10. 도적 출신 이력(-30)과 따로 쌓인다"
+    },
+    {
+      "id": "family.extended",
+      "name": "대가족",
+      "kind": "가훈",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.members",
+          "op": ">=",
+          "value": 50,
+          "keep": true
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "사교",
+        "야심"
+      ],
+      "dislikes": [
+        "내향"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.branch_needs_consent",
+          "op": "set",
+          "value": false,
+          "who": "group"
+        },
+        {
+          "type": "slot",
+          "slot": "trait",
+          "value": 1
+        }
+      ],
+      "note": "가문원이 가주 허락이나 독립 선언 없이 분가한다(04번 8절). 가훈 슬롯 +1"
+    },
+    {
+      "id": "family.hidden_bloodline",
+      "name": "숨은 혈맥",
+      "kind": "가훈",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "head.known_bastard_kin",
+          "op": ">=",
+          "value": 5
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "기만",
+        "색욕"
+      ],
+      "dislikes": [
+        "정직",
+        "절제"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.score_bastards",
+          "op": "set",
+          "value": true,
+          "who": "group"
+        },
+        {
+          "type": "mod",
+          "var": "group.trait_secret_weight",
+          "op": "set",
+          "value": 60,
+          "who": "group"
+        }
+      ],
+      "note": "가주가 아는 사생아 혈족을 07번 2절 가문 점수(1인 10)에 센다. 이 특성 보유 사실이 무게 60인 가문 비밀(05번 2절 지위 보정 적용)"
+    },
+    {
+      "id": "band.execute_traitors",
+      "name": "배신자 처형",
+      "kind": "규율",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "잔인"
+      ],
+      "dislikes": [
+        "자비"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.desertion",
+          "op": "mul",
+          "value": 0.5
+        },
+        {
+          "type": "mod",
+          "var": "rel.fear",
+          "op": "add",
+          "value": 15,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "desert",
+          "status": "forbidden",
+          "severity": 50,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "leak_group_secret",
+          "status": "forbidden",
+          "severity": 50,
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "group.punishment",
+          "op": "set",
+          "value": "처형",
+          "arg": "desert"
+        },
+        {
+          "type": "mod",
+          "var": "group.punishment",
+          "op": "set",
+          "value": "처형",
+          "arg": "leak_group_secret"
+        }
+      ],
+      "note": "탈주율 × 0.5. 단원의 두목에 대한 두려움 +15(03번 명령, 14번 3-4 납부율에 쓰인다). 탈주와 밀고는 규율 위반(심각도 50, 16번 5절 큼)이고 형벌은 처형으로 고정"
+    },
+    {
+      "id": "band.ransom_only",
+      "name": "포로 몸값만",
+      "kind": "규율",
+      "tier": "기본",
+      "exclusive": [
+        "band.slave_hunting"
+      ],
+      "likes": [
+        "자비",
+        "탐욕"
+      ],
+      "dislikes": [
+        "잔인"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "kill_captive",
+          "status": "forbidden",
+          "severity": 40,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "enslave_coreligionist",
+          "status": "forbidden",
+          "severity": 30,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "enslave_heathen",
+          "status": "forbidden",
+          "severity": 30,
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "group.hostility",
+          "op": "mul",
+          "value": 0.7,
+          "arg": "영주"
+        }
+      ],
+      "note": "포로 살해(심각도 40), 노예화(30)를 규율 위반으로 둔다. 영주가 이 도적단을 토벌하려는 의지 × 0.7"
+    },
+    {
+      "id": "band.spare_the_weak",
+      "name": "약자 불가침",
+      "kind": "규율",
+      "tier": "기본",
+      "exclusive": [
+        "band.dread_name"
+      ],
+      "likes": [
+        "자비",
+        "관대"
+      ],
+      "dislikes": [
+        "잔인",
+        "탐욕"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "harm_weak",
+          "status": "forbidden",
+          "severity": 30,
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "group.relation",
+          "op": "add",
+          "value": 10,
+          "arg": "마을"
+        },
+        {
+          "type": "mod",
+          "var": "group.detection",
+          "op": "mul",
+          "value": 0.5
+        }
+      ],
+      "note": "농민, 빈민 약탈은 규율 위반(30). 마을 집단과 관계 +10(16번 5절 보통). 마을 제보로 생기는 은신처 발각 × 0.5"
+    },
+    {
+      "id": "band.nomadic",
+      "name": "이동 생활",
+      "kind": "규율",
+      "tier": "기본",
+      "exclusive": [
+        "band.fixed_hideout"
+      ],
+      "likes": [
+        "변덕"
+      ],
+      "dislikes": [
+        "만족"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.mobile",
+          "op": "set",
+          "value": true
+        },
+        {
+          "type": "mod",
+          "var": "group.can_build",
+          "op": "set",
+          "value": false
+        },
+        {
+          "type": "mod",
+          "var": "group.evasion",
+          "op": "mul",
+          "value": 1.5
+        },
+        {
+          "type": "mod",
+          "var": "econ.hunt",
+          "op": "mul",
+          "value": 1.2,
+          "who": "group"
+        }
+      ],
+      "note": "정착(14번 8-2)과 시설 건설을 못 한다. 토벌 회피 × 1.5. 사냥 산출 × 1.2"
+    },
+    {
+      "id": "band.fixed_hideout",
+      "name": "은신처 고정",
+      "kind": "규율",
+      "tier": "기본",
+      "exclusive": [
+        "band.nomadic"
+      ],
+      "likes": [
+        "만족"
+      ],
+      "dislikes": [
+        "변덕"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.mobile",
+          "op": "set",
+          "value": false
+        },
+        {
+          "type": "mod",
+          "var": "group.can_build",
+          "op": "set",
+          "value": true
+        },
+        {
+          "type": "mod",
+          "var": "group.evasion",
+          "op": "mul",
+          "value": 0.5
+        }
+      ],
+      "note": "정착하고 창고, 목책 등 시설을 짓는다(14번 8-2 정착 기대 계산이 열린다). 은신처가 들키면 흩어질 수 없어 토벌 회피 × 0.5(이동 생활 1.5의 반대, 16번 5절 큼)"
+    },
+    {
+      "id": "band.initiation_test",
+      "name": "신입 시험",
+      "kind": "규율",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "인내"
+      ],
+      "dislikes": [
+        "성급"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.infiltration",
+          "op": "mul",
+          "value": 0.5
+        },
+        {
+          "type": "mod",
+          "var": "group.growth",
+          "op": "mul",
+          "value": 0.7
+        }
+      ],
+      "note": "가입 판정으로 걸러서 첩자 침투 × 0.5, 구성원 증가 × 0.7"
+    },
+    {
+      "id": "band.blood_oath",
+      "name": "피의 맹세",
+      "kind": "규율",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.members",
+          "op": ">=",
+          "value": 10
+        },
+        {
+          "metric": "group.members_with_history",
+          "arg": "살인자",
+          "op": ">=",
+          "value": 5
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "잔인"
+      ],
+      "dislikes": [
+        "자비",
+        "정직"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "murder",
+          "status": "required",
+          "severity": 30,
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "group.loyalty",
+          "op": "add",
+          "value": 20
+        },
+        {
+          "type": "mod",
+          "var": "group.mutual_secret",
+          "op": "set",
+          "value": true,
+          "arg": "살인",
+          "who": "members"
+        }
+      ],
+      "note": "살인이 가입 조건이다. 살인자 이력이 없으면 가입 판정이 실패하고, 이력 없는 기존 단원은 의무 위반자로 반응을 받는다(심각도 30, 16번 5절 보통). 충성 +20. 단원 전원이 서로의 살인 비밀을 증언 수준으로 알아 탈퇴하면 서로의 협박 재료가 된다"
+    },
+    {
+      "id": "band.noble_thief",
+      "name": "의적",
+      "kind": "규율",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.trait_years",
+          "arg": "band.spare_the_weak",
+          "op": ">=",
+          "value": 2
+        }
+      ],
+      "exclusive": [
+        "band.dread_name",
+        "band.abduct_bride"
+      ],
+      "likes": [
+        "자비",
+        "관대"
+      ],
+      "dislikes": [
+        "잔인",
+        "탐욕"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "harm_weak",
+          "status": "forbidden",
+          "severity": 30,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "robbery",
+          "status": "forbidden",
+          "severity": 30,
+          "who": "members",
+          "if": [
+            "!is_noble",
+            "!has_occupation:상인"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "group.detection",
+          "op": "mul",
+          "value": 0.5
+        },
+        {
+          "type": "mod",
+          "var": "group.legitimacy_per_year",
+          "op": "add",
+          "value": 1
+        }
+      ],
+      "note": "농민, 빈민 약탈과 귀족, 상인이 아닌 대상 강도를 규율 위반(30)으로 둔다(if는 피해자를 본다). 마을이 은신처를 숨겨 발각 × 0.5(약자 불가침과 곱하면 0.25). 정통성 연 +1(14번 8-2 영주화 3단계)"
+    },
+    {
+      "id": "band.dread_name",
+      "name": "공포의 이름",
+      "kind": "규율",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.raids",
+          "op": ">=",
+          "value": 10
+        }
+      ],
+      "exclusive": [
+        "band.noble_thief",
+        "band.spare_the_weak"
+      ],
+      "likes": [
+        "잔인",
+        "탐욕"
+      ],
+      "dislikes": [
+        "자비",
+        "관대"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "tribute_demand",
+          "who": "head"
+        },
+        {
+          "type": "enable",
+          "action": "protection_racket",
+          "who": "head"
+        },
+        {
+          "type": "mod",
+          "var": "econ.protection_income",
+          "op": "set",
+          "value": 0.1,
+          "who": "group"
+        },
+        {
+          "type": "mod",
+          "var": "group.hostility",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "영주"
+        }
+      ],
+      "note": "공물 요구로 시작해 수락한 마을에서 매 계절 보호비를 걷는다(14번 8-2 정착 1단계). 수입은 그 마을 수확의 10%(15번 2-2 토지세 범위 5~30%의 낮은 쪽, 15번 2-8 세금 10%와 같다). 영주 토벌 의지 × 2. 해금은 약탈 성공 수(group.raids) 10으로 센다. 마을 약탈만 세는 지표는 레지스트리에 없다"
+    },
+    {
+      "id": "band.slave_hunting",
+      "name": "노예 사냥",
+      "kind": "규율",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.captives_handled",
+          "op": ">=",
+          "value": 20
+        }
+      ],
+      "exclusive": [
+        "band.ransom_only"
+      ],
+      "likes": [
+        "잔인",
+        "탐욕"
+      ],
+      "dislikes": [
+        "자비"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "econ.sell_price",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "노예",
+          "who": "group"
+        },
+        {
+          "type": "enable",
+          "action": "slave_trade",
+          "who": "head"
+        },
+        {
+          "type": "norm",
+          "behavior": "enslave_coreligionist",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "enslave_heathen",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        }
+      ],
+      "note": "포로를 노예로 팔 때 가격 × 1.5. 노예 매매 행동을 열어 노예 상인과 계약한다. 포로 노예화를 규율에서 허용해 비밀 무게 × 0.3(16번 3-1). 나라 노예제 법은 따로 적용"
+    },
+    {
+      "id": "band.toll",
+      "name": "통행세",
+      "kind": "규율",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.trade_route_lands",
+          "op": ">=",
+          "value": 1,
+          "keep": true
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "탐욕",
+        "인내"
+      ],
+      "dislikes": [
+        "성급"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "toll",
+          "who": "head"
+        },
+        {
+          "type": "mod",
+          "var": "econ.toll_income",
+          "op": "set",
+          "value": 0.1,
+          "who": "group"
+        },
+        {
+          "type": "mod",
+          "var": "group.legitimacy_per_year",
+          "op": "add",
+          "value": 0.5
+        }
+      ],
+      "note": "점유한 교역로를 지나는 상인에게 매주 통행세(해금 지표의 보유에 점유를 포함, 06번 6절). 비율 0.1(15번 2-2 관세, 통행세 범위 5~20%의 중간). 납부율은 14번 3-4 공식(정통성 × 0.6 + 두려움 × 0.4). 정통성 연 +0.5"
+    },
+    {
+      "id": "band.mountain_fort",
+      "name": "산채",
+      "kind": "규율",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.has_trait",
+          "arg": "band.fixed_hideout",
+          "op": "==",
+          "value": 1
+        },
+        {
+          "metric": "group.facility",
+          "arg": "목책",
+          "op": ">=",
+          "value": 1
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "만족",
+        "겁많음"
+      ],
+      "dislikes": [
+        "변덕"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.defense",
+          "op": "mul",
+          "value": 2.0
+        },
+        {
+          "type": "mod",
+          "var": "group.family_residence",
+          "op": "set",
+          "value": true
+        }
+      ],
+      "note": "방어 × 2(목책 1.5와 곱한다). 구성원 가족이 산채에 살아 아이가 태어나고 산채가 마을처럼 자란다"
+    },
+    {
+      "id": "band.spy_network",
+      "name": "정보망",
+      "kind": "규율",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.members_with_skill",
+          "arg": "은밀:40",
+          "op": ">=",
+          "value": 3,
+          "keep": true
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "기만"
+      ],
+      "dislikes": [
+        "정직"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "spy_rumor",
+          "who": "head"
+        }
+      ],
+      "note": "인접 마을(은신처와 맞닿은 셀)의 비밀 소문을 매주 자동으로 두목에게 모은다(05번 3절 소문 증거)"
+    },
+    {
+      "id": "band.fence_market",
+      "name": "장물 시장",
+      "kind": "규율",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.thefts",
+          "op": ">=",
+          "value": 20
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "탐욕",
+        "기만"
+      ],
+      "dislikes": [
+        "정직"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "fence_goods",
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "econ.sell_price",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "장물",
+          "who": "group"
+        }
+      ],
+      "note": "훔친 물건(장물 표시 품목) 판매가 × 1.5. 판매는 09번 장물 거래(목격률 10%, 벌금)로 처리되어 거래마다 비밀이 생긴다"
+    },
+    {
+      "id": "band.military_discipline",
+      "name": "군율",
+      "kind": "규율",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "head.skill",
+          "arg": "지휘",
+          "op": ">=",
+          "value": 60,
+          "keep": true
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "충직",
+        "용감"
+      ],
+      "dislikes": [
+        "변덕",
+        "게으름"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.combat",
+          "op": "mul",
+          "value": 1.2
+        },
+        {
+          "type": "mod",
+          "var": "group.desertion",
+          "op": "mul",
+          "value": 0.7
+        }
+      ],
+      "note": "집단 전투력 × 1.2(14번 9-1). 탈주율 × 0.7"
+    },
+    {
+      "id": "band.brotherhood",
+      "name": "형제단",
+      "kind": "규율",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.avg_loyalty_years",
+          "arg": 70,
+          "op": ">=",
+          "value": 2
+        }
+      ],
+      "exclusive": [
+        "band.hereditary_chief"
+      ],
+      "likes": [
+        "충직",
+        "관대"
+      ],
+      "dislikes": [
+        "야심"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.split_on_death",
+          "op": "set",
+          "value": 0
+        },
+        {
+          "type": "mod",
+          "var": "group.deputy_succession",
+          "op": "set",
+          "value": true
+        }
+      ],
+      "note": "두목 사망 시 분열 확률(15번 4-12 도적단 50%)을 0으로. 부두목이 분쟁 없이 잇는다(S1 p = 1)"
+    },
+    {
+      "id": "band.privateers",
+      "name": "사략단",
+      "kind": "규율",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.law_of_liege",
+          "arg": "law.letters_of_marque",
+          "op": "==",
+          "value": 1
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "야심",
+        "충직"
+      ],
+      "dislikes": [
+        "변덕"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "robbery",
+          "status": "allowed",
+          "severity": 0,
+          "who": "liege",
+          "if": [
+            "at_war_with"
+          ]
+        },
+        {
+          "type": "norm",
+          "behavior": "harm_weak",
+          "status": "allowed",
+          "severity": 0,
+          "who": "liege",
+          "if": [
+            "at_war_with"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "group.law_exempt",
+          "op": "set",
+          "value": 0
+        }
+      ],
+      "note": "피해자의 집단이 상위 나라와 전쟁 중이면 그 나라 규범에서 강도, 농민 약탈이 합법이다(범죄 아님, 비밀 무게 × 0.3). 상위 나라 법 면제 0: 포로, 노예 규정 등 나라 법을 그대로 따른다(04번 7절 공개 종속)"
+    },
+    {
+      "id": "band.abduct_bride",
+      "name": "납치 혼인",
+      "kind": "규율",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.members",
+          "op": ">=",
+          "value": 25
+        }
+      ],
+      "exclusive": [
+        "band.noble_thief"
+      ],
+      "likes": [
+        "색욕",
+        "잔인"
+      ],
+      "dislikes": [
+        "자비",
+        "절제"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "abduct_bride",
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "kidnap",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "rel.victim_grievance",
+          "op": "add",
+          "value": 60,
+          "arg": "abduct_bride",
+          "who": "members"
+        }
+      ],
+      "note": "납치한 인물과 혼인하는 행동을 연다. 단원 규범에서 납치를 허용한다. 피해 가문은 납치한 단원에게 원한 +60"
+    },
+    {
+      "id": "band.retirement_pension",
+      "name": "은퇴 연금",
+      "kind": "규율",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.treasury",
+          "op": ">=",
+          "value": 500
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "만족"
+      ],
+      "dislikes": [
+        "탐욕"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "retire",
+          "who": "members",
+          "if": [
+            "age_min:40"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "group.secret_leak",
+          "op": "mul",
+          "value": 0.5,
+          "who": "outsiders",
+          "if": [
+            "retired"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "group.stipend",
+          "op": "add",
+          "value": 34,
+          "who": "outsiders",
+          "if": [
+            "retired"
+          ]
+        }
+      ],
+      "note": "40세 이상 단원이 은퇴 행동으로 떠난다(desert 행위가 아니다). 은퇴자의 집단 비밀 발설 × 0.5. 연금은 은퇴자 1인 연 곡식 34(14번 3-2: 5인 가구 연 소비 168 / 5)를 금고에서 낸다. 금고 기준 500은 곡식 환산(은화 1 = 곡식 1)"
+    },
+    {
+      "id": "band.hereditary_chief",
+      "name": "두목 세습",
+      "kind": "규율",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.consecutive_heads_same_dynasty",
+          "op": ">=",
+          "value": 2
+        }
+      ],
+      "exclusive": [
+        "band.brotherhood"
+      ],
+      "likes": [
+        "충직"
+      ],
+      "dislikes": [
+        "야심"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.succession_rule_allowed",
+          "op": "set",
+          "value": true,
+          "arg": "장자"
+        },
+        {
+          "type": "mod",
+          "var": "char.legitimacy",
+          "op": "add",
+          "value": 10,
+          "who": "head_family",
+          "if": [
+            "child_of_head"
+          ]
+        }
+      ],
+      "note": "승계 슬롯에 장자를 허용한다(15번 4-12). 장자 규칙의 S1 후보 순서(아들 → 형제 → 조카 → 가문 남성)가 두목 가문 안에서만 돌아 도적단이 가문에 묶인다. 두목 자녀 정통성 +10"
+    },
+    {
+      "id": "custom.labor_exchange",
+      "name": "품앗이",
+      "kind": "관습",
+      "tier": "기본",
+      "auto_from": {
+        "personality": "관대",
+        "share": 0.3
+      },
+      "exclusive": [],
+      "likes": [
+        "관대"
+      ],
+      "dislikes": [
+        "탐욕"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "econ.clear_cost",
+          "op": "mul",
+          "value": 0.83,
+          "who": "land"
+        }
+      ],
+      "note": "가구끼리 일손을 나눠 개간한다. 속도 1.2배 = 개간 노동 × 0.83(1 / 1.2, 14번 2-1)"
+    },
+    {
+      "id": "custom.insular",
+      "name": "텃세",
+      "kind": "관습",
+      "tier": "기본",
+      "auto_from": {
+        "personality": "내향",
+        "share": 0.3
+      },
+      "exclusive": [],
+      "likes": [
+        "내향"
+      ],
+      "dislikes": [
+        "사교"
+      ],
+      "effects": [
+        {
+          "type": "opinion",
+          "from": "residents",
+          "to": "outsiders",
+          "value": -15
+        }
+      ],
+      "note": "주민이 외지인에게 상시 호감 -15"
+    },
+    {
+      "id": "custom.hospitality",
+      "name": "손님 환대",
+      "kind": "관습",
+      "tier": "기본",
+      "auto_from": {
+        "personality": "사교",
+        "share": 0.3
+      },
+      "exclusive": [],
+      "likes": [
+        "사교"
+      ],
+      "dislikes": [
+        "내향"
+      ],
+      "effects": [
+        {
+          "type": "opinion",
+          "from": "residents",
+          "to": "outsiders",
+          "value": 10
+        },
+        {
+          "type": "mod",
+          "var": "group.rumor_inflow",
+          "op": "mul",
+          "value": 1.25
+        }
+      ],
+      "note": "주민이 외지인에게 상시 호감 +10. 외부 소문 유입 × 1.25(16번 5절 보통)"
+    },
+    {
+      "id": "custom.gossip_village",
+      "name": "수다쟁이 마을",
+      "kind": "관습",
+      "tier": "기본",
+      "auto_from": {
+        "personality": "사교",
+        "share": 0.3
+      },
+      "exclusive": [],
+      "likes": [
+        "사교"
+      ],
+      "dislikes": [
+        "내향"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.rumor_spread",
+          "op": "mul",
+          "value": 2.0,
+          "who": "residents"
+        }
+      ],
+      "note": "주민의 비밀 소문 전파 × 2(05번 4절)"
+    },
+    {
+      "id": "custom.silent_village",
+      "name": "침묵하는 마을",
+      "kind": "관습",
+      "tier": "기본",
+      "auto_from": {
+        "personality": "내향",
+        "share": 0.3
+      },
+      "exclusive": [],
+      "likes": [
+        "내향"
+      ],
+      "dislikes": [
+        "사교"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "ai.leak",
+          "op": "mul",
+          "value": 0.5,
+          "who": "residents",
+          "if": [
+            "!same_group"
+          ]
+        }
+      ],
+      "note": "주민이 마을 밖 인물에게 비밀을 퍼뜨릴 확률 × 0.5(if는 듣는 상대를 본다). 11번 루트 3(탁란)의 보조 관습"
+    },
+    {
+      "id": "custom.vigilantes",
+      "name": "자경단",
+      "kind": "관습",
+      "tier": "기본",
+      "auto_from": {
+        "personality": "용감",
+        "share": 0.3
+      },
+      "exclusive": [],
+      "likes": [
+        "용감"
+      ],
+      "dislikes": [
+        "겁많음"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "land.defense",
+          "op": "mul",
+          "value": 1.5,
+          "who": "land"
+        }
+      ],
+      "note": "마을 토지 방어 × 1.5(약탈 방어 판정에 곱한다). 14번 8-1에서 자경이 보호자 계약보다 유리해진다"
+    },
+    {
+      "id": "custom.resignation",
+      "name": "체념",
+      "kind": "관습",
+      "tier": "기본",
+      "auto_from": {
+        "personality": "겁많음",
+        "share": 0.3
+      },
+      "exclusive": [],
+      "likes": [
+        "겁많음"
+      ],
+      "dislikes": [
+        "용감"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.tribute_accept",
+          "op": "set",
+          "value": true
+        }
+      ],
+      "note": "공물 요구(tribute_demand)를 받으면 저항 판정 없이 받아들인다(14번 8-1 '공물' 선택). 공포의 이름 도적단의 먹잇감"
+    },
+    {
+      "id": "custom.devout_village",
+      "name": "독실한 마을",
+      "kind": "관습",
+      "tier": "기본",
+      "auto_from": {
+        "personality": "독실",
+        "share": 0.3
+      },
+      "exclusive": [],
+      "likes": [
+        "독실"
+      ],
+      "dislikes": [
+        "냉소"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "land.facility_effect",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "사당",
+          "who": "land"
+        },
+        {
+          "type": "opinion",
+          "from": "residents",
+          "to": "heathens",
+          "value": -15
+        }
+      ],
+      "note": "사당 신앙 영향력(06번 5절 +1/주) × 2. 주민이 이교도에게 상시 호감 -15(16번 5절 보통)"
+    },
+    {
+      "id": "custom.tolerated_affairs",
+      "name": "사통 묵인",
+      "kind": "관습",
+      "tier": "기본",
+      "auto_from": {
+        "personality": "색욕",
+        "share": 0.3
+      },
+      "exclusive": [],
+      "likes": [
+        "색욕"
+      ],
+      "dislikes": [
+        "절제"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "ai.expose",
+          "op": "mul",
+          "value": 0.5,
+          "arg": "adultery",
+          "who": "residents",
+          "if": [
+            "same_group"
+          ]
+        }
+      ],
+      "note": "마을 주민의 불륜 비밀을 알게 된 주민의 폭로 선택 가중 × 0.5(인자 = 비밀을 만든 행위). 11번 루트 3(탁란)의 보조 관습"
+    },
+    {
+      "id": "custom.witch_hunt",
+      "name": "마녀사냥",
+      "kind": "관습",
+      "tier": "기본",
+      "auto_from": [
+        {
+          "personality": "잔인",
+          "share": 0.3
+        },
+        {
+          "personality": "독실",
+          "share": 0.3
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "잔인",
+        "독실"
+      ],
+      "dislikes": [
+        "자비",
+        "냉소"
+      ],
+      "effects": [
+        {
+          "type": "event",
+          "event": "witch_accusation",
+          "chance_per_year": 0.05,
+          "who": "residents",
+          "if": [
+            "has_talent:의술 감각"
+          ]
+        },
+        {
+          "type": "event",
+          "event": "witch_accusation",
+          "chance_per_year": 0.05,
+          "who": "residents",
+          "if": [
+            "has_talent:영성"
+          ]
+        }
+      ],
+      "note": "의술 감각, 영성 재능자(숨은 재능 포함)에게 연 5% 마녀 고발 사건. 16번 5절에 확률 척도가 없어 영성 천재의 기적(연 2%)보다 조금 높게 잡았다. 잔인과 독실이 모두 30% 이상일 때 후보"
+    },
+    {
+      "id": "custom.diligent_village",
+      "name": "근면한 마을",
+      "kind": "관습",
+      "tier": "기본",
+      "auto_from": {
+        "personality": "근면",
+        "share": 0.3
+      },
+      "exclusive": [],
+      "likes": [
+        "근면"
+      ],
+      "dislikes": [
+        "게으름"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.labor",
+          "op": "mul",
+          "value": 1.1,
+          "who": "residents"
+        }
+      ],
+      "note": "주민 노동량 × 1.1(14번 2절)"
+    },
+    {
+      "id": "custom.grudge_village",
+      "name": "원한의 마을",
+      "kind": "관습",
+      "tier": "기본",
+      "auto_from": {
+        "personality": "복수심",
+        "share": 0.3
+      },
+      "exclusive": [],
+      "likes": [
+        "복수심"
+      ],
+      "dislikes": [
+        "관용"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.raid_grudge",
+          "op": "set",
+          "value": true
+        }
+      ],
+      "note": "마을을 약탈한 집단과의 관계가 영구 적대로 굳는다(04번 7절)"
+    }
+  ]
+}
