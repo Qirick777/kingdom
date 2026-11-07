@@ -1,0 +1,2594 @@
+{
+  "proposed": {
+    "scopes": {
+      "region_land": "집단 토지와 그 반경 3셀 안의 토지(14번 8-2의 반경)"
+    },
+    "predicates": {
+      "target_younger": "대상이 행위자보다 나이가 적음",
+      "ancestor_has_history": "대상의 직계 조상(부모, 조부모 이상)이 인자 이력을 가짐",
+      "nearby": "대상이 집단 토지 반경 3셀 안에 삶(14번 8-2의 반경)",
+      "sacred_site": "성지 특성 토지",
+      "owes_this_group": "대상 집단이 이 집단에 갚을 빚이 있음(대여 잔액 > 0)",
+      "owns_slaves": "대상이 노예를 1명 이상 소유",
+      "liege_type": "상위 군주 집단이 인자 유형(교단, 나라 등)"
+    },
+    "metrics": {
+      "group.groups_of_type": "집단 토지에 본거지를 둔 인자 유형 집단 수",
+      "group.treasury_of_type": "집단 토지에 본거지를 둔 인자 유형 집단의 금고 합계(곡식 환산)",
+      "group.allies_of_type": "동맹 관계(04번 7절)인 인자 유형 집단 수",
+      "group.members_with_trait": "인자 특성을 가진 회원 집단 수(연맹)",
+      "group.members_state_religion_share": "회원 집단 중 맹주 나라와 같은 국교를 가진 비율(0~1)",
+      "group.sieges_won": "함락시킨 요새, 성채 수",
+      "group.contract_years_same_employer": "같은 고용주와 끊김 없이 이어진 계약 연수(인자: 고용주 집단 유형, 없으면 전체)",
+      "group.knights": "구성원 중 기사 수",
+      "liege.concentration": "상위 군주(공인 주체) 집단의 권력 집중도(0~1)"
+    },
+    "behaviors": {
+      "marry_same_dynasty": "같은 가문 인물과 혼인",
+      "marry_other_dynasty": "다른 가문 인물과 혼인",
+      "hold_private_property": "개인 재산(곡식, 은화, 필지) 보유",
+      "marry": "혼인(배우자를 둠)",
+      "war_on_member": "같은 연맹 회원 집단에 전쟁 선포",
+      "refuse_verdict": "연맹 법정 판결 거부"
+    },
+    "actions": {
+      "buy_citizenship": "시민권 구입",
+      "found_league": "연맹 창설",
+      "hire_mercenary": "용병단 고용",
+      "absorb_member": "회원 집단 흡수(맹주 나라에 병합)",
+      "member_trial": "회원 간 분쟁 재판",
+      "back_claimant": "승계 분쟁에서 후보 지지(자기 병력을 15번 S6 힘에 더함)",
+      "punish_named": "지목 인물 처형 또는 추방(09번 5절 형벌)",
+      "abdicate": "수장 퇴위. 지정 후보에게 수장 자리 이양"
+    },
+    "vars": {
+      "econ.common_pool": {
+        "label": "공동 창고로 모으는 순수확 비율. 모은 곡식은 구성원 수대로 균등 분배",
+        "unit": "set(0~1)",
+        "ref": "14 3절"
+      },
+      "econ.clearing_allowed": {
+        "label": "개간 가능",
+        "unit": "set true/false",
+        "ref": "14 2-1"
+      },
+      "econ.price_swing": {
+        "label": "지역 가격 변동 지수. 지역 가격 = 기준가 × (수요/공급)^값",
+        "unit": "배수(기본 1)",
+        "ref": "02 5절"
+      },
+      "econ.ransom_split": {
+        "label": "포로 몸값 중 단원에게 균등 분배하는 비율(나머지는 금고)",
+        "unit": "set(0~1)",
+        "ref": "03 3절"
+      },
+      "char.assassination_defense": {
+        "label": "암살 방어 배수(암살 판정 요구 크기 '대상 경비'에 곱함)",
+        "unit": "배수",
+        "ref": "03 3절"
+      },
+      "char.cult_found_req": {
+        "label": "교단 창설 신학 요구치 가산(기본 30)",
+        "unit": "가산",
+        "ref": "04 8절"
+      },
+      "group.hereditary_membership": {
+        "label": "구성원 자녀만 정식 구성원이 됨",
+        "unit": "set true",
+        "ref": "10 8절"
+      },
+      "demo.emancipate_all": {
+        "label": "채택 즉시 모든 노예 해방(해방노예 이력 부여)",
+        "unit": "set true",
+        "ref": "08 법"
+      },
+      "rel.grievance_to_head": {
+        "label": "특성 채택 때 수장에 대한 원한 가산(1회)",
+        "unit": "가산",
+        "ref": "03 1절"
+      },
+      "group.citizenship_price": {
+        "label": "시민권 가격(은화)",
+        "unit": "set",
+        "ref": "10 2절"
+      },
+      "group.call_to_arms": {
+        "label": "회원 집단이 공격받으면 나머지 회원 집단 자동 참전",
+        "unit": "set true",
+        "ref": "10 3절"
+      },
+      "group.expel_on": {
+        "label": "인자 행위를 한 회원 집단 자동 제명(인자: 행위 키)",
+        "unit": "set true",
+        "ref": "10 3절"
+      },
+      "group.pay_upfront": {
+        "label": "출동 전에 받아야 하는 계약금 선불 비율",
+        "unit": "set(0~1)",
+        "ref": "10 4절"
+      },
+      "group.pay_on_victory": {
+        "label": "승리 시 계약 보수 배수",
+        "unit": "set",
+        "ref": "10 4절"
+      },
+      "group.pay_on_defeat": {
+        "label": "패배 시 계약 보수 배수",
+        "unit": "set",
+        "ref": "10 4절"
+      },
+      "group.royal_contract": {
+        "label": "나라 수장과 직접 계약(왕실 계약) 가능",
+        "unit": "set true",
+        "ref": "10 4절"
+      },
+      "group.camp_plots": {
+        "label": "고용주 토지 중 숙영지로 받는 필지 수",
+        "unit": "set",
+        "ref": "14 9-5"
+      },
+      "group.loyalty_carryover": {
+        "label": "수장 자녀가 승계하면 옛 수장 호감을 새 수장 호감으로 옮기는 비율. 1이면 새 수장 첫 1년 충성 -10(15번 4-15)도 면제",
+        "unit": "set(0~1)",
+        "ref": "15 4-15"
+      },
+      "group.treasury_income": {
+        "label": "집단 금고 수입 배수",
+        "unit": "배수",
+        "ref": "04 1절"
+      },
+      "group.knight_hereditary": {
+        "label": "기사 자격 세습. 기사의 맏아들이 16세에 기사 자격을 받음",
+        "unit": "set true",
+        "ref": "14 9-5"
+      },
+      "group.can_hold_land": {
+        "label": "집단 명의 토지 보유와 소작(14번 7-4) 운영 가능",
+        "unit": "set true/false",
+        "ref": "14 7-4"
+      }
+    }
+  },
+  "traits": [
+    {
+      "id": "tribe.exogamy",
+      "name": "족외혼",
+      "kind": "부족법",
+      "tier": "기본",
+      "exclusive": [
+        "tribe.endogamy"
+      ],
+      "likes": [
+        "사교",
+        "야심"
+      ],
+      "dislikes": [
+        "내향"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "marry_same_dynasty",
+          "status": "forbidden",
+          "severity": 40,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "marry_kin6",
+          "status": "forbidden",
+          "severity": 40,
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "group.inheritance_gift_kin",
+          "op": "add",
+          "value": 10
+        },
+        {
+          "type": "opinion",
+          "from": "members",
+          "to": "members",
+          "value": 10,
+          "if": [
+            "!same_dynasty"
+          ]
+        }
+      ],
+      "note": "씨족(구성 가문) 안 혼인과 다른 씨족이라도 6촌 이내 혼인을 금지한다. 심각도 40은 05번 근친 기본 무게. 근친 출산이 없어 열성 형질 동형접합 위험이 0이 된다. 씨족 간 혼인 판정 +10, 다른 씨족 구성원 상시 호감 +10이 결속이다"
+    },
+    {
+      "id": "tribe.endogamy",
+      "name": "족내혼",
+      "kind": "부족법",
+      "tier": "기본",
+      "exclusive": [
+        "tribe.exogamy"
+      ],
+      "likes": [
+        "내향",
+        "충직"
+      ],
+      "dislikes": [
+        "사교"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "marry_other_dynasty",
+          "status": "forbidden",
+          "severity": 30,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "marry_kin6",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "marry_cousin",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        }
+      ],
+      "note": "씨족(구성 가문) 밖 혼인 금지(심각도 30, 보통). interclass_marriage는 신분 기준이라 쓰지 않았다. 사촌, 6촌 혼인은 허용. 혈통 비율 유지와 열성 형질 위험은 별도 수치 없이 01번 유전 계산이 낸다(친족 혼인이 늘어 공통 조상 r과 보인자 동형접합이 함께 오른다)"
+    },
+    {
+      "id": "tribe.elder_respect",
+      "name": "연장자 우대",
+      "kind": "부족법",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "인내",
+        "충직"
+      ],
+      "dislikes": [
+        "야심",
+        "성급"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 15,
+          "arg": "명령",
+          "who": "members",
+          "if": [
+            "target_younger"
+          ]
+        }
+      ],
+      "note": "03번 명령 판정에 +15. 명령하는 사람이 대상보다 나이가 많을 때만 붙는다"
+    },
+    {
+      "id": "tribe.warrior_society",
+      "name": "전사 사회",
+      "kind": "부족법",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "용감",
+        "잔인"
+      ],
+      "dislikes": [
+        "겁많음",
+        "자비"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.levy_ratio",
+          "op": "set",
+          "value": 0.3
+        },
+        {
+          "type": "mod",
+          "var": "econ.labor",
+          "op": "mul",
+          "value": 0.8,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "desert",
+          "status": "forbidden",
+          "severity": 40,
+          "who": "members",
+          "if": [
+            "is_male",
+            "is_adult"
+          ]
+        }
+      ],
+      "note": "병력 3배: 징집 비율 0.3은 기본 0.1(law.conscription과 같은 가정)의 3배. 성인 남성 전원 의무는 탈주 금지 규범(심각도 40)으로 건다. 생산 -20%는 노동량 배수 0.8"
+    },
+    {
+      "id": "tribe.communal_property",
+      "name": "공동 소유",
+      "kind": "부족법",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "관대",
+        "만족"
+      ],
+      "dislikes": [
+        "탐욕",
+        "야심"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "econ.common_pool",
+          "op": "set",
+          "value": 1.0,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "hold_private_property",
+          "status": "forbidden",
+          "severity": 30,
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "land.commons_protected",
+          "op": "set",
+          "value": true
+        }
+      ],
+      "note": "순수확 전부를 공동 창고로 모아 구성원 수대로 나눈다. 흉년의 식량 부족도 가구별이 아니라 부족 전체 충족률로 고르게 걸린다. 개인 재산 보유는 부족 범죄(심각도 30), 공유지 점유 금지"
+    },
+    {
+      "id": "tribe.nomadic",
+      "name": "유목",
+      "kind": "부족법",
+      "tier": "기본",
+      "exclusive": [
+        "tribe.settled"
+      ],
+      "likes": [
+        "용감",
+        "변덕"
+      ],
+      "dislikes": [
+        "근면"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.mobile",
+          "op": "set",
+          "value": true
+        },
+        {
+          "type": "mod",
+          "var": "econ.hunt",
+          "op": "mul",
+          "value": 1.3,
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "econ.clearing_allowed",
+          "op": "set",
+          "value": false
+        }
+      ],
+      "note": "계절마다 부족 전체가 토지를 옮긴다(고유 기능 이동). 사냥 산출 1.3배, 개간 불가"
+    },
+    {
+      "id": "tribe.settled",
+      "name": "정착 농경",
+      "kind": "부족법",
+      "tier": "기본",
+      "exclusive": [
+        "tribe.nomadic"
+      ],
+      "likes": [
+        "근면",
+        "인내"
+      ],
+      "dislikes": [
+        "변덕"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "econ.clearing_allowed",
+          "op": "set",
+          "value": true
+        },
+        {
+          "type": "mod",
+          "var": "group.mobile",
+          "op": "set",
+          "value": false
+        }
+      ],
+      "note": "개간 가능. 고유 기능 이동을 끈다. 나라 전환 조건(정착지 3곳)을 채우는 길"
+    },
+    {
+      "id": "tribe.blood_brothers",
+      "name": "피의 형제",
+      "kind": "부족법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.intermarriages",
+          "op": ">=",
+          "value": 10
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "사교",
+        "야심"
+      ],
+      "dislikes": [
+        "내향"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "absorb_tribe",
+          "who": "head"
+        }
+      ],
+      "note": "족장이 다른 부족 흡수 합병을 실행할 수 있다. 혼인 수는 다른 집단과 맺은 혼인 전체로 센다"
+    },
+    {
+      "id": "tribe.hero_worship",
+      "name": "영웅 숭배",
+      "kind": "부족법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.members_with_history",
+          "arg": "전쟁 영웅",
+          "op": ">=",
+          "value": 3
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "용감",
+        "야심"
+      ],
+      "dislikes": [
+        "겁많음",
+        "자비"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.morale",
+          "op": "add",
+          "value": 20
+        },
+        {
+          "type": "mod",
+          "var": "char.legitimacy",
+          "op": "add",
+          "value": 10,
+          "who": "members",
+          "if": [
+            "ancestor_has_history:전쟁 영웅"
+          ]
+        },
+        {
+          "type": "justify",
+          "behavior": "murder",
+          "holder": "members",
+          "value": 0.4,
+          "who": "members",
+          "if": [
+            "has_history:전쟁 영웅"
+          ]
+        },
+        {
+          "type": "justify",
+          "behavior": "assault",
+          "holder": "members",
+          "value": 0.4,
+          "who": "members",
+          "if": [
+            "has_history:전쟁 영웅"
+          ]
+        },
+        {
+          "type": "justify",
+          "behavior": "robbery",
+          "holder": "members",
+          "value": 0.4,
+          "who": "members",
+          "if": [
+            "has_history:전쟁 영웅"
+          ]
+        }
+      ],
+      "note": "전투 사기 +20. 영웅 후손 정통성 +10(보통)은 승계 주장 강도와 새 수장 정통성에 더해진다. 16번 3-3: 전쟁 영웅 이력 보유자의 살인, 폭행, 약탈에 정당화 0.4"
+    },
+    {
+      "id": "tribe.raiding_expedition",
+      "name": "약탈 원정",
+      "kind": "부족법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.has_trait",
+          "arg": "tribe.warrior_society",
+          "op": "==",
+          "value": 1
+        },
+        {
+          "metric": "group.members",
+          "op": ">=",
+          "value": 100
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "용감",
+        "탐욕"
+      ],
+      "dislikes": [
+        "자비",
+        "겁많음"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "expedition",
+          "who": "head"
+        },
+        {
+          "type": "mod",
+          "var": "group.raid_season",
+          "op": "set",
+          "value": true
+        }
+      ],
+      "note": "계절마다 약탈 원정을 낼 수 있다. 약탈품과 포로는 14번 8-2 약탈 계산과 03번 노예화, 몸값 요구가 낸다"
+    },
+    {
+      "id": "tribe.hereditary_chief",
+      "name": "족장 세습",
+      "kind": "부족법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.consecutive_heads_same_dynasty",
+          "op": ">=",
+          "value": 3
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "충직",
+        "만족"
+      ],
+      "dislikes": [
+        "야심"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.succession_rule_allowed",
+          "op": "set",
+          "value": true,
+          "arg": "장자"
+        }
+      ],
+      "note": "승계 슬롯에 장자를 허용한다(고정하지 않음). 15번 4-3의 장자 사용 조건(집중도 40% 또는 성문법)은 그대로 적용된다. 나라 전환 조건이므로 전환 판정이 이 특성 보유를 확인한다"
+    },
+    {
+      "id": "tribe.oracle",
+      "name": "신탁",
+      "kind": "부족법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.members_with_talent",
+          "arg": "영성",
+          "op": ">=",
+          "value": 1
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "독실"
+      ],
+      "dislikes": [
+        "냉소"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.council_seats",
+          "op": "set",
+          "value": 1,
+          "arg": "신탁자"
+        },
+        {
+          "type": "mod",
+          "var": "group.succession_rule_allowed",
+          "op": "set",
+          "value": true,
+          "arg": "신탁"
+        },
+        {
+          "type": "mod",
+          "var": "char.cult_found_req",
+          "op": "add",
+          "value": -10,
+          "who": "members"
+        }
+      ],
+      "note": "원로 회의에 영성 재능 신탁자 1석. 15번 4-3대로 승계 슬롯에 신탁 규칙 허용. 부족원의 교단 창설 신학 요구 30 → 20(보통 10)"
+    },
+    {
+      "id": "city.hereditary_citizenship",
+      "name": "시민권 세습",
+      "kind": "시법",
+      "tier": "기본",
+      "exclusive": [
+        "city.purchasable_citizenship"
+      ],
+      "likes": [
+        "충직"
+      ],
+      "dislikes": [
+        "야심"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.hereditary_membership",
+          "op": "set",
+          "value": true
+        },
+        {
+          "type": "mod",
+          "var": "group.loyalty",
+          "op": "add",
+          "value": 10,
+          "who": "members"
+        }
+      ],
+      "note": "시민 자녀만 시민이 된다. 시민 충성 +10(보통)"
+    },
+    {
+      "id": "city.purchasable_citizenship",
+      "name": "시민권 매매",
+      "kind": "시법",
+      "tier": "기본",
+      "exclusive": [
+        "city.hereditary_citizenship"
+      ],
+      "likes": [
+        "탐욕",
+        "사교"
+      ],
+      "dislikes": [
+        "내향"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.hereditary_membership",
+          "op": "set",
+          "value": false
+        },
+        {
+          "type": "mod",
+          "var": "group.citizenship_price",
+          "op": "set",
+          "value": 100
+        },
+        {
+          "type": "enable",
+          "action": "buy_citizenship",
+          "who": "residents"
+        },
+        {
+          "type": "mod",
+          "var": "demo.migration_in",
+          "op": "mul",
+          "value": 1.25
+        }
+      ],
+      "note": "거주자가 은화 100으로 시민권을 산다. 값은 자영농 잉여 약 2년치(14번 9-2의 90 기준). 대금은 시 금고로 간다. 인구 유입 1.25배(보통)"
+    },
+    {
+      "id": "city.wall_duty",
+      "name": "성벽 의무",
+      "kind": "시법",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "근면",
+        "겁많음"
+      ],
+      "dislikes": [
+        "게으름"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.defense",
+          "op": "mul",
+          "value": 2.0
+        },
+        {
+          "type": "mod",
+          "var": "econ.labor",
+          "op": "mul",
+          "value": 0.9,
+          "who": "members"
+        }
+      ],
+      "note": "방어 2배. 성벽 유지 노동으로 시민 노동량 10%를 쓴다(작음 0.9)"
+    },
+    {
+      "id": "city.open_market",
+      "name": "시장 개방",
+      "kind": "시법",
+      "tier": "기본",
+      "exclusive": [
+        "city.foreigner_limits"
+      ],
+      "likes": [
+        "사교",
+        "관대"
+      ],
+      "dislikes": [
+        "탐욕"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "econ.tariff",
+          "op": "set",
+          "value": 0.0
+        },
+        {
+          "type": "mod",
+          "var": "econ.price_swing",
+          "op": "mul",
+          "value": 0.75
+        }
+      ],
+      "note": "외부 상인 거래세 0. 가격 안정은 02번 5절 지역 가격 식의 (수요/공급) 지수를 0.75로 낮춰 흉년, 전쟁 때 가격 폭을 줄인다"
+    },
+    {
+      "id": "city.foreigner_limits",
+      "name": "외지인 제한",
+      "kind": "시법",
+      "tier": "기본",
+      "exclusive": [
+        "city.open_market"
+      ],
+      "likes": [
+        "탐욕",
+        "내향"
+      ],
+      "dislikes": [
+        "사교",
+        "관대"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "econ.tariff",
+          "op": "set",
+          "value": 0.1
+        },
+        {
+          "type": "mod",
+          "var": "group.relation",
+          "op": "add",
+          "value": 10,
+          "arg": "장인 조합"
+        }
+      ],
+      "note": "외부 상인 거래에 관세 10%(15번 2-2 범위 5~20%의 중간 아래). 조합 관계 +10(보통)"
+    },
+    {
+      "id": "city.guild_government",
+      "name": "길드 정부",
+      "kind": "시법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.groups_of_type",
+          "arg": "장인 조합",
+          "op": ">=",
+          "value": 3
+        }
+      ],
+      "exclusive": [
+        "city.merchant_oligarchy"
+      ],
+      "likes": [
+        "근면"
+      ],
+      "dislikes": [
+        "탐욕"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.council_seats",
+          "op": "set",
+          "value": 1,
+          "arg": "장인 조합"
+        },
+        {
+          "type": "mod",
+          "var": "group.council_seats",
+          "op": "set",
+          "value": 0,
+          "arg": "시민"
+        }
+      ],
+      "note": "도시 안 장인 조합마다 조합장 1석. 재산 비례 시민 의석은 0이 되어 입법은 조합장 의석 투표로 한다"
+    },
+    {
+      "id": "city.merchant_oligarchy",
+      "name": "상인 과두정",
+      "kind": "시법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.treasury_of_type",
+          "arg": "상단",
+          "op": ">=",
+          "value": 5000
+        }
+      ],
+      "exclusive": [
+        "city.guild_government"
+      ],
+      "likes": [
+        "탐욕",
+        "야심"
+      ],
+      "dislikes": [
+        "관대"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.council_seats",
+          "op": "set",
+          "value": 1,
+          "arg": "상단"
+        },
+        {
+          "type": "mod",
+          "var": "group.council_seats",
+          "op": "set",
+          "value": 0,
+          "arg": "시민"
+        }
+      ],
+      "note": "도시 안 상단마다 상단 수장 1석. 재산 비례 시민 의석은 0이 되어 입법은 상단 수장 의석 투표로 한다"
+    },
+    {
+      "id": "city.militia",
+      "name": "도시 민병",
+      "kind": "시법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.facility",
+          "arg": "성벽",
+          "op": ">=",
+          "value": 1
+        },
+        {
+          "metric": "group.members",
+          "op": ">=",
+          "value": 200
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "용감",
+        "충직"
+      ],
+      "dislikes": [
+        "겁많음"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "levy",
+          "who": "head"
+        },
+        {
+          "type": "ai",
+          "action": "hire_mercenary",
+          "weight": 0.75,
+          "who": "head"
+        }
+      ],
+      "note": "시장이 시민을 징집할 수 있다(징집 비율은 기본값). 용병 고용 효용 0.75배(보통)"
+    },
+    {
+      "id": "city.city_air",
+      "name": "도시의 공기",
+      "kind": "시법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.members",
+          "op": ">=",
+          "value": 500
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "자비",
+        "관대"
+      ],
+      "dislikes": [
+        "탐욕",
+        "잔인"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "demo.freedom_after_year",
+          "op": "set",
+          "value": true
+        },
+        {
+          "type": "mod",
+          "var": "rel.grievance_to_head",
+          "op": "add",
+          "value": 20,
+          "who": "outsiders",
+          "if": [
+            "is_noble",
+            "nearby"
+          ]
+        },
+        {
+          "type": "opinion",
+          "from": "outsiders",
+          "to": "head",
+          "value": -10,
+          "if": [
+            "is_noble",
+            "nearby"
+          ]
+        }
+      ],
+      "note": "도망 노예, 농노가 1년 거주하면 자유민. 반경 3셀 안 귀족: 채택 때 시장에 대한 원한 +20(큼), 이후 상시 호감 -10(도망민을 계속 받아서)"
+    },
+    {
+      "id": "city.city_alliance",
+      "name": "도시 동맹",
+      "kind": "시법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.allies_of_type",
+          "arg": "자치 도시",
+          "op": ">=",
+          "value": 1
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "사교"
+      ],
+      "dislikes": [
+        "내향"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "found_league",
+          "who": "head"
+        }
+      ],
+      "note": "시장이 연맹 창설을 실행할 수 있다. 회원 조건은 10번 3절(집단 3개 이상)을 따른다"
+    },
+    {
+      "id": "city.free_city",
+      "name": "자유 도시",
+      "kind": "시법",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "liege.concentration",
+          "op": "<",
+          "value": 0.3
+        },
+        {
+          "metric": "group.treasury",
+          "op": ">=",
+          "value": 3000
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "야심",
+        "용감"
+      ],
+      "dislikes": [
+        "충직"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "secede",
+          "who": "head"
+        }
+      ],
+      "note": "시장이 분리 독립을 실행하면 나라 종속이 풀리고 나라와 동격이 된다. 금고 3000은 은화 기준가 1(02번)이라 곡식 환산 3000"
+    },
+    {
+      "id": "league.mutual_defense",
+      "name": "공동 방위",
+      "kind": "헌장",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "충직",
+        "용감"
+      ],
+      "dislikes": [
+        "겁많음"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.call_to_arms",
+          "op": "set",
+          "value": true
+        }
+      ],
+      "note": "회원 집단 하나가 공격받으면 나머지 회원 집단이 자동 참전한다"
+    },
+    {
+      "id": "league.no_civil_war",
+      "name": "내전 금지",
+      "kind": "헌장",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "관대",
+        "인내"
+      ],
+      "dislikes": [
+        "야심",
+        "성급"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "war_on_member",
+          "status": "forbidden",
+          "severity": 60,
+          "who": "vassals"
+        },
+        {
+          "type": "mod",
+          "var": "group.expel_on",
+          "op": "set",
+          "value": true,
+          "arg": "war_on_member"
+        }
+      ],
+      "note": "회원 간 전쟁 선포는 연맹 범죄(심각도 60, 큼). 선포한 회원은 자동 제명. 범위 vassals는 회원 집단과 그 수장"
+    },
+    {
+      "id": "league.hereditary_leader",
+      "name": "맹주 세습",
+      "kind": "헌장",
+      "tier": "기본",
+      "exclusive": [
+        "league.elected_leader"
+      ],
+      "likes": [
+        "충직",
+        "인내"
+      ],
+      "dislikes": [
+        "야심"
+      ],
+      "uses_slot": "succession",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.succession_rule_allowed",
+          "op": "set",
+          "value": true,
+          "arg": "장자"
+        },
+        {
+          "type": "mod",
+          "var": "group.legitimacy",
+          "op": "add",
+          "value": 10
+        }
+      ],
+      "note": "승계 슬롯을 장자로 고정한다. 맹주 정통성 +10"
+    },
+    {
+      "id": "league.elected_leader",
+      "name": "맹주 선출",
+      "kind": "헌장",
+      "tier": "기본",
+      "exclusive": [
+        "league.hereditary_leader"
+      ],
+      "likes": [
+        "야심",
+        "탐욕"
+      ],
+      "dislikes": [
+        "정직"
+      ],
+      "uses_slot": "succession",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.succession_rule_allowed",
+          "op": "set",
+          "value": true,
+          "arg": "공개 선출"
+        },
+        {
+          "type": "norm",
+          "behavior": "bribery",
+          "status": "allowed",
+          "severity": 0,
+          "who": "vassals"
+        }
+      ],
+      "note": "승계 슬롯을 공개 선출로 고정한다. 선거인은 회원 수장. 뇌물이 연맹 범죄가 아니어서 15번 4-10의 선거 뇌물이 그대로 돈다"
+    },
+    {
+      "id": "league.customs_union",
+      "name": "관세 동맹",
+      "kind": "헌장",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "사교",
+        "탐욕"
+      ],
+      "dislikes": [
+        "내향"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "econ.tariff",
+          "op": "set",
+          "value": 0.0,
+          "who": "vassals",
+          "if": [
+            "same_group"
+          ]
+        }
+      ],
+      "note": "상대가 같은 연맹 회원일 때 관세 0"
+    },
+    {
+      "id": "league.imperial_title",
+      "name": "제국 칭호",
+      "kind": "헌장",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.members",
+          "op": ">=",
+          "value": 6
+        },
+        {
+          "metric": "group.legitimacy",
+          "op": ">=",
+          "value": 70
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "야심",
+        "충직"
+      ],
+      "dislikes": [
+        "변덕"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.legitimacy",
+          "op": "add",
+          "value": 30
+        },
+        {
+          "type": "enable",
+          "action": "absorb_member",
+          "who": "head"
+        }
+      ],
+      "note": "맹주 정통성 +30. 맹주가 회원 집단을 자기 나라에 흡수할 수 있다(10번 3절 전환: 맹주 집중도 70% 필요)"
+    },
+    {
+      "id": "league.imperial_court",
+      "name": "황제 법정",
+      "kind": "헌장",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.members_with_trait",
+          "arg": "law.written_law",
+          "op": ">=",
+          "value": 3
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "정직",
+        "인내"
+      ],
+      "dislikes": [
+        "야심",
+        "성급"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "member_trial",
+          "who": "head"
+        },
+        {
+          "type": "norm",
+          "behavior": "refuse_verdict",
+          "status": "forbidden",
+          "severity": 40,
+          "who": "vassals"
+        },
+        {
+          "type": "mod",
+          "var": "group.expel_on",
+          "op": "set",
+          "value": true,
+          "arg": "refuse_verdict"
+        }
+      ],
+      "note": "맹주가 회원 간 분쟁을 재판한다. 판결 거부는 연맹 범죄(심각도 40)이고 자동 제명"
+    },
+    {
+      "id": "league.league_currency",
+      "name": "연맹 화폐",
+      "kind": "헌장",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.members_with_trait",
+          "arg": "law.minting",
+          "op": ">=",
+          "value": 3
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "탐욕",
+        "사교"
+      ],
+      "dislikes": [
+        "내향"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "mint",
+          "who": "head"
+        },
+        {
+          "type": "mod",
+          "var": "econ.trade",
+          "op": "mul",
+          "value": 1.25,
+          "who": "vassals"
+        },
+        {
+          "type": "mod",
+          "var": "econ.monetization",
+          "op": "add",
+          "value": 0.1,
+          "who": "vassals"
+        }
+      ],
+      "note": "맹주가 공통 은화를 주조한다. 회원 교역 이익 1.25배(보통), 화폐화율 +0.1(14번 9-4: 녹봉 조건 50%에 가까워진다)"
+    },
+    {
+      "id": "league.common_church",
+      "name": "공동 교단",
+      "kind": "헌장",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.members_state_religion_share",
+          "op": ">=",
+          "value": 1.0
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "독실"
+      ],
+      "dislikes": [
+        "냉소"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.council_seats",
+          "op": "set",
+          "value": 1,
+          "arg": "교단 수장"
+        }
+      ],
+      "note": "공동 국교 교단 수장이 연맹 회의에 1석을 가진다"
+    },
+    {
+      "id": "merc.payment_upfront",
+      "name": "선불 원칙",
+      "kind": "계약 원칙",
+      "tier": "기본",
+      "exclusive": [
+        "merc.pay_on_result"
+      ],
+      "likes": [
+        "탐욕",
+        "겁많음"
+      ],
+      "dislikes": [
+        "성급"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.pay_upfront",
+          "op": "set",
+          "value": 0.5
+        },
+        {
+          "type": "mod",
+          "var": "group.hire_check",
+          "op": "add",
+          "value": -10
+        }
+      ],
+      "note": "계약금 50%를 받아야 출동한다. 고용 판정 -10"
+    },
+    {
+      "id": "merc.pay_on_result",
+      "name": "성과급",
+      "kind": "계약 원칙",
+      "tier": "기본",
+      "exclusive": [
+        "merc.payment_upfront"
+      ],
+      "likes": [
+        "용감",
+        "탐욕"
+      ],
+      "dislikes": [
+        "겁많음"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.pay_on_victory",
+          "op": "set",
+          "value": 2.0
+        },
+        {
+          "type": "mod",
+          "var": "group.pay_on_defeat",
+          "op": "set",
+          "value": 0.0
+        }
+      ],
+      "note": "승리하면 계약 보수 2배, 지면 0"
+    },
+    {
+      "id": "merc.contract_honor",
+      "name": "계약 엄수",
+      "kind": "계약 원칙",
+      "tier": "기본",
+      "exclusive": [
+        "merc.highest_bidder"
+      ],
+      "likes": [
+        "정직",
+        "충직"
+      ],
+      "dislikes": [
+        "탐욕",
+        "변덕"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.betray_in_battle",
+          "op": "set",
+          "value": false
+        },
+        {
+          "type": "mod",
+          "var": "group.hire_check",
+          "op": "add",
+          "value": 15
+        },
+        {
+          "type": "norm",
+          "behavior": "break_contract",
+          "status": "forbidden",
+          "severity": 40,
+          "who": "members"
+        }
+      ],
+      "note": "전투 중 변절 불가. 고용 판정 +15. 계약 위반은 단 범죄(심각도 40)"
+    },
+    {
+      "id": "merc.highest_bidder",
+      "name": "최고가 입찰",
+      "kind": "계약 원칙",
+      "tier": "기본",
+      "exclusive": [
+        "merc.contract_honor",
+        "merc.honored_mercenary"
+      ],
+      "likes": [
+        "탐욕",
+        "변덕"
+      ],
+      "dislikes": [
+        "정직",
+        "충직"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.betray_in_battle",
+          "op": "set",
+          "value": true
+        },
+        {
+          "type": "norm",
+          "behavior": "break_contract",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        }
+      ],
+      "note": "전투 중 상대가 더 높은 값을 부르면 변절할 수 있다. 계약 위반이 단 범죄가 아니다"
+    },
+    {
+      "id": "merc.ransom_share",
+      "name": "몸값 분배",
+      "kind": "계약 원칙",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "관대",
+        "탐욕"
+      ],
+      "dislikes": [
+        "잔인"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "econ.ransom_split",
+          "op": "set",
+          "value": 0.5
+        },
+        {
+          "type": "mod",
+          "var": "group.loyalty",
+          "op": "add",
+          "value": 10
+        },
+        {
+          "type": "mod",
+          "var": "ai.mercy_captive",
+          "op": "mul",
+          "value": 1.25,
+          "who": "members"
+        }
+      ],
+      "note": "몸값의 절반을 단원에게 균등 분배, 절반은 금고. 충성 +10(보통). 단원이 몫을 받으니 포로 살해보다 몸값을 고른다(1.25배)"
+    },
+    {
+      "id": "merc.honored_mercenary",
+      "name": "명예 용병",
+      "kind": "계약 원칙",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.has_trait",
+          "arg": "merc.contract_honor",
+          "op": "==",
+          "value": 1
+        },
+        {
+          "metric": "group.contracts_done",
+          "op": ">=",
+          "value": 10
+        }
+      ],
+      "exclusive": [
+        "merc.highest_bidder"
+      ],
+      "likes": [
+        "정직",
+        "충직"
+      ],
+      "dislikes": [
+        "탐욕"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.prestige",
+          "op": "add",
+          "value": 10
+        },
+        {
+          "type": "mod",
+          "var": "group.hire_check",
+          "op": "add",
+          "value": 25
+        },
+        {
+          "type": "mod",
+          "var": "group.royal_contract",
+          "op": "set",
+          "value": true
+        }
+      ],
+      "note": "명성 연 +10(보통). 고용 판정 +25로 계약 엄수 +15와 합쳐 +40. 나라 수장과 직접 계약할 수 있다"
+    },
+    {
+      "id": "merc.siege_specialist",
+      "name": "공성 전문",
+      "kind": "계약 원칙",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.sieges_won",
+          "op": ">=",
+          "value": 2
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "인내",
+        "근면"
+      ],
+      "dislikes": [
+        "성급"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.siege",
+          "op": "mul",
+          "value": 2.0
+        }
+      ],
+      "note": "요새, 성채 공격 2배"
+    },
+    {
+      "id": "merc.encampment",
+      "name": "숙영지",
+      "kind": "계약 원칙",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.contract_years_same_employer",
+          "op": ">=",
+          "value": 5
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "만족",
+        "인내"
+      ],
+      "dislikes": [
+        "변덕"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.camp_plots",
+          "op": "set",
+          "value": 16
+        }
+      ],
+      "note": "고용주 토지에서 필지 16개를 숙영지로 받는다. 크기는 14번 9-5 봉토 1개(셀의 1/4). 토지 보유 시 영주 전환 조건이 된다"
+    },
+    {
+      "id": "merc.royal_guard",
+      "name": "친위대",
+      "kind": "계약 원칙",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.contract_years_same_employer",
+          "arg": "나라",
+          "op": ">=",
+          "value": 10
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "충직",
+        "야심"
+      ],
+      "dislikes": [
+        "변덕"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.assassination_defense",
+          "op": "mul",
+          "value": 2.0,
+          "who": "liege"
+        },
+        {
+          "type": "enable",
+          "action": "back_claimant",
+          "who": "head"
+        }
+      ],
+      "note": "계약 중 고용주(liege) 나라 수장의 암살 방어 2배: 03번 암살 요구 크기(대상 경비) × 2. 대장이 승계 분쟁에서 후보를 지지해 병력을 15번 S6 힘에 더한다"
+    },
+    {
+      "id": "merc.merc_dynasty",
+      "name": "용병 가문",
+      "kind": "계약 원칙",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.consecutive_heads_same_dynasty",
+          "op": ">=",
+          "value": 2
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "충직"
+      ],
+      "dislikes": [
+        "야심"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.succession_rule_allowed",
+          "op": "set",
+          "value": true,
+          "arg": "장자"
+        },
+        {
+          "type": "mod",
+          "var": "group.loyalty_carryover",
+          "op": "set",
+          "value": 1.0
+        }
+      ],
+      "note": "승계 슬롯에 장자를 허용한다(고정하지 않음). 대장 자녀가 이으면 단원 호감을 그대로 넘겨받고 새 수장 첫 1년 충성 -10이 없다"
+    },
+    {
+      "id": "order.poverty",
+      "name": "청빈",
+      "kind": "서약",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "독실",
+        "절제"
+      ],
+      "dislikes": [
+        "탐욕"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "hold_private_property",
+          "status": "forbidden",
+          "severity": 40,
+          "who": "knights"
+        },
+        {
+          "type": "mod",
+          "var": "group.treasury_income",
+          "op": "mul",
+          "value": 2.0
+        }
+      ],
+      "note": "기사 개인 재산 보유는 기사단 범죄(심각도 40). 기사 몫이 금고로 들어가 금고 수입 2배"
+    },
+    {
+      "id": "order.celibacy",
+      "name": "독신 서약",
+      "kind": "서약",
+      "tier": "기본",
+      "exclusive": [
+        "order.hereditary_knights"
+      ],
+      "likes": [
+        "독실",
+        "절제"
+      ],
+      "dislikes": [
+        "색욕"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "marry",
+          "status": "forbidden",
+          "severity": 40,
+          "who": "knights"
+        },
+        {
+          "type": "norm",
+          "behavior": "premarital_sex",
+          "status": "forbidden",
+          "severity": 30,
+          "who": "knights"
+        },
+        {
+          "type": "mod",
+          "var": "econ.inheritance_tax",
+          "op": "set",
+          "value": 1.0,
+          "who": "knights"
+        },
+        {
+          "type": "mod",
+          "var": "group.secret_weight",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "사생아",
+          "who": "knights"
+        }
+      ],
+      "note": "기사 혼인, 관계 금지. 기사 유산 전부 기사단 금고로(상속세 1.0)라 재산이 흩어지지 않는다. 기사의 사생아는 서약 위반 증거라 비밀 무게 1.5배(40 → 60)"
+    },
+    {
+      "id": "order.hereditary_knights",
+      "name": "세습 기사",
+      "kind": "서약",
+      "tier": "기본",
+      "exclusive": [
+        "order.celibacy"
+      ],
+      "likes": [
+        "충직",
+        "야심"
+      ],
+      "dislikes": [
+        "독실"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.knight_hereditary",
+          "op": "set",
+          "value": true
+        },
+        {
+          "type": "mod",
+          "var": "group.succession_rule_allowed",
+          "op": "set",
+          "value": true,
+          "arg": "장자"
+        }
+      ],
+      "note": "기사의 맏아들이 기사 자격을 잇는다. 장비 상속과 부자 훈련(14번 9-5)이 겹쳐 기사 가문이 생긴다. 기사단장 승계 슬롯에 장자 허용"
+    },
+    {
+      "id": "order.pilgrim_protection",
+      "name": "순례자 보호",
+      "kind": "서약",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "독실",
+        "관대"
+      ],
+      "dislikes": [
+        "냉소"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "land.bandit_spawn",
+          "op": "mul",
+          "value": 0.5,
+          "who": "region_land",
+          "if": [
+            "trade_route"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "land.bandit_spawn",
+          "op": "mul",
+          "value": 0.5,
+          "who": "region_land",
+          "if": [
+            "sacred_site"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "group.relation",
+          "op": "add",
+          "value": 10,
+          "arg": "교단"
+        }
+      ],
+      "note": "기사단 토지 반경 3셀 안 교역로, 성지의 도적 출몰 -50%. 교단 관계 +10(보통)"
+    },
+    {
+      "id": "order.heathen_crusade",
+      "name": "이교도 토벌",
+      "kind": "서약",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "독실",
+        "용감"
+      ],
+      "dislikes": [
+        "관용",
+        "자비"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.combat",
+          "op": "mul",
+          "value": 1.2,
+          "if": [
+            "other_religion"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "group.hostility",
+          "op": "mul",
+          "value": 1.25,
+          "arg": "이교도"
+        }
+      ],
+      "note": "상대가 다른 종교일 때 집단 전투력 1.2배. 토벌이라 이교도 적대 의지 1.25배(보통)"
+    },
+    {
+      "id": "order.commoner_knighting",
+      "name": "평민 서임",
+      "kind": "서약",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "관대",
+        "야심"
+      ],
+      "dislikes": [
+        "만족"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "knight",
+          "who": "head",
+          "if": [
+            "is_commoner"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "group.loyalty",
+          "op": "add",
+          "value": 10,
+          "who": "commoners"
+        },
+        {
+          "type": "opinion",
+          "from": "nobles",
+          "to": "head",
+          "value": -10
+        },
+        {
+          "type": "opinion",
+          "from": "outsiders",
+          "to": "head",
+          "value": -10,
+          "if": [
+            "is_noble"
+          ]
+        }
+      ],
+      "note": "기사단장이 평민도 서임할 수 있다(서임되면 하급 귀족, 정통성 +20은 10번 5절 고유 기능). 평민 구성원 충성 +10, 귀족 호감 -10(보통)"
+    },
+    {
+      "id": "order.order_domain",
+      "name": "기사단령",
+      "kind": "서약",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.knights",
+          "op": ">=",
+          "value": 30
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "야심",
+        "근면"
+      ],
+      "dislikes": [
+        "절제"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.can_hold_land",
+          "op": "set",
+          "value": true
+        },
+        {
+          "type": "mod",
+          "var": "group.can_build",
+          "op": "set",
+          "value": true
+        }
+      ],
+      "note": "기사단 명의로 토지를 보유하고 14번 7-4 소작 계약으로 소작농을 둔다. 시설 건설 가능"
+    },
+    {
+      "id": "order.order_treasury",
+      "name": "기사단 금고",
+      "kind": "서약",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.treasury",
+          "op": ">=",
+          "value": 3000
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "탐욕",
+        "야심"
+      ],
+      "dislikes": [
+        "독실"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "lend",
+          "who": "head"
+        },
+        {
+          "type": "mod",
+          "var": "group.vote_weight",
+          "op": "add",
+          "value": 0.1,
+          "arg": "나라",
+          "if": [
+            "owes_this_group"
+          ]
+        }
+      ],
+      "note": "상단처럼 대여(14번 7-3). 빚진 나라의 입법 투표 지분 +10%: 04번 6절의 안건 제출 기준 5%를 넘는 채권자 지위"
+    },
+    {
+      "id": "order.chivalry",
+      "name": "기사도",
+      "kind": "서약",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.members_with_history",
+          "arg": "결투 승자",
+          "op": ">=",
+          "value": 5
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "용감",
+        "정직"
+      ],
+      "dislikes": [
+        "겁많음"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.prestige",
+          "op": "add",
+          "value": 10
+        },
+        {
+          "type": "enable",
+          "action": "proxy_duel",
+          "who": "knights"
+        }
+      ],
+      "note": "명성 연 +10(보통). 기사가 결투 재판에서 대리 결투를 맡을 수 있다"
+    },
+    {
+      "id": "order.relic_guardian",
+      "name": "성유물 수호",
+      "kind": "서약",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.relics",
+          "op": ">=",
+          "value": 1
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "독실"
+      ],
+      "dislikes": [
+        "냉소"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 20,
+          "who": "members",
+          "if": [
+            "is_clergy"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "group.slots",
+          "op": "add",
+          "value": 1,
+          "who": "liege",
+          "if": [
+            "liege_type:교단"
+          ]
+        }
+      ],
+      "note": "구성원이 사제를 상대로 하는 판정 +20. 공인 주체가 교단이면 그 교단의 교리 슬롯 +1"
+    },
+    {
+      "id": "order.independent_order",
+      "name": "독립 기사단",
+      "kind": "서약",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.has_trait",
+          "arg": "order.order_domain",
+          "op": "==",
+          "value": 1
+        },
+        {
+          "metric": "group.lands",
+          "op": ">=",
+          "value": 3
+        },
+        {
+          "metric": "liege.concentration",
+          "op": "<",
+          "value": 0.3
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "야심",
+        "용감"
+      ],
+      "dislikes": [
+        "충직"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "secede",
+          "who": "head"
+        }
+      ],
+      "note": "기사단장이 분리 독립을 실행하면 공인 주체에서 독립해 나라가 될 수 있다. 기사단령 3곳은 기사단령 보유 + 토지 3셀로 본다"
+    },
+    {
+      "id": "revolt.tax_relief",
+      "name": "세금 감면",
+      "kind": "요구",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "탐욕",
+        "만족"
+      ],
+      "dislikes": [
+        "야심"
+      ],
+      "applies": "on_victory",
+      "duration_years": 5,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "econ.land_tax",
+          "op": "mul",
+          "value": 0.5
+        },
+        {
+          "type": "mod",
+          "var": "econ.poll_tax",
+          "op": "mul",
+          "value": 0.5
+        },
+        {
+          "type": "mod",
+          "var": "econ.corvee_days",
+          "op": "mul",
+          "value": 0.5
+        }
+      ],
+      "note": "승리 시 대상 나라에 입법 절차 없이 적용(법 단계, 가장 나중에 채택한 것으로 침). 범위는 대상 나라 기준(group = 대상 나라, head = 대상 나라 수장). repeals의 법은 폐지. 토지세, 인두세, 부역 절반, 5년"
+    },
+    {
+      "id": "revolt.punish_official",
+      "name": "특정 인물 처벌",
+      "kind": "요구",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "복수심",
+        "잔인"
+      ],
+      "dislikes": [
+        "자비",
+        "관용"
+      ],
+      "applies": "on_victory",
+      "effects": [
+        {
+          "type": "enable",
+          "action": "punish_named",
+          "who": "head"
+        }
+      ],
+      "note": "승리 시 대상 나라에 입법 절차 없이 적용(법 단계, 가장 나중에 채택한 것으로 침). 범위는 대상 나라 기준(group = 대상 나라, head = 대상 나라 수장). repeals의 법은 폐지. 대상 나라 수장이 봉기군이 지목한 인물(대개 관리)을 처형하거나 추방한다. 승리 즉시 1회 실행"
+    },
+    {
+      "id": "revolt.serf_emancipation",
+      "name": "농노 해방",
+      "kind": "요구",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "자비",
+        "관대"
+      ],
+      "dislikes": [
+        "탐욕"
+      ],
+      "applies": "on_victory",
+      "repeals": [
+        "law.serfdom"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "demo.serf_bound",
+          "op": "set",
+          "value": false
+        },
+        {
+          "type": "mod",
+          "var": "econ.rent_cap",
+          "op": "set",
+          "value": 0.5
+        },
+        {
+          "type": "mod",
+          "var": "econ.corvee_days",
+          "op": "set",
+          "value": 0
+        },
+        {
+          "type": "disable",
+          "action": "corvee",
+          "who": "head"
+        },
+        {
+          "type": "norm",
+          "behavior": "serf_flight",
+          "status": "allowed",
+          "severity": 0,
+          "who": "serfs"
+        }
+      ],
+      "note": "승리 시 대상 나라에 입법 절차 없이 적용(법 단계, 가장 나중에 채택한 것으로 침). 범위는 대상 나라 기준(group = 대상 나라, head = 대상 나라 수장). repeals의 법은 폐지. 농노제 폐지: 이주 금지 해제, 소작료 상한 70% → 50%(08번 농노제의 반대), 부역 0과 부역 부과 불가, 소작농 이주가 범죄가 아니다"
+    },
+    {
+      "id": "revolt.slave_emancipation",
+      "name": "노예 해방",
+      "kind": "요구",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "자비",
+        "관대"
+      ],
+      "dislikes": [
+        "탐욕",
+        "잔인"
+      ],
+      "applies": "on_victory",
+      "repeals": [
+        "law.slavery",
+        "law.debt_slavery"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "demo.emancipate_all",
+          "op": "set",
+          "value": true
+        },
+        {
+          "type": "norm",
+          "behavior": "own_slaves",
+          "status": "forbidden",
+          "severity": 40,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "enslave_coreligionist",
+          "status": "forbidden",
+          "severity": 40,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "enslave_heathen",
+          "status": "forbidden",
+          "severity": 40,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "debt_slavery",
+          "status": "forbidden",
+          "severity": 40,
+          "who": "members"
+        },
+        {
+          "type": "disable",
+          "action": "slave_trade",
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "demo.slave_offspring_free",
+          "op": "set",
+          "value": true
+        },
+        {
+          "type": "mod",
+          "var": "group.loyalty",
+          "op": "add",
+          "value": 30,
+          "who": "members",
+          "if": [
+            "has_history:해방노예"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "rel.grievance_to_head",
+          "op": "add",
+          "value": 30,
+          "who": "members",
+          "if": [
+            "owns_slaves"
+          ]
+        }
+      ],
+      "note": "승리 시 대상 나라에 입법 절차 없이 적용(법 단계, 가장 나중에 채택한 것으로 침). 범위는 대상 나라 기준(group = 대상 나라, head = 대상 나라 수장). repeals의 법은 폐지. 노예제 폐지와 즉시 해방. 노예 소유, 노예화, 채무 노예는 나라 범죄(심각도 40, law.abolition과 같음), 노예 매매 불가, 노예 자녀는 자유민. 해방민 충성 +30, 노예주 원한 +30은 08번 노예 해방령 수치"
+    },
+    {
+      "id": "revolt.religious_freedom",
+      "name": "종교 자유",
+      "kind": "요구",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "관용",
+        "냉소"
+      ],
+      "dislikes": [
+        "독실"
+      ],
+      "applies": "on_victory",
+      "repeals": [
+        "law.state_religion"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.heathen_loyalty_penalty",
+          "op": "set",
+          "value": false
+        },
+        {
+          "type": "mod",
+          "var": "group.state_religion_doctrines",
+          "op": "set",
+          "value": 0
+        },
+        {
+          "type": "norm",
+          "behavior": "apostasy",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        },
+        {
+          "type": "disable",
+          "action": "inquisition",
+          "who": "head"
+        }
+      ],
+      "note": "승리 시 대상 나라에 입법 절차 없이 적용(법 단계, 가장 나중에 채택한 것으로 침). 범위는 대상 나라 기준(group = 대상 나라, head = 대상 나라 수장). repeals의 법은 폐지. 08번 종교 관용 법: 이교도 국민 충성 감소 없음. 국교와 배타라 국교 교리 국내 효력 0. 배교가 나라 범죄가 아니고 종교재판 불가"
+    },
+    {
+      "id": "revolt.abdication",
+      "name": "수장 퇴위",
+      "kind": "요구",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.members",
+          "op": ">=",
+          "value": 200
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "야심",
+        "복수심"
+      ],
+      "dislikes": [
+        "충직"
+      ],
+      "applies": "on_victory",
+      "effects": [
+        {
+          "type": "enable",
+          "action": "abdicate",
+          "who": "head"
+        }
+      ],
+      "note": "승리 시 대상 나라에 입법 절차 없이 적용(법 단계, 가장 나중에 채택한 것으로 침). 범위는 대상 나라 기준(group = 대상 나라, head = 대상 나라 수장). repeals의 법은 폐지. 대상 나라 수장이 물러나고 요구에 지정한 후보가 수장이 된다. 승리 즉시 1회 실행. 새 수장 시작 정통성은 15번 4-4(찬탈 25)"
+    },
+    {
+      "id": "revolt.independence",
+      "name": "독립",
+      "kind": "요구",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.share_of_population",
+          "op": ">=",
+          "value": 0.5
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "야심",
+        "용감"
+      ],
+      "dislikes": [
+        "충직"
+      ],
+      "applies": "on_victory",
+      "effects": [
+        {
+          "type": "enable",
+          "action": "secede",
+          "who": "head"
+        }
+      ],
+      "note": "승리 시 적용. 이 요구만 봉기군 수장이 실행한다: 가담자가 사는 지역을 들고 분리 독립해 나라 또는 자치 도시가 된다. 승리 즉시 1회 실행"
+    },
+    {
+      "id": "revolt.abolish_noble_privilege",
+      "name": "귀족 특권 폐지",
+      "kind": "요구",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.commoner_share",
+          "op": ">=",
+          "value": 0.9
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "정직",
+        "야심"
+      ],
+      "dislikes": [
+        "만족"
+      ],
+      "applies": "on_victory",
+      "repeals": [
+        "law.noble_privilege",
+        "law.class_system"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "group.noble_punishment_step",
+          "op": "set",
+          "value": 0
+        },
+        {
+          "type": "mod",
+          "var": "group.status_rigid",
+          "op": "set",
+          "value": false
+        },
+        {
+          "type": "mod",
+          "var": "econ.land_tax_exempt",
+          "op": "set",
+          "value": 0.0,
+          "who": "nobles"
+        },
+        {
+          "type": "mod",
+          "var": "group.loyalty",
+          "op": "add",
+          "value": 10,
+          "who": "commoners"
+        },
+        {
+          "type": "mod",
+          "var": "group.loyalty",
+          "op": "add",
+          "value": -15,
+          "who": "nobles"
+        }
+      ],
+      "note": "승리 시 대상 나라에 입법 절차 없이 적용(법 단계, 가장 나중에 채택한 것으로 침). 범위는 대상 나라 기준(group = 대상 나라, head = 대상 나라 수장). repeals의 법은 폐지. 08번 법 앞의 평등: 귀족 형벌 경감 0, 신분 고정 해제, 귀족 필지 토지세 면제(15번 2-6) 0. 평민 충성 +10, 귀족 -15"
+    },
+    {
+      "id": "revolt.no_looting",
+      "name": "약탈 금지",
+      "kind": "요구",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "자비",
+        "정직"
+      ],
+      "dislikes": [
+        "탐욕",
+        "잔인"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "harm_weak",
+          "status": "forbidden",
+          "severity": 40,
+          "who": "members"
+        },
+        {
+          "type": "opinion",
+          "from": "residents",
+          "to": "head",
+          "value": 10
+        }
+      ],
+      "note": "행동 규범. 농민, 빈민 약탈은 봉기군 범죄(심각도 40). 봉기군 토지 주민의 선동자 호감 +10(보통)"
+    },
+    {
+      "id": "revolt.blood_purge",
+      "name": "피의 숙청",
+      "kind": "요구",
+      "tier": "기본",
+      "exclusive": [],
+      "likes": [
+        "잔인",
+        "복수심"
+      ],
+      "dislikes": [
+        "자비",
+        "관용"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "murder",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members",
+          "if": [
+            "is_noble"
+          ]
+        },
+        {
+          "type": "norm",
+          "behavior": "kill_captive",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members",
+          "if": [
+            "is_noble"
+          ]
+        },
+        {
+          "type": "ai",
+          "action": "murder",
+          "weight": 2.0,
+          "who": "members",
+          "if": [
+            "is_noble"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "group.growth",
+          "op": "mul",
+          "value": 1.3
+        },
+        {
+          "type": "opinion",
+          "from": "outsiders",
+          "to": "head",
+          "value": -30,
+          "if": [
+            "is_noble"
+          ]
+        }
+      ],
+      "note": "행동 규범. 귀족 살해, 귀족 포로 살해가 봉기군 범죄가 아니고 효용 2배. 가담 속도 1.3배(보통). 귀족의 선동자 호감 -30(큼). 피해 가문 원한은 05, 09번 규칙대로 따로 쌓여 승리 뒤에도 남는다"
+    }
+  ]
+}
