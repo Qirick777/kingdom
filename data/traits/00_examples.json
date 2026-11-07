@@ -1,0 +1,515 @@
+{
+  "proposed": {},
+  "traits": [
+    {
+      "id": "pers.honest",
+      "name": "정직",
+      "kind": "성격",
+      "tier": "없음",
+      "pair": "기만",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.norm_internalization",
+          "op": "add",
+          "value": 0.2
+        },
+        {
+          "type": "mod",
+          "var": "ai.moral",
+          "op": "mul",
+          "value": 2.5
+        },
+        {
+          "type": "mod",
+          "var": "ai.expose",
+          "op": "mul",
+          "value": 1.3
+        },
+        {
+          "type": "mod",
+          "var": "ai.bribe_accept",
+          "op": "add",
+          "value": -15
+        },
+        {
+          "type": "mod",
+          "var": "char.deceive",
+          "op": "set",
+          "value": 0.0
+        },
+        {
+          "type": "mod",
+          "var": "ai.leak",
+          "op": "mul",
+          "value": 1.3
+        }
+      ],
+      "note": "15번 S3 도덕 배수 2.5, 05번 발설 배수 1.3, 03번 뇌물 거절. 거짓말을 못 한다"
+    },
+    {
+      "id": "pers.deceitful",
+      "name": "기만",
+      "kind": "성격",
+      "tier": "없음",
+      "pair": "정직",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.norm_internalization",
+          "op": "add",
+          "value": -0.2
+        },
+        {
+          "type": "mod",
+          "var": "ai.moral",
+          "op": "mul",
+          "value": 0.8
+        },
+        {
+          "type": "mod",
+          "var": "ai.leak",
+          "op": "mul",
+          "value": 0.8
+        },
+        {
+          "type": "mod",
+          "var": "char.deceive",
+          "op": "add",
+          "value": 0.2
+        },
+        {
+          "type": "ai",
+          "action": "embezzle",
+          "weight": 1.5
+        },
+        {
+          "type": "ai",
+          "action": "forgery",
+          "weight": 1.5
+        }
+      ],
+      "note": "15번 S3 도덕 배수 0.8, 05번 발설 배수 0.8"
+    },
+    {
+      "id": "gene.fertile",
+      "name": "다산",
+      "kind": "형질",
+      "tier": "없음",
+      "genetics": {
+        "dominance": "우성",
+        "carrier_freq": 0.05
+      },
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.conception",
+          "op": "mul",
+          "value": 1.5
+        }
+      ],
+      "note": "01번 3절. 쌍둥이 확률은 임신 1회당 3%로 일반(1%)의 3배"
+    },
+    {
+      "id": "talent.rhetoric",
+      "name": "화술",
+      "kind": "재능",
+      "tier": "없음",
+      "skill": "언변",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "언변"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 20,
+          "arg": "언변"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "설득"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "칭찬"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "지지 요청"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "반란 선동"
+        },
+        {
+          "type": "mod",
+          "var": "char.deceive",
+          "op": "add",
+          "value": 0.3
+        }
+      ],
+      "genius_effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "언변"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 30,
+          "arg": "언변"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "설득"
+        },
+        {
+          "type": "enable",
+          "action": "feast",
+          "who": "self"
+        }
+      ],
+      "note": "천재는 재능 효과에 더해진다(습득 2 × 1.5 = 3배, 최대치 150). 연설은 연회 행동을 군중 설득으로 쓴다"
+    },
+    {
+      "id": "doctrine.monogamy",
+      "name": "일부일처",
+      "kind": "교리",
+      "tier": "기본",
+      "exclusive": [
+        "doctrine.polygyny",
+        "doctrine.polyandry",
+        "doctrine.free_love"
+      ],
+      "likes": [
+        "정직",
+        "절제"
+      ],
+      "dislikes": [
+        "색욕"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "multiple_wives",
+          "status": "forbidden",
+          "severity": 30,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "multiple_husbands",
+          "status": "forbidden",
+          "severity": 30,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "concubinage",
+          "status": "forbidden",
+          "severity": 25,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "adultery",
+          "status": "forbidden",
+          "severity": 30,
+          "who": "members"
+        }
+      ],
+      "note": "위반은 교단 범죄. 비밀 무게 × 1.5(05번)"
+    },
+    {
+      "id": "doctrine.sacred_union",
+      "name": "성혼",
+      "kind": "교리",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "head.skill",
+          "arg": "신학",
+          "op": ">=",
+          "value": 50
+        },
+        {
+          "metric": "group.has_trait",
+          "arg": "doctrine.miracle_worship",
+          "op": "==",
+          "value": 1,
+          "keep": true
+        }
+      ],
+      "exclusive": [],
+      "likes": [
+        "독실",
+        "색욕"
+      ],
+      "dislikes": [
+        "정직",
+        "냉소",
+        "복수심"
+      ],
+      "effects": [
+        {
+          "type": "enable",
+          "action": "sacred_union",
+          "who": "head"
+        },
+        {
+          "type": "justify",
+          "behavior": "multiple_wives",
+          "holder": "head",
+          "value": 0.7,
+          "who": "members"
+        },
+        {
+          "type": "justify",
+          "behavior": "concubinage",
+          "holder": "head",
+          "value": 0.7,
+          "who": "members"
+        },
+        {
+          "type": "justify",
+          "behavior": "adultery",
+          "holder": "head",
+          "value": 0.7,
+          "who": "members"
+        },
+        {
+          "type": "justify",
+          "behavior": "sex_among_believers",
+          "holder": "head",
+          "value": 0.7,
+          "who": "members"
+        },
+        {
+          "type": "opinion",
+          "from": "members",
+          "to": "head",
+          "value": 5,
+          "if": [
+            "has_personality:독실"
+          ]
+        }
+      ],
+      "note": "16번 3-5. 규범은 그대로 두고 교주의 위반에만 정당화 0.7. 피해 배우자의 개인 원한은 남는다. 범위를 사제로 넓히려면 holder를 clergy로 한 효과를 추가 채택"
+    },
+    {
+      "id": "doctrine.infallible_leader",
+      "name": "교주 무오류",
+      "kind": "교리",
+      "tier": "해금",
+      "unlock": [
+        {
+          "metric": "group.has_trait",
+          "arg": "doctrine.miracle_worship",
+          "op": "==",
+          "value": 1,
+          "keep": true
+        },
+        {
+          "metric": "group.followers",
+          "op": ">=",
+          "value": 300
+        },
+        {
+          "metric": "group.miracles",
+          "op": ">=",
+          "value": 2
+        }
+      ],
+      "exclusive": [
+        "doctrine.elected_leader"
+      ],
+      "likes": [
+        "독실",
+        "충직"
+      ],
+      "dislikes": [
+        "냉소",
+        "정직",
+        "야심"
+      ],
+      "effects": [
+        {
+          "type": "justify",
+          "behavior": "*",
+          "holder": "head",
+          "value": 0.8,
+          "who": "members"
+        },
+        {
+          "type": "mod",
+          "var": "group.faction_rate",
+          "op": "mul",
+          "value": 0.5
+        },
+        {
+          "type": "mod",
+          "var": "group.legitimacy",
+          "op": "add",
+          "value": 20
+        },
+        {
+          "type": "mod",
+          "var": "char.norm_internalization",
+          "op": "add",
+          "value": -0.2,
+          "who": "members",
+          "if": [
+            "has_personality:냉소"
+          ]
+        }
+      ],
+      "note": "교주의 모든 위반에 정당화 0.8. 냉소 신도는 오히려 등을 돌린다(내면화 낮아짐 = 교단 규범 자체를 덜 따름). 교주가 바뀌어도 유지되므로 무능한 후계자도 보호한다"
+    },
+    {
+      "id": "law.polygamy",
+      "name": "일부다처법",
+      "kind": "법",
+      "tier": "기본",
+      "exclusive": [
+        "law.monogamy"
+      ],
+      "likes": [
+        "색욕",
+        "야심"
+      ],
+      "dislikes": [
+        "정직",
+        "절제"
+      ],
+      "effects": [
+        {
+          "type": "norm",
+          "behavior": "multiple_wives",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        },
+        {
+          "type": "norm",
+          "behavior": "concubinage",
+          "status": "allowed",
+          "severity": 0,
+          "who": "members"
+        },
+        {
+          "type": "opinion",
+          "from": "women",
+          "to": "head",
+          "value": -5
+        }
+      ],
+      "note": "범위 [왕족만]으로 걸면 norm의 who를 head_family로 바꾸고, 나머지 구성원에는 forbidden 규범이 남는다. 이때 04번 3-1과 16번 3-4의 불공정 비용이 생긴다"
+    },
+    {
+      "id": "band.equal_share",
+      "name": "균등 분배",
+      "kind": "규율",
+      "tier": "기본",
+      "exclusive": [
+        "band.chief_takes_all"
+      ],
+      "likes": [
+        "관대",
+        "충직"
+      ],
+      "dislikes": [
+        "탐욕",
+        "야심"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "econ.share_split",
+          "op": "set",
+          "value": 0.0,
+          "who": "group"
+        },
+        {
+          "type": "mod",
+          "var": "group.loyalty",
+          "op": "add",
+          "value": 10
+        },
+        {
+          "type": "mod",
+          "var": "group.desertion",
+          "op": "mul",
+          "value": 0.8
+        }
+      ],
+      "note": "약탈품 수장 몫 0. 두목의 재산이 늘지 않아 정착(14번 8-2)에 쓸 금고가 느리게 찬다"
+    },
+    {
+      "id": "band.chief_takes_all",
+      "name": "두목 독식",
+      "kind": "규율",
+      "tier": "기본",
+      "exclusive": [
+        "band.equal_share"
+      ],
+      "likes": [
+        "야심",
+        "잔인"
+      ],
+      "dislikes": [
+        "관대",
+        "탐욕"
+      ],
+      "effects": [
+        {
+          "type": "mod",
+          "var": "econ.share_split",
+          "op": "set",
+          "value": 0.5,
+          "who": "group"
+        },
+        {
+          "type": "mod",
+          "var": "group.loyalty",
+          "op": "add",
+          "value": -10,
+          "if": [
+            "has_personality:탐욕"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "group.desertion",
+          "op": "mul",
+          "value": 1.2
+        }
+      ],
+      "note": "약탈품 50%가 두목에게. 탐욕 부하 충성 -10은 조건부"
+    }
+  ]
+}
