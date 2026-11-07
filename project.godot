@@ -1,0 +1,26 @@
+; Godot 4.4 프로젝트 설정
+
+config_version=5
+
+[application]
+
+config/name="Kingdom"
+config/description="혈통과 가문의 2.5D 왕조 시뮬레이션"
+run/main_scene="res://scenes/viewers/person_viewer.tscn"
+config/features=PackedStringArray("4.4", "GL Compatibility")
+
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+
+[editor_plugins]
+
+enabled=PackedStringArray()
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/canvas_textures/default_texture_filter=0
+anti_aliasing/quality/msaa_3d=0
