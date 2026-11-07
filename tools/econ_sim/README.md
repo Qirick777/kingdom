@@ -39,3 +39,19 @@ python3 batch.py A 장자 A_tax D 고리금지 상급 장자우대 분재없음
 ## 결과 기록
 
 최근 결과는 `results.txt`에 있다. 설계 문서 14_property_and_class.md 15절에 정리했다.
+
+# 승계 시뮬레이터
+
+15_house_tax_inheritance.md 4절의 승계 규칙 장단점을 공통 메커니즘(S1~S7)으로 검증한다.
+
+```bash
+python3 succ_sim.py --runs 200
+```
+
+하렘(수장 배우자 4명) 비교:
+
+```bash
+python3 succ_sim.py --runs 100 --wives 4 --rule 장자,분할,지명,연장자,신탁
+```
+
+결과: `succ_results.txt`, `succ_results_harem.txt`. 규칙 하나당 200년 x 200회에 약 1분 걸린다.

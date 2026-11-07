@@ -31,6 +31,7 @@ C = dict(
     vassal_domain=(5.0, 15.0),
     tribute=0.2,              # 봉신 공납 비율
     birth_p=0.25,             # 혼인한 여성 연 출산 확률
+    ruler_wives=1,            # 수장 배우자 수 (하렘 루트 검증용)
     cadet_birth=0.7,          # 땅 없는 방계의 출산 배수
     tenure_cap=25,            # 직위 가치 계산의 최대 재위 연수
     # 암살
@@ -444,10 +445,12 @@ class Sim:
             bp = self.c["birth_p"]
             if p.domain == 0 and p.id != self.ruler:
                 bp *= self.c["cadet_birth"]
-            if rng.random() < bp:
-                k = self.new(rng.random() < 0.5, self.year, p.dyn, p.id)
-                k.r = p.r / 2
-                k.in_realm = p.in_realm
+            draws = self.c["ruler_wives"] if p.id == self.ruler else 1
+            for _ in range(draws):
+                if rng.random() < bp:
+                    k = self.new(rng.random() < 0.5, self.year, p.dyn, p.id)
+                    k.r = p.r / 2
+                    k.in_realm = p.in_realm
 
     def vassal_heirs(self):
         pass   # kill()에서 처리
@@ -810,7 +813,7 @@ class Sim:
         return m
 
 
-def compare(runs, rules, years):
+def compare(runs, rules, years, **kw):
     keys = [("succ", "승계 수", "{:.1f}"), ("disputed", "내전 승계", "{:.2f}"),
             ("attempts", "암살 시도", "{:.2f}"), ("murders", "암살 성공", "{:.2f}"),
             ("fratricide", "형제 살해", "{:.2f}"), ("patricide", "부친 살해", "{:.2f}"),
@@ -825,7 +828,7 @@ def compare(runs, rules, years):
     for rule in rules:
         acc = {}
         for sd in range(runs):
-            m = Sim(rule, sd, years=years).run()
+            m = Sim(rule, sd, years=years, **kw).run()
             for k, _, _ in keys:
                 acc[k] = acc.get(k, 0) + m[k]
         res[rule] = {k: v / runs for k, v in acc.items()}
@@ -841,10 +844,11 @@ def main():
     ap.add_argument("--runs", type=int, default=200)
     ap.add_argument("--years", type=int, default=200)
     ap.add_argument("--rule", default=None)
+    ap.add_argument("--wives", type=int, default=1)
     a = ap.parse_args()
-    rules = [a.rule] if a.rule else RULES
-    print(f"규칙별 평균 ({a.runs}회 x {a.years}년)")
-    compare(a.runs, rules, a.years)
+    rules = a.rule.split(",") if a.rule else RULES
+    print(f"규칙별 평균 ({a.runs}회 x {a.years}년, 수장 배우자 {a.wives}명)")
+    compare(a.runs, rules, a.years, ruler_wives=a.wives)
 
 
 if __name__ == "__main__":
