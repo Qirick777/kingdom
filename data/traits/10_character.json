@@ -1,0 +1,4002 @@
+{
+  "proposed": {},
+  "traits": [
+    {
+      "id": "pers.brave",
+      "name": "용감",
+      "kind": "성격",
+      "tier": "없음",
+      "pair": "겁많음",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "ai.join_combat",
+          "op": "mul",
+          "value": 1.5
+        },
+        {
+          "type": "mod",
+          "var": "char.fear_resist",
+          "op": "add",
+          "value": 15
+        },
+        {
+          "type": "mod",
+          "var": "ai.occupation",
+          "op": "add",
+          "value": 20,
+          "arg": "병사"
+        },
+        {
+          "type": "mod",
+          "var": "ai.occupation",
+          "op": "add",
+          "value": 20,
+          "arg": "도적"
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": 5,
+          "if": [
+            "has_personality:용감"
+          ]
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": -10,
+          "if": [
+            "has_personality:겁많음"
+          ]
+        }
+      ],
+      "note": "전투 참여를 1.5배로 받아들이고 위협 저항에 03번 2절 성격 보정 +15를 받는다. 14번 7-1 병사·도적 생업 효용에 곡식 20/년(자영농 2필지 순수확 104의 약 20%)을 더한다."
+    },
+    {
+      "id": "pers.craven",
+      "name": "겁많음",
+      "kind": "성격",
+      "tier": "없음",
+      "pair": "용감",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "ai.join_combat",
+          "op": "mul",
+          "value": 0.5
+        },
+        {
+          "type": "mod",
+          "var": "char.fear_resist",
+          "op": "add",
+          "value": -15
+        },
+        {
+          "type": "mod",
+          "var": "ai.occupation",
+          "op": "add",
+          "value": -20,
+          "arg": "병사"
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": 5,
+          "if": [
+            "has_personality:겁많음"
+          ]
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": -10,
+          "if": [
+            "has_personality:용감"
+          ]
+        }
+      ],
+      "note": "전투 참여를 절반으로 받아들이고 위협에 03번 2절 성격 보정 -15로 약하다. 14번 7-1 병사 생업 효용에서 곡식 20/년을 뺀다."
+    },
+    {
+      "id": "pers.greedy",
+      "name": "탐욕",
+      "kind": "성격",
+      "tier": "없음",
+      "pair": "관대",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "ai.gain",
+          "op": "mul",
+          "value": 1.2
+        },
+        {
+          "type": "mod",
+          "var": "ai.moral",
+          "op": "mul",
+          "value": 0.9
+        },
+        {
+          "type": "mod",
+          "var": "ai.bribe_accept",
+          "op": "add",
+          "value": 15
+        },
+        {
+          "type": "mod",
+          "var": "ai.blackmail",
+          "op": "mul",
+          "value": 2.0
+        },
+        {
+          "type": "mod",
+          "var": "ai.sell_secret",
+          "op": "mul",
+          "value": 2.0
+        },
+        {
+          "type": "ai",
+          "action": "embezzle",
+          "weight": 1.5
+        },
+        {
+          "type": "mod",
+          "var": "ai.occupation",
+          "op": "add",
+          "value": 20,
+          "arg": "상인"
+        },
+        {
+          "type": "mod",
+          "var": "ai.occupation",
+          "op": "add",
+          "value": 20,
+          "arg": "대금업"
+        },
+        {
+          "type": "mod",
+          "var": "ai.surplus_use",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "대여"
+        },
+        {
+          "type": "mod",
+          "var": "ai.surplus_use",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "땅매입"
+        },
+        {
+          "type": "mod",
+          "var": "ai.goal",
+          "op": "set",
+          "value": 1,
+          "arg": "재산"
+        },
+        {
+          "type": "mod",
+          "var": "ai.emigrate",
+          "op": "mul",
+          "value": 1.3
+        },
+        {
+          "type": "mod",
+          "var": "ai.tax_horizon",
+          "op": "set",
+          "value": 1
+        },
+        {
+          "type": "mod",
+          "var": "ai.clear_extra",
+          "op": "add",
+          "value": 2
+        },
+        {
+          "type": "mod",
+          "var": "ai.house_payback",
+          "op": "set",
+          "value": 6
+        },
+        {
+          "type": "mod",
+          "var": "char.succession_candidate",
+          "op": "set",
+          "value": true,
+          "if": [
+            "succession_rule:공개 선출"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "ai.rule_weight",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "영토"
+        },
+        {
+          "type": "mod",
+          "var": "ai.rule_weight",
+          "op": "mul",
+          "value": 0.6,
+          "arg": "혈통"
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": 5,
+          "if": [
+            "has_personality:탐욕"
+          ]
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": -10,
+          "if": [
+            "has_personality:관대"
+          ]
+        }
+      ],
+      "note": "15번 S2 직위 가치 1.2, S3 도덕 0.9, 03번 뇌물 +15, 05번 협박·거래 가중 2(16번 5절 매우 큼). 분배 규율 반응은 규율 특성의 likes/dislikes가 맡는다."
+    },
+    {
+      "id": "pers.generous",
+      "name": "관대",
+      "kind": "성격",
+      "tier": "없음",
+      "pair": "탐욕",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "ai.moral",
+          "op": "mul",
+          "value": 2.0
+        },
+        {
+          "type": "mod",
+          "var": "ai.bribe_accept",
+          "op": "add",
+          "value": -15
+        },
+        {
+          "type": "mod",
+          "var": "ai.surplus_use",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "연회"
+        },
+        {
+          "type": "mod",
+          "var": "ai.tax_rate",
+          "op": "mul",
+          "value": 0.75
+        },
+        {
+          "type": "mod",
+          "var": "ai.rule_weight",
+          "op": "mul",
+          "value": 0.7,
+          "arg": "영토"
+        },
+        {
+          "type": "mod",
+          "var": "ai.rule_weight",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "혈통"
+        },
+        {
+          "type": "mod",
+          "var": "ai.rule_weight",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "평화"
+        },
+        {
+          "type": "mod",
+          "var": "ai.rule_weight",
+          "op": "mul",
+          "value": 1.4,
+          "arg": "안전"
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": 5,
+          "if": [
+            "has_personality:관대"
+          ]
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": -10,
+          "if": [
+            "has_personality:탐욕"
+          ]
+        }
+      ],
+      "note": "15번 S3 도덕 2.0. 뇌물에 03번 2절 성격 보정 -15로 버티고, 15번 2-3 세율을 0.75배(16번 5절 보통)로 낮게 잡는다."
+    },
+    {
+      "id": "pers.ambitious",
+      "name": "야심",
+      "kind": "성격",
+      "tier": "없음",
+      "pair": "만족",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "ai.gain",
+          "op": "mul",
+          "value": 1.5
+        },
+        {
+          "type": "mod",
+          "var": "ai.moral",
+          "op": "mul",
+          "value": 0.7
+        },
+        {
+          "type": "mod",
+          "var": "ai.blackmail",
+          "op": "mul",
+          "value": 2.0
+        },
+        {
+          "type": "mod",
+          "var": "ai.revolt",
+          "op": "mul",
+          "value": 1.25
+        },
+        {
+          "type": "mod",
+          "var": "ai.goal",
+          "op": "set",
+          "value": 1,
+          "arg": "지위"
+        },
+        {
+          "type": "mod",
+          "var": "ai.surplus_use",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "무장"
+        },
+        {
+          "type": "mod",
+          "var": "ai.emigrate",
+          "op": "mul",
+          "value": 1.3
+        },
+        {
+          "type": "mod",
+          "var": "ai.face",
+          "op": "mul",
+          "value": 1.5
+        },
+        {
+          "type": "mod",
+          "var": "ai.clear_extra",
+          "op": "add",
+          "value": 2
+        },
+        {
+          "type": "mod",
+          "var": "ai.house_payback",
+          "op": "set",
+          "value": 15
+        },
+        {
+          "type": "mod",
+          "var": "char.succession_candidate",
+          "op": "set",
+          "value": true,
+          "if": [
+            "succession_rule:공개 선출"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "ai.expected_share_floor",
+          "op": "set",
+          "value": 0.5
+        },
+        {
+          "type": "mod",
+          "var": "ai.civil_war",
+          "op": "set",
+          "value": true
+        },
+        {
+          "type": "mod",
+          "var": "ai.rule_weight",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "영토"
+        },
+        {
+          "type": "mod",
+          "var": "ai.rule_weight",
+          "op": "mul",
+          "value": 0.7,
+          "arg": "평화"
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": 5,
+          "if": [
+            "has_personality:야심"
+          ]
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": -10,
+          "if": [
+            "has_personality:만족"
+          ]
+        }
+      ],
+      "note": "15번 S2 직위 가치 1.5, S3 도덕 0.7. 반란 효용 1.25배(16번 5절 보통)는 S2 배수 위에 곱하고, 05번 협박 가중 2로 비밀을 무기로 쓴다."
+    },
+    {
+      "id": "pers.content",
+      "name": "만족",
+      "kind": "성격",
+      "tier": "없음",
+      "pair": "야심",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "ai.gain",
+          "op": "mul",
+          "value": 0.5
+        },
+        {
+          "type": "mod",
+          "var": "ai.moral",
+          "op": "mul",
+          "value": 1.2
+        },
+        {
+          "type": "mod",
+          "var": "ai.blackmail",
+          "op": "mul",
+          "value": 0.5
+        },
+        {
+          "type": "mod",
+          "var": "ai.revolt",
+          "op": "mul",
+          "value": 0.75
+        },
+        {
+          "type": "mod",
+          "var": "ai.goal",
+          "op": "set",
+          "value": 1,
+          "arg": "가족"
+        },
+        {
+          "type": "mod",
+          "var": "ai.surplus_use",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "저장"
+        },
+        {
+          "type": "mod",
+          "var": "ai.face",
+          "op": "mul",
+          "value": 0.7
+        },
+        {
+          "type": "mod",
+          "var": "ai.rule_change_cost",
+          "op": "mul",
+          "value": 2.0
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": 5,
+          "if": [
+            "has_personality:만족"
+          ]
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": -10,
+          "if": [
+            "has_personality:야심"
+          ]
+        }
+      ],
+      "note": "15번 S2 직위 가치 0.5, S3 도덕 1.2. 협박 가중 0.5와 반란 효용 0.75배(16번 5절 큼, 보통)로 비밀을 무기로 덜 쓰고 반란을 덜 일으킨다."
+    },
+    {
+      "id": "pers.cruel",
+      "name": "잔인",
+      "kind": "성격",
+      "tier": "없음",
+      "pair": "자비",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "ai.moral",
+          "op": "mul",
+          "value": 0.3
+        },
+        {
+          "type": "mod",
+          "var": "ai.mercy_captive",
+          "op": "mul",
+          "value": 0.5
+        },
+        {
+          "type": "mod",
+          "var": "ai.punish_harshness",
+          "op": "mul",
+          "value": 1.5
+        },
+        {
+          "type": "ai",
+          "action": "kill_captive",
+          "weight": 1.5
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 15,
+          "arg": "고문"
+        },
+        {
+          "type": "mod",
+          "var": "ai.occupation",
+          "op": "add",
+          "value": 20,
+          "arg": "도적"
+        },
+        {
+          "type": "mod",
+          "var": "ai.tax_horizon",
+          "op": "set",
+          "value": 1
+        },
+        {
+          "type": "mod",
+          "var": "ai.civil_war",
+          "op": "set",
+          "value": true
+        },
+        {
+          "type": "mod",
+          "var": "ai.rule_weight",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "영토"
+        },
+        {
+          "type": "mod",
+          "var": "ai.rule_weight",
+          "op": "mul",
+          "value": 0.5,
+          "arg": "평화"
+        },
+        {
+          "type": "mod",
+          "var": "ai.rule_weight",
+          "op": "mul",
+          "value": 0.4,
+          "arg": "안전"
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": 5,
+          "if": [
+            "has_personality:잔인"
+          ]
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": -10,
+          "if": [
+            "has_personality:자비"
+          ]
+        }
+      ],
+      "note": "15번 S3 도덕 0.3. 포로 석방을 절반으로, 처벌 강도와 포로 살해를 1.5배(16번 5절 큼)로 고르고, 03번 고문의 잔인 보정은 성격 보정 크기 +15를 쓴다."
+    },
+    {
+      "id": "pers.merciful",
+      "name": "자비",
+      "kind": "성격",
+      "tier": "없음",
+      "pair": "잔인",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "ai.mercy_captive",
+          "op": "mul",
+          "value": 1.5
+        },
+        {
+          "type": "mod",
+          "var": "ai.punish_harshness",
+          "op": "mul",
+          "value": 0.5
+        },
+        {
+          "type": "ai",
+          "action": "kill_captive",
+          "weight": 0.5
+        },
+        {
+          "type": "mod",
+          "var": "char.privilege_resentment",
+          "op": "mul",
+          "value": 2.0
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": 5,
+          "if": [
+            "has_personality:자비"
+          ]
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": -10,
+          "if": [
+            "has_personality:잔인"
+          ]
+        }
+      ],
+      "note": "포로 석방, 몸값을 1.5배로 고르고 처벌 강도와 포로 살해를 절반으로 고른다(16번 5절 큼). 04번 3-1 공개 특권의 충성 감소를 2배로 받는다."
+    },
+    {
+      "id": "pers.pious",
+      "name": "독실",
+      "kind": "성격",
+      "tier": "없음",
+      "pair": "냉소",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.norm_internalization",
+          "op": "add",
+          "value": 0.4
+        },
+        {
+          "type": "mod",
+          "var": "char.justify_accept",
+          "op": "mul",
+          "value": 1.25
+        },
+        {
+          "type": "mod",
+          "var": "ai.moral",
+          "op": "mul",
+          "value": 1.5
+        },
+        {
+          "type": "mod",
+          "var": "ai.convert_resist",
+          "op": "add",
+          "value": 30
+        },
+        {
+          "type": "mod",
+          "var": "ai.occupation",
+          "op": "add",
+          "value": 20,
+          "arg": "사제"
+        },
+        {
+          "type": "mod",
+          "var": "ai.surplus_use",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "헌금"
+        },
+        {
+          "type": "mod",
+          "var": "econ.church_donation",
+          "op": "add",
+          "value": 0.1
+        },
+        {
+          "type": "mod",
+          "var": "ai.goal",
+          "op": "set",
+          "value": 1,
+          "arg": "신앙"
+        },
+        {
+          "type": "mod",
+          "var": "ai.expected_share",
+          "op": "mul",
+          "value": 0.3,
+          "if": [
+            "succession_rule:신탁"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "ai.rule_bias",
+          "op": "add",
+          "value": 0.5,
+          "arg": "신탁"
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": 5,
+          "if": [
+            "has_personality:독실"
+          ]
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": -10,
+          "if": [
+            "has_personality:냉소"
+          ]
+        }
+      ],
+      "note": "16번 3-2 내면화 +0.4, 3-3 정당화 × 1.25, 15번 S3 도덕 1.5, 03번 개종 권유 요구 +30. 14번 4절 유증은 재산의 10%(십일조 수준)를 교단에 남긴다."
+    },
+    {
+      "id": "pers.cynical",
+      "name": "냉소",
+      "kind": "성격",
+      "tier": "없음",
+      "pair": "독실",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.norm_internalization",
+          "op": "add",
+          "value": -0.4
+        },
+        {
+          "type": "mod",
+          "var": "char.justify_accept",
+          "op": "mul",
+          "value": 0.5
+        },
+        {
+          "type": "mod",
+          "var": "ai.convert_resist",
+          "op": "add",
+          "value": -15
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": 5,
+          "if": [
+            "has_personality:냉소"
+          ]
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": -10,
+          "if": [
+            "has_personality:독실"
+          ]
+        }
+      ],
+      "note": "16번 3-2 내면화 -0.4, 3-3 정당화 × 0.5. 신앙에 매이지 않아 개종 권유에 03번 2절 성격 보정 -15로 약하다."
+    },
+    {
+      "id": "pers.diligent",
+      "name": "근면",
+      "kind": "성격",
+      "tier": "없음",
+      "pair": "게으름",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.labor",
+          "op": "mul",
+          "value": 1.25
+        },
+        {
+          "type": "mod",
+          "var": "ai.occupation",
+          "op": "add",
+          "value": 20,
+          "arg": "농사"
+        },
+        {
+          "type": "mod",
+          "var": "ai.occupation",
+          "op": "add",
+          "value": 20,
+          "arg": "장인"
+        },
+        {
+          "type": "mod",
+          "var": "ai.surplus_use",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "개간"
+        },
+        {
+          "type": "mod",
+          "var": "ai.surplus_use",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "땅매입"
+        },
+        {
+          "type": "mod",
+          "var": "ai.clear_extra",
+          "op": "add",
+          "value": 2
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": 5,
+          "if": [
+            "has_personality:근면"
+          ]
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": -10,
+          "if": [
+            "has_personality:게으름"
+          ]
+        }
+      ],
+      "note": "01번 4절 노동량 +25%. 14번 7-1 농사·장인 생업 효용에 곡식 20/년을 더하고, 7-2와 7-5대로 잉여를 개간과 땅 매입에 쓴다."
+    },
+    {
+      "id": "pers.lazy",
+      "name": "게으름",
+      "kind": "성격",
+      "tier": "없음",
+      "pair": "근면",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.labor",
+          "op": "mul",
+          "value": 0.75
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": 5,
+          "if": [
+            "has_personality:게으름"
+          ]
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": -10,
+          "if": [
+            "has_personality:근면"
+          ]
+        }
+      ],
+      "note": "01번 4절 노동량 -25%. 02번 채집 산출의 근면 보정도 이 노동량을 쓴다."
+    },
+    {
+      "id": "pers.gregarious",
+      "name": "사교",
+      "kind": "성격",
+      "tier": "없음",
+      "pair": "내향",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "ai.leak",
+          "op": "mul",
+          "value": 1.5
+        },
+        {
+          "type": "mod",
+          "var": "char.rumor_spread",
+          "op": "mul",
+          "value": 1.5
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "잡담"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "소문 나누기"
+        },
+        {
+          "type": "mod",
+          "var": "ai.surplus_use",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "지참금"
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": 5,
+          "if": [
+            "has_personality:사교"
+          ]
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": -10,
+          "if": [
+            "has_personality:내향"
+          ]
+        }
+      ],
+      "note": "05번 4절 발설 배수 1.5, 같은 크기로 소문 전파 1.5배. 대화 효과는 잡담, 소문 나누기 판정 +10(16번 5절 보통)으로 준다."
+    },
+    {
+      "id": "pers.reserved",
+      "name": "내향",
+      "kind": "성격",
+      "tier": "없음",
+      "pair": "사교",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "ai.leak",
+          "op": "mul",
+          "value": 0.7
+        },
+        {
+          "type": "mod",
+          "var": "char.rumor_spread",
+          "op": "mul",
+          "value": 0.7
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": -10,
+          "arg": "잡담"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": -10,
+          "arg": "소문 나누기"
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": 5,
+          "if": [
+            "has_personality:내향"
+          ]
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": -10,
+          "if": [
+            "has_personality:사교"
+          ]
+        }
+      ],
+      "note": "05번 4절 발설 배수 0.7, 같은 크기로 소문 전파 0.7배. 잡담, 소문 나누기 판정 -10(16번 5절 보통)으로 대화 효과가 작다."
+    },
+    {
+      "id": "pers.loyal",
+      "name": "충직",
+      "kind": "성격",
+      "tier": "없음",
+      "pair": "변덕",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.loyalty_decay",
+          "op": "mul",
+          "value": 0.5
+        },
+        {
+          "type": "mod",
+          "var": "ai.warn_owner",
+          "op": "mul",
+          "value": 2.0
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": 5,
+          "if": [
+            "has_personality:충직"
+          ]
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": -10,
+          "if": [
+            "has_personality:변덕"
+          ]
+        }
+      ],
+      "note": "충성 감소를 절반(16번 5절 큼)으로 줄인다. 05번 4절대로 비밀 주인에게 알림을 2배 가중으로 고른다."
+    },
+    {
+      "id": "pers.fickle",
+      "name": "변덕",
+      "kind": "성격",
+      "tier": "없음",
+      "pair": "충직",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.loyalty_decay",
+          "op": "mul",
+          "value": 1.5
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": 5,
+          "if": [
+            "has_personality:변덕"
+          ]
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": -10,
+          "if": [
+            "has_personality:충직"
+          ]
+        }
+      ],
+      "note": "충성 감소를 1.5배(16번 5절 큼)로 늘린다. 04번 충성과 15번 S5 봉신 충성이 이 감소를 쓴다."
+    },
+    {
+      "id": "pers.impatient",
+      "name": "성급",
+      "kind": "성격",
+      "tier": "없음",
+      "pair": "인내",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "ai.plan_patience",
+          "op": "add",
+          "value": -10
+        },
+        {
+          "type": "mod",
+          "var": "char.trade_price",
+          "op": "mul",
+          "value": 0.9
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": 5,
+          "if": [
+            "has_personality:성급"
+          ]
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": -10,
+          "if": [
+            "has_personality:인내"
+          ]
+        }
+      ],
+      "note": "계획 음모 판정 -10(16번 5절 보통). 협상에서 매매 가격을 0.9배(작음)로 불리하게 받는다."
+    },
+    {
+      "id": "pers.patient",
+      "name": "인내",
+      "kind": "성격",
+      "tier": "없음",
+      "pair": "성급",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "ai.plan_patience",
+          "op": "add",
+          "value": 10
+        },
+        {
+          "type": "mod",
+          "var": "char.trade_price",
+          "op": "mul",
+          "value": 1.1
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": 5,
+          "if": [
+            "has_personality:인내"
+          ]
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": -10,
+          "if": [
+            "has_personality:성급"
+          ]
+        }
+      ],
+      "note": "계획 음모 판정 +10(16번 5절 보통). 협상에서 매매 가격을 1.1배(작음)로 유리하게 받는다."
+    },
+    {
+      "id": "pers.lustful",
+      "name": "색욕",
+      "kind": "성격",
+      "tier": "없음",
+      "pair": "절제",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.relations_per_week",
+          "op": "add",
+          "value": 1
+        },
+        {
+          "type": "mod",
+          "var": "ai.courtship",
+          "op": "mul",
+          "value": 1.5
+        },
+        {
+          "type": "ai",
+          "action": "adultery",
+          "weight": 1.5
+        },
+        {
+          "type": "mod",
+          "var": "ai.adultery_accept",
+          "op": "add",
+          "value": -15
+        },
+        {
+          "type": "mod",
+          "var": "char.norm_internalization",
+          "op": "add",
+          "value": -0.2,
+          "if": [
+            "sex_behavior"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "ai.goal",
+          "op": "set",
+          "value": 1,
+          "arg": "연인"
+        },
+        {
+          "type": "mod",
+          "var": "ai.surplus_use",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "지참금"
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": 5,
+          "if": [
+            "has_personality:색욕"
+          ]
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": -10,
+          "if": [
+            "has_personality:절제"
+          ]
+        }
+      ],
+      "note": "01번 8절 관계 주 2회, 16번 3-2 성 관련 행위만 내면화 -0.2. 구애와 불륜 시도를 1.5배(16번 5절 큼)로 하고 유혹에 03번 2절 성격 보정 -15로 약하다."
+    },
+    {
+      "id": "pers.chaste",
+      "name": "절제",
+      "kind": "성격",
+      "tier": "없음",
+      "pair": "색욕",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "ai.courtship",
+          "op": "mul",
+          "value": 0.5
+        },
+        {
+          "type": "ai",
+          "action": "adultery",
+          "weight": 0.5
+        },
+        {
+          "type": "mod",
+          "var": "ai.adultery_accept",
+          "op": "add",
+          "value": 20
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": 5,
+          "if": [
+            "has_personality:절제"
+          ]
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": -10,
+          "if": [
+            "has_personality:색욕"
+          ]
+        }
+      ],
+      "note": "03번 3절 유혹 요구 +20. 구애와 불륜 시도를 절반(16번 5절 큼)으로 줄인다."
+    },
+    {
+      "id": "pers.vengeful",
+      "name": "복수심",
+      "kind": "성격",
+      "tier": "없음",
+      "pair": "관용",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.grievance_decay",
+          "op": "mul",
+          "value": 0.2
+        },
+        {
+          "type": "mod",
+          "var": "ai.revenge_target",
+          "op": "mul",
+          "value": 1.5
+        },
+        {
+          "type": "mod",
+          "var": "ai.goal",
+          "op": "set",
+          "value": 1,
+          "arg": "복수"
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": 5,
+          "if": [
+            "has_personality:복수심"
+          ]
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": -10,
+          "if": [
+            "has_personality:관용"
+          ]
+        }
+      ],
+      "note": "03번 1절 '원한이 거의 안 줄어듦'을 감소 0.2배(16번 5절 매우 큼)로 둔다. 원한 대상 제거 목표를 1.5배로 고른다."
+    },
+    {
+      "id": "pers.forgiving",
+      "name": "관용",
+      "kind": "성격",
+      "tier": "없음",
+      "pair": "복수심",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.grievance_decay",
+          "op": "mul",
+          "value": 2.0
+        },
+        {
+          "type": "mod",
+          "var": "ai.revenge_target",
+          "op": "mul",
+          "value": 0.5
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": 5,
+          "if": [
+            "has_personality:관용"
+          ]
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": -10,
+          "if": [
+            "has_personality:복수심"
+          ]
+        }
+      ],
+      "note": "03번 1절 '원한이 빨리 줆'을 감소 2배(08번 관용의 가풍과 같은 크기)로 둔다. 원한 대상 제거 목표를 절반으로 고른다."
+    },
+    {
+      "id": "gene.giant",
+      "name": "거구",
+      "kind": "형질",
+      "tier": "없음",
+      "genetics": {
+        "dominance": "우성",
+        "carrier_freq": 0.03
+      },
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.strength",
+          "op": "add",
+          "value": 4
+        },
+        {
+          "type": "mod",
+          "var": "char.food_need",
+          "op": "mul",
+          "value": 1.5
+        }
+      ],
+      "note": "01번 3절. 체격 +4, 식량 소비 +50%."
+    },
+    {
+      "id": "gene.beautiful",
+      "name": "미모",
+      "kind": "형질",
+      "tier": "없음",
+      "genetics": {
+        "dominance": "우성",
+        "carrier_freq": 0.04
+      },
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.charm",
+          "op": "add",
+          "value": 4
+        }
+      ],
+      "note": "01번 3절. 매력 +4는 03번 첫인상 (매력 - 10) × 2에 들어간다."
+    },
+    {
+      "id": "gene.clever",
+      "name": "총명",
+      "kind": "형질",
+      "tier": "없음",
+      "genetics": {
+        "dominance": "열성",
+        "carrier_freq": 0.06
+      },
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.intellect",
+          "op": "add",
+          "value": 4
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 1.3
+        }
+      ],
+      "note": "01번 3절. 지능 +4, 모든 기술 습득 +30%."
+    },
+    {
+      "id": "gene.robust",
+      "name": "강골",
+      "kind": "형질",
+      "tier": "없음",
+      "genetics": {
+        "dominance": "열성",
+        "carrier_freq": 0.06
+      },
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.constitution",
+          "op": "add",
+          "value": 4
+        },
+        {
+          "type": "mod",
+          "var": "char.disease_resist",
+          "op": "mul",
+          "value": 0.75
+        }
+      ],
+      "note": "01번 3절 체력 +4. '질병 저항'은 질병 사망률 0.75배(16번 5절 보통)로 둔다."
+    },
+    {
+      "id": "gene.long_lived",
+      "name": "장수",
+      "kind": "형질",
+      "tier": "없음",
+      "genetics": {
+        "dominance": "열성",
+        "carrier_freq": 0.05
+      },
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.aging_start",
+          "op": "add",
+          "value": 15
+        }
+      ],
+      "note": "01번 3절. 노화 시작이 45세에서 60세로 늦춰진다."
+    },
+    {
+      "id": "gene.keen_senses",
+      "name": "예민한 감각",
+      "kind": "형질",
+      "tier": "없음",
+      "genetics": {
+        "dominance": "열성",
+        "carrier_freq": 0.05
+      },
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.secret_detect",
+          "op": "mul",
+          "value": 1.25
+        },
+        {
+          "type": "mod",
+          "var": "char.work_output",
+          "op": "mul",
+          "value": 1.2,
+          "arg": "사냥"
+        },
+        {
+          "type": "mod",
+          "var": "char.paternity_suspicion",
+          "op": "mul",
+          "value": 2.0
+        }
+      ],
+      "note": "01번 3절 비밀 인지 +25%, 사냥 +20%. 09번 6절과 05번 3절대로 사생아 의심 점수와 닮음 추론을 2배로 한다."
+    },
+    {
+      "id": "gene.puny",
+      "name": "왜소",
+      "kind": "형질",
+      "tier": "없음",
+      "genetics": {
+        "dominance": "열성",
+        "carrier_freq": 0.06
+      },
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.strength",
+          "op": "add",
+          "value": -4
+        }
+      ],
+      "note": "01번 3절. 체격 -4."
+    },
+    {
+      "id": "gene.ugly",
+      "name": "추형",
+      "kind": "형질",
+      "tier": "없음",
+      "genetics": {
+        "dominance": "열성",
+        "carrier_freq": 0.04
+      },
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.charm",
+          "op": "add",
+          "value": -4
+        }
+      ],
+      "note": "01번 3절. 매력 -4는 03번 첫인상 (매력 - 10) × 2에 들어간다."
+    },
+    {
+      "id": "gene.dull",
+      "name": "우둔",
+      "kind": "형질",
+      "tier": "없음",
+      "genetics": {
+        "dominance": "열성",
+        "carrier_freq": 0.05
+      },
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.intellect",
+          "op": "add",
+          "value": -4
+        }
+      ],
+      "note": "01번 3절. 지능 -4는 기술 습득 (지능 / 10)과 숙련 슬롯 수를 함께 낮춘다."
+    },
+    {
+      "id": "gene.sickly",
+      "name": "병약",
+      "kind": "형질",
+      "tier": "없음",
+      "genetics": {
+        "dominance": "열성",
+        "carrier_freq": 0.06
+      },
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.constitution",
+          "op": "add",
+          "value": -4
+        }
+      ],
+      "note": "01번 3절. 체력 -4."
+    },
+    {
+      "id": "gene.infertile",
+      "name": "불임 경향",
+      "kind": "형질",
+      "tier": "없음",
+      "genetics": {
+        "dominance": "열성",
+        "carrier_freq": 0.04
+      },
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.conception",
+          "op": "mul",
+          "value": 0.3
+        }
+      ],
+      "note": "01번 3절. 1회당 임신 확률 -70%."
+    },
+    {
+      "id": "gene.bleeder",
+      "name": "출혈병",
+      "kind": "형질",
+      "tier": "없음",
+      "genetics": {
+        "dominance": "X열성",
+        "carrier_freq": 0.02
+      },
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.wound_death",
+          "op": "mul",
+          "value": 3.0
+        }
+      ],
+      "note": "01번 3절. 부상 사망률 3배. 부계 X 연관 열성이라 남성에게 주로 발현한다."
+    },
+    {
+      "id": "gene.madness",
+      "name": "광기",
+      "kind": "형질",
+      "tier": "없음",
+      "genetics": {
+        "dominance": "열성",
+        "carrier_freq": 0.03
+      },
+      "effects": [
+        {
+          "type": "event",
+          "event": "madness_onset",
+          "chance_per_year": 0.02,
+          "if": [
+            "is_adult"
+          ]
+        }
+      ],
+      "note": "01번 3절. 성인 이후 매년 2% 확률로 발병하고, 발병 사건이 성격을 무작위로 바꾼다."
+    },
+    {
+      "id": "talent.allure",
+      "name": "매혹",
+      "kind": "재능",
+      "tier": "없음",
+      "skill": "언변",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "언변"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 20,
+          "arg": "언변"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "유혹"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "청혼"
+        },
+        {
+          "type": "mod",
+          "var": "char.first_impression",
+          "op": "add",
+          "value": 10
+        },
+        {
+          "type": "mod",
+          "var": "char.lover_decay",
+          "op": "set",
+          "value": 0.0
+        }
+      ],
+      "genius_effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "언변"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 30,
+          "arg": "언변"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "유혹"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "청혼"
+        },
+        {
+          "type": "mod",
+          "var": "char.first_impression",
+          "op": "add",
+          "value": 10
+        },
+        {
+          "type": "mod",
+          "var": "char.ignore_temperance",
+          "op": "set",
+          "value": true
+        }
+      ],
+      "note": "첫인상 판정 보정은 첫인상 호감 가산으로 준다. 천재는 재능 효과에 더해진다(습득 3배, 최대치 150, 판정 +20). 천재는 03번 유혹의 절제 요구 +20을 무시한다."
+    },
+    {
+      "id": "talent.craftsman",
+      "name": "손재주",
+      "kind": "재능",
+      "tier": "없음",
+      "skill": "제작",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "제작"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 20,
+          "arg": "제작"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "제작"
+        },
+        {
+          "type": "mod",
+          "var": "char.craft_time",
+          "op": "mul",
+          "value": 0.75
+        },
+        {
+          "type": "mod",
+          "var": "char.masterwork",
+          "op": "mul",
+          "value": 2.0
+        }
+      ],
+      "genius_effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "제작"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 30,
+          "arg": "제작"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "제작"
+        },
+        {
+          "type": "mod",
+          "var": "char.masterwork_fame",
+          "op": "add",
+          "value": 10
+        }
+      ],
+      "note": "제작 시간 -25%, 명품 확률 2배. 천재는 재능 효과에 더해진다(습득 3배, 최대치 150, 판정 +20). 명품 1개마다 위신 +10(16번 5절 보통)을 얻고 가보에 이름을 남긴다."
+    },
+    {
+      "id": "talent.athletic",
+      "name": "운동신경",
+      "kind": "재능",
+      "tier": "없음",
+      "skill": "전투",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "전투"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 20,
+          "arg": "전투"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "사냥"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 20,
+          "arg": "사냥"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "전투"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "사냥"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "도주"
+        },
+        {
+          "type": "mod",
+          "var": "char.agility",
+          "op": "add",
+          "value": 2
+        },
+        {
+          "type": "mod",
+          "var": "char.injury",
+          "op": "mul",
+          "value": 0.7
+        }
+      ],
+      "genius_effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "전투"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 30,
+          "arg": "전투"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "사냥"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 30,
+          "arg": "사냥"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "전투"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "사냥"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "도주"
+        },
+        {
+          "type": "mod",
+          "var": "char.first_strike",
+          "op": "set",
+          "value": true
+        }
+      ],
+      "note": "관련 기술 전투, 사냥 둘 다에 공통 효과를 준다(skill 필드는 첫 기술). 민첩 +2, 부상 확률 -30%. 천재는 재능 효과에 더해진다(습득 3배, 최대치 150, 판정 +20)."
+    },
+    {
+      "id": "talent.mighty",
+      "name": "괴력",
+      "kind": "재능",
+      "tier": "없음",
+      "skill": "채집",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "채집"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 20,
+          "arg": "채집"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "전투"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 20,
+          "arg": "전투"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "위압"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "근접 전투"
+        },
+        {
+          "type": "mod",
+          "var": "char.labor",
+          "op": "mul",
+          "value": 1.3
+        }
+      ],
+      "genius_effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "채집"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 30,
+          "arg": "채집"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "전투"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 30,
+          "arg": "전투"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "위압"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "근접 전투"
+        },
+        {
+          "type": "mod",
+          "var": "char.armor_penalty",
+          "op": "set",
+          "value": false
+        }
+      ],
+      "note": "관련 기술 채집, 전투 둘 다에 공통 효과를 준다(skill 필드는 첫 기술). 노동량 +30%. 천재는 재능 효과에 더해진다(습득 3배, 최대치 150, 판정 +20). 천재는 갑옷 감속이 없다."
+    },
+    {
+      "id": "talent.leadership",
+      "name": "통솔",
+      "kind": "재능",
+      "tier": "없음",
+      "skill": "지휘",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "지휘"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 20,
+          "arg": "지휘"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "부대 전투"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "명령"
+        },
+        {
+          "type": "mod",
+          "var": "char.command_range",
+          "op": "add",
+          "value": 5
+        }
+      ],
+      "genius_effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "지휘"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 30,
+          "arg": "지휘"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "부대 전투"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "명령"
+        },
+        {
+          "type": "slot",
+          "slot": "trait",
+          "value": 1
+        }
+      ],
+      "note": "직접 거느릴 부하 +5명. 강압 명령은 03번 '명령' 판정이다. 천재는 재능 효과에 더해진다(습득 3배, 최대치 150, 판정 +20). 천재는 자기가 수장인 집단의 특성 슬롯을 1 늘린다."
+    },
+    {
+      "id": "talent.mercantile",
+      "name": "장사 수완",
+      "kind": "재능",
+      "tier": "없음",
+      "skill": "교역",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "교역"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 20,
+          "arg": "교역"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "매매"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "뇌물"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "외주 계약"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "용병 계약"
+        },
+        {
+          "type": "mod",
+          "var": "char.see_prices",
+          "op": "set",
+          "value": true
+        }
+      ],
+      "genius_effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "교역"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 30,
+          "arg": "교역"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "매매"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "뇌물"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "외주 계약"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "용병 계약"
+        },
+        {
+          "type": "enable",
+          "action": "hoard",
+          "who": "self"
+        }
+      ],
+      "note": "계약 판정은 03번 외주 계약, 용병 계약이다. 이웃 지역 가격을 정확히 안다. 천재는 재능 효과에 더해진다(습득 3배, 최대치 150, 판정 +20). 천재는 사재기로 한 품목 지역 가격을 1.5배로 올린다."
+    },
+    {
+      "id": "talent.green_thumb",
+      "name": "흙손",
+      "kind": "재능",
+      "tier": "없음",
+      "skill": "농사",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "농사"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 20,
+          "arg": "농사"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "개간"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "수확"
+        },
+        {
+          "type": "mod",
+          "var": "char.famine_damage",
+          "op": "mul",
+          "value": 0.5
+        }
+      ],
+      "genius_effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "농사"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 30,
+          "arg": "농사"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "개간"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "수확"
+        },
+        {
+          "type": "mod",
+          "var": "char.harvest",
+          "op": "mul",
+          "value": 1.3
+        }
+      ],
+      "note": "흉년 피해 절반. 천재는 재능 효과에 더해진다(습득 3배, 최대치 150, 판정 +20). 천재는 맡은 필지 수확 +30%."
+    },
+    {
+      "id": "talent.hunting_instinct",
+      "name": "사냥 본능",
+      "kind": "재능",
+      "tier": "없음",
+      "skill": "사냥",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "사냥"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 20,
+          "arg": "사냥"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "사냥"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "추적"
+        },
+        {
+          "type": "mod",
+          "var": "char.track_fugitive",
+          "op": "mul",
+          "value": 1.3
+        }
+      ],
+      "genius_effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "사냥"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 30,
+          "arg": "사냥"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "사냥"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "추적"
+        },
+        {
+          "type": "mod",
+          "var": "char.ambush",
+          "op": "mul",
+          "value": 1.5
+        }
+      ],
+      "note": "도주자, 탈주 노예 추적 성공 +30%. 천재는 재능 효과에 더해진다(습득 3배, 최대치 150, 판정 +20). 천재는 숲 매복 전투 +50%."
+    },
+    {
+      "id": "talent.studious",
+      "name": "학구열",
+      "kind": "재능",
+      "tier": "없음",
+      "skill": "학문",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "학문"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 20,
+          "arg": "학문"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "가르치기"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "조언 구하기"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 1.15
+        }
+      ],
+      "genius_effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "학문"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 30,
+          "arg": "학문"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "가르치기"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "조언 구하기"
+        },
+        {
+          "type": "mod",
+          "var": "char.book_speed",
+          "op": "mul",
+          "value": 2.0
+        }
+      ],
+      "note": "교육 판정은 가르치기(teach)다. 모든 기술 습득 +15%가 학문 2배에 곱해진다. 천재는 재능 효과에 더해진다(습득 3배, 최대치 150, 판정 +20). 천재는 경전, 법전 편찬 시간이 절반이다."
+    },
+    {
+      "id": "talent.spiritual",
+      "name": "영성",
+      "kind": "재능",
+      "tier": "없음",
+      "skill": "신학",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "신학"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 20,
+          "arg": "신학"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "개종 권유"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "축복"
+        },
+        {
+          "type": "mod",
+          "var": "char.faith_influence",
+          "op": "mul",
+          "value": 2.0
+        }
+      ],
+      "genius_effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "신학"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 30,
+          "arg": "신학"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "개종 권유"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "축복"
+        },
+        {
+          "type": "event",
+          "event": "miracle",
+          "chance_per_year": 0.02
+        },
+        {
+          "type": "mod",
+          "var": "char.cult_found_req",
+          "op": "add",
+          "value": -15
+        }
+      ],
+      "note": "신앙 영향력 획득 2배. 천재는 재능 효과에 더해진다(습득 3배, 최대치 150, 판정 +20). 천재는 매년 2% 기적 사건을 일으키고, 교단 창설 신학 요구치 30을 15로 낮춘다(절반, 16번 5절 큼)."
+    },
+    {
+      "id": "talent.medical",
+      "name": "의술 감각",
+      "kind": "재능",
+      "tier": "없음",
+      "skill": "의술",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "의술"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 20,
+          "arg": "의술"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "치료"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "진단"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "독살"
+        },
+        {
+          "type": "mod",
+          "var": "char.midwife_mortality",
+          "op": "mul",
+          "value": 0.5
+        }
+      ],
+      "genius_effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "의술"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 30,
+          "arg": "의술"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "치료"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "진단"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "독살"
+        },
+        {
+          "type": "enable",
+          "action": "carrier_diagnosis",
+          "who": "self"
+        }
+      ],
+      "note": "출산을 도우면 산모 사망률을 01번 8절 산파 절반에 더해 다시 절반으로 줄인다. 천재는 재능 효과에 더해진다(습득 3배, 최대치 150, 판정 +20). 천재는 보인자 진단을 쓴다."
+    },
+    {
+      "id": "talent.shadow",
+      "name": "그림자",
+      "kind": "재능",
+      "tier": "없음",
+      "skill": "은밀",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "은밀"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 20,
+          "arg": "은밀"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "비밀 캐기"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "범죄 실행"
+        },
+        {
+          "type": "mod",
+          "var": "char.crime_witness",
+          "op": "mul",
+          "value": 0.6
+        }
+      ],
+      "genius_effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "은밀"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 30,
+          "arg": "은밀"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "비밀 캐기"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "범죄 실행"
+        },
+        {
+          "type": "mod",
+          "var": "char.crime_witness",
+          "op": "mul",
+          "value": 0.6667
+        },
+        {
+          "type": "mod",
+          "var": "char.leave_no_evidence",
+          "op": "set",
+          "value": true
+        }
+      ],
+      "note": "범죄 목격률 × 0.6. 천재는 재능 효과에 더해진다(습득 3배, 최대치 150, 판정 +20). 천재는 목격률 × 0.6667을 더 곱해 09번 2절의 천재 0.4에 맞추고 증거를 남기지 않는다."
+    },
+    {
+      "id": "talent.perceptive",
+      "name": "눈치",
+      "kind": "재능",
+      "tier": "없음",
+      "skill": null,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "비밀 인지"
+        },
+        {
+          "type": "mod",
+          "var": "char.lie_detect",
+          "op": "add",
+          "value": 10
+        },
+        {
+          "type": "mod",
+          "var": "char.auto_rumor",
+          "op": "set",
+          "value": true
+        },
+        {
+          "type": "mod",
+          "var": "char.paternity_suspicion",
+          "op": "mul",
+          "value": 2.0
+        }
+      ],
+      "genius_effects": [
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "비밀 인지"
+        },
+        {
+          "type": "mod",
+          "var": "char.lie_detect",
+          "op": "add",
+          "value": 10
+        },
+        {
+          "type": "mod",
+          "var": "char.see_blackmail",
+          "op": "set",
+          "value": true
+        }
+      ],
+      "note": "관련 기술이 없어(지능) 습득·최대치 효과가 없다. 주변 비밀 소문을 매주 인지하고 09번 6절 사생아 의심 점수를 2배로 한다. 천재는 판정 +20이 되고 협박하려는 사람을 미리 안다."
+    },
+    {
+      "id": "talent.administration",
+      "name": "행정",
+      "kind": "재능",
+      "tier": "없음",
+      "skill": "관리",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 2.0,
+          "arg": "관리"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 20,
+          "arg": "관리"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "세금"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "입법"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "관직 임명"
+        },
+        {
+          "type": "mod",
+          "var": "char.jurisdiction_cap",
+          "op": "mul",
+          "value": 1.5
+        }
+      ],
+      "genius_effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "관리"
+        },
+        {
+          "type": "mod",
+          "var": "char.skill_cap",
+          "op": "add",
+          "value": 30,
+          "arg": "관리"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "세금"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "입법"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "관직 임명"
+        },
+        {
+          "type": "slot",
+          "slot": "trait",
+          "value": 1
+        }
+      ],
+      "note": "관할 인구 상한 +50%. 천재는 재능 효과에 더해진다(습득 3배, 최대치 150, 판정 +20). 천재는 자기가 수장인 집단의 특성 슬롯(나라면 법 슬롯)을 1 늘린다."
+    },
+    {
+      "id": "talent.iron_will",
+      "name": "강철 정신",
+      "kind": "재능",
+      "tier": "없음",
+      "skill": null,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.fear_resist",
+          "op": "add",
+          "value": 10
+        },
+        {
+          "type": "mod",
+          "var": "char.torture_resist",
+          "op": "add",
+          "value": 10
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "심문 저항"
+        },
+        {
+          "type": "mod",
+          "var": "char.stress_gain",
+          "op": "mul",
+          "value": 0.5
+        }
+      ],
+      "genius_effects": [
+        {
+          "type": "mod",
+          "var": "char.fear_resist",
+          "op": "add",
+          "value": 10
+        },
+        {
+          "type": "mod",
+          "var": "char.torture_resist",
+          "op": "add",
+          "value": 10
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "심문 저항"
+        },
+        {
+          "type": "mod",
+          "var": "char.torture_immune",
+          "op": "set",
+          "value": true
+        }
+      ],
+      "note": "관련 기술이 없어(의지) 습득·최대치 효과가 없다. 스트레스 증가 절반. 천재는 판정 +20이 되고 고문으로 비밀을 내주지 않는다."
+    },
+    {
+      "id": "talent.artistic",
+      "name": "예술",
+      "kind": "재능",
+      "tier": "없음",
+      "skill": null,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "연회"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "선물"
+        },
+        {
+          "type": "mod",
+          "var": "char.feast_effect",
+          "op": "mul",
+          "value": 2.0
+        }
+      ],
+      "genius_effects": [
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "연회"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "선물"
+        },
+        {
+          "type": "enable",
+          "action": "create_artwork",
+          "who": "self"
+        }
+      ],
+      "note": "관련 기술이 없어(매력) 습득·최대치 효과가 없다. 연회 참석자 호감 증가 2배. 천재는 작품 제작으로 가보를 만들고 가문 명성 +10(16번 5절 보통)을 얻는다."
+    },
+    {
+      "id": "talent.versatile",
+      "name": "다재다능",
+      "kind": "재능",
+      "tier": "없음",
+      "skill": null,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.skill_gain",
+          "op": "mul",
+          "value": 1.2
+        }
+      ],
+      "genius_effects": [],
+      "note": "모든 기술 습득 +20%. 판정 보정과 천재 등급이 없다."
+    },
+    {
+      "id": "hist.thief",
+      "name": "절도범",
+      "kind": "이력",
+      "tier": "없음",
+      "visibility": "둘 다",
+      "trigger": "도둑질이나 소매치기를 저지름(09번 2절). 목격자가 없으면 비밀",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.first_trust",
+          "op": "add",
+          "value": -15
+        }
+      ],
+      "note": "공개되면 남이 처음 매기는 신뢰가 15 낮다."
+    },
+    {
+      "id": "hist.robber",
+      "name": "강도",
+      "kind": "이력",
+      "tier": "없음",
+      "visibility": "둘 다",
+      "trigger": "강도를 저지름(09번 2절). 피해자만 알면 비밀",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.first_trust",
+          "op": "add",
+          "value": -20
+        },
+        {
+          "type": "mod",
+          "var": "rel.fear",
+          "op": "add",
+          "value": 10,
+          "who": "others"
+        }
+      ],
+      "note": "공개되면 남이 매기는 신뢰가 20 낮고 두려움이 10 높다."
+    },
+    {
+      "id": "hist.murderer",
+      "name": "살인자",
+      "kind": "이력",
+      "tier": "없음",
+      "visibility": "둘 다",
+      "trigger": "살인이나 독살을 저지름(09번 2절). 목격자가 없으면 05번 살인 비밀",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.first_impression",
+          "op": "add",
+          "value": -20
+        },
+        {
+          "type": "mod",
+          "var": "rel.fear",
+          "op": "add",
+          "value": 15,
+          "who": "others"
+        }
+      ],
+      "note": "공개되면 첫인상 호감 -20, 남이 느끼는 두려움 +15."
+    },
+    {
+      "id": "hist.adulterer",
+      "name": "간통자",
+      "kind": "이력",
+      "tier": "없음",
+      "visibility": "둘 다",
+      "trigger": "혼외 관계를 맺음(09번 불륜). 들키기 전에는 05번 불륜 비밀",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.marriage_value",
+          "op": "add",
+          "value": -15
+        }
+      ],
+      "note": "혼인 판정 -15는 상대가 보는 혼인 효용(14번 12-4)에서 뺀다. 배우자 원한 +40은 05번 불륜 비밀 공개가 한 번 준다."
+    },
+    {
+      "id": "hist.prostitute",
+      "name": "매춘 경력",
+      "kind": "이력",
+      "tier": "없음",
+      "visibility": "둘 다",
+      "trigger": "매춘을 함(09번 7절)",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.marriage_value",
+          "op": "add",
+          "value": -20
+        },
+        {
+          "type": "mod",
+          "var": "char.marriage_value",
+          "op": "add",
+          "value": 15,
+          "if": [
+            "has_law:공창"
+          ]
+        }
+      ],
+      "note": "혼인 효용 -20. 공창 법 아래에서는 +15를 더해 -5가 된다."
+    },
+    {
+      "id": "hist.swindler",
+      "name": "사기꾼",
+      "kind": "이력",
+      "tier": "없음",
+      "visibility": "둘 다",
+      "trigger": "사기나 위조를 저지름(09번 2절)",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "rel.trust_cap",
+          "op": "set",
+          "value": 50,
+          "who": "others"
+        }
+      ],
+      "note": "공개되면 남이 이 인물에게 주는 신뢰가 50을 넘지 못한다."
+    },
+    {
+      "id": "hist.betrayer",
+      "name": "배신자",
+      "kind": "이력",
+      "tier": "없음",
+      "visibility": "둘 다",
+      "trigger": "속한 집단을 배신하거나 동료를 밀고함",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": -20,
+          "arg": "집단 가입"
+        }
+      ],
+      "note": "공개되면 모든 집단 가입 판정이 -20이다."
+    },
+    {
+      "id": "hist.fugitive",
+      "name": "탈주자",
+      "kind": "이력",
+      "tier": "없음",
+      "visibility": "둘 다",
+      "trigger": "노예나 농노가 주인에게서 달아남(09번 탈주)",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.wanted",
+          "op": "set",
+          "value": true,
+          "arg": "탈주"
+        }
+      ],
+      "note": "공개되면 체포 대상이 되고, 잡히면 09번 형벌(원래 주인에게 반환 + 태형)을 받는다."
+    },
+    {
+      "id": "hist.convict",
+      "name": "전과자",
+      "kind": "이력",
+      "tier": "없음",
+      "visibility": "공개",
+      "trigger": "재판에서 형벌을 받음(09번 4~5절). 받은 형벌 종류를 함께 기록",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.testimony_weight",
+          "op": "mul",
+          "value": 0.5
+        },
+        {
+          "type": "mod",
+          "var": "char.prestige",
+          "op": "add",
+          "value": -10
+        },
+        {
+          "type": "mod",
+          "var": "char.charm",
+          "op": "add",
+          "value": -2,
+          "if": [
+            "punished_with:낙인"
+          ]
+        }
+      ],
+      "note": "09번 4절대로 증언 강도가 절반이다. 14번 12-1 수치는 위신 -10(16번 5절 보통)이고, 낙인을 받았으면 외형에 보이고 매력 -2(09번 5절)다."
+    },
+    {
+      "id": "hist.bastard",
+      "name": "사생아",
+      "kind": "이력",
+      "tier": "없음",
+      "visibility": "둘 다",
+      "trigger": "혼외 출산으로 태어남. 드러나기 전에는 05번 사생아 비밀",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.inheritance_right",
+          "op": "set",
+          "value": false
+        },
+        {
+          "type": "mod",
+          "var": "char.succession_candidate",
+          "op": "set",
+          "value": false
+        }
+      ],
+      "note": "재산 상속과 직위 승계 후보에서 빠진다. 08번 서자 상속권 법이 인정한 사생아에게 true로 덮어쓴다(법이 우선)."
+    },
+    {
+      "id": "hist.freedman",
+      "name": "해방노예",
+      "kind": "이력",
+      "tier": "없음",
+      "visibility": "공개",
+      "trigger": "노예였다가 해방됨(03번 해방)",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "rel.debt",
+          "op": "add",
+          "value": 3,
+          "if": [
+            "history_counterpart"
+          ]
+        }
+      ],
+      "note": "해방한 사람에게 빚 +3을 진다. 03번 규칙대로 한 번 갚을 때마다 1씩 준다."
+    },
+    {
+      "id": "hist.ex_bandit",
+      "name": "도적 출신",
+      "kind": "이력",
+      "tier": "없음",
+      "visibility": "둘 다",
+      "trigger": "도적단에 1년 이상 속함. 숨기면 05번 도적 과거 비밀",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.legitimacy",
+          "op": "add",
+          "value": -30
+        }
+      ],
+      "note": "정통성 -30. 30년이 지나도 사라지지 않는다(11번)."
+    },
+    {
+      "id": "hist.war_hero",
+      "name": "전쟁 영웅",
+      "kind": "이력",
+      "tier": "없음",
+      "visibility": "공개",
+      "trigger": "전투에서 큰 공을 세움",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.prestige",
+          "op": "add",
+          "value": 20
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "부대 전투"
+        }
+      ],
+      "note": "명성은 위신 +20(16번 5절 큼)으로 준다. 지휘 판정 +10은 부대 전투 판정에 붙는다."
+    },
+    {
+      "id": "hist.duel_victor",
+      "name": "결투 승자",
+      "kind": "이력",
+      "tier": "없음",
+      "visibility": "공개",
+      "trigger": "결투에서 이김",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "위압"
+        }
+      ],
+      "note": "위압 판정 +10."
+    },
+    {
+      "id": "hist.torture_survivor",
+      "name": "고문 생존자",
+      "kind": "이력",
+      "tier": "없음",
+      "visibility": "공개",
+      "trigger": "고문을 당하고 살아남음(03번 고문)",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.will",
+          "op": "add",
+          "value": 2
+        },
+        {
+          "type": "mod",
+          "var": "char.grievance_decay",
+          "op": "set",
+          "value": 0.0,
+          "if": [
+            "history_counterpart"
+          ]
+        }
+      ],
+      "note": "의지 +2. 고문한 사람을 향한 원한은 줄지 않는다."
+    },
+    {
+      "id": "hist.pilgrim",
+      "name": "순례자",
+      "kind": "이력",
+      "tier": "없음",
+      "visibility": "공개",
+      "trigger": "성지 순례를 마침",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.first_impression",
+          "op": "add",
+          "value": 10,
+          "if": [
+            "same_religion"
+          ]
+        }
+      ],
+      "note": "같은 교단 신도의 첫인상 호감 +10."
+    },
+    {
+      "id": "hist.apostate",
+      "name": "배교자",
+      "kind": "이력",
+      "tier": "없음",
+      "visibility": "둘 다",
+      "trigger": "개종함. 공개 종교와 실제 신앙이 다르면 05번 배교 비밀",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.first_impression",
+          "op": "add",
+          "value": -20,
+          "if": [
+            "former_religion"
+          ]
+        }
+      ],
+      "note": "원래 교단 신도의 첫인상 호감 -20."
+    },
+    {
+      "id": "hist.excommunicated",
+      "name": "파문자",
+      "kind": "이력",
+      "tier": "없음",
+      "visibility": "공개",
+      "trigger": "교단에서 파문됨(03번 파문)",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.church_barred",
+          "op": "set",
+          "value": true
+        }
+      ],
+      "note": "파문한 교단 안의 판정(개종 권유, 축복, 고해 듣기, 교단 가입)을 하거나 받을 수 없다."
+    },
+    {
+      "id": "hist.orphan",
+      "name": "고아",
+      "kind": "이력",
+      "tier": "없음",
+      "visibility": "공개",
+      "trigger": "15세 전에 부모가 모두 죽음",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.personality_bias",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "탐욕"
+        },
+        {
+          "type": "mod",
+          "var": "char.personality_bias",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "겁많음"
+        },
+        {
+          "type": "mod",
+          "var": "char.personality_bias",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "내향"
+        }
+      ],
+      "note": "아직 비어 있는 12세, 16세 성격 슬롯에서 탐욕, 겁많음, 내향을 1.5배(16번 5절 큼)로 뽑는다. 01번 4절의 굶주림→탐욕, 학대→겁많음과 같은 결핍 계열이다."
+    },
+    {
+      "id": "hist.widowed",
+      "name": "과부, 홀아비",
+      "kind": "이력",
+      "tier": "없음",
+      "visibility": "공개",
+      "trigger": "배우자가 죽음",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.marriage_value",
+          "op": "add",
+          "value": -10
+        }
+      ],
+      "note": "재혼 판정 보정은 혼인 효용 -10(16번 5절 보통)이다. 지참금과 과부 몫(15번 3절)은 재산 항이 따로 반영한다."
+    },
+    {
+      "id": "hist.rebel",
+      "name": "반역자",
+      "kind": "이력",
+      "tier": "없음",
+      "visibility": "둘 다",
+      "trigger": "반란에 가담함. 음모 단계에서는 05번 음모 가담 비밀, 봉기 패배 시 공개(10번)",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.wanted",
+          "op": "set",
+          "value": true,
+          "arg": "반역"
+        }
+      ],
+      "note": "공개되면 체포 대상이 되고, 잡히면 09번 형벌(처형 + 연좌)을 받는다."
+    },
+    {
+      "id": "hist.benefactor",
+      "name": "은인",
+      "kind": "이력",
+      "tier": "없음",
+      "visibility": "공개",
+      "trigger": "남의 목숨을 구함",
+      "effects": [
+        {
+          "type": "mod",
+          "var": "rel.debt",
+          "op": "add",
+          "value": 5,
+          "who": "others",
+          "if": [
+            "history_counterpart"
+          ]
+        }
+      ],
+      "note": "구해 준 상대가 이 인물에게 빚 +5를 진다. 03번 규칙대로 한 번 갚을 때마다 1씩 준다."
+    },
+    {
+      "id": "mastery.elder_farmer",
+      "name": "노농",
+      "kind": "숙련",
+      "tier": "없음",
+      "skill": "농사",
+      "threshold": 50,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.famine_damage",
+          "op": "mul",
+          "value": 0.75
+        }
+      ],
+      "note": "흉년 피해를 0.75배(16번 5절 보통)로 줄인다. 14번 2-2 작황 배수에 곱한다."
+    },
+    {
+      "id": "mastery.agronomist",
+      "name": "농학자",
+      "kind": "숙련",
+      "tier": "없음",
+      "skill": "농사",
+      "threshold": 80,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.harvest",
+          "op": "mul",
+          "value": 1.3
+        }
+      ],
+      "note": "01번 6절 예시. 맡은 필지 수확 +30%."
+    },
+    {
+      "id": "mastery.woodcutter",
+      "name": "나무꾼",
+      "kind": "숙련",
+      "tier": "없음",
+      "skill": "채집",
+      "threshold": 50,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.work_output",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "벌목"
+        }
+      ],
+      "note": "벌목 산출 +50%. 수치는 16번 5절 '큼'."
+    },
+    {
+      "id": "mastery.master_miner",
+      "name": "채굴 장인",
+      "kind": "숙련",
+      "tier": "없음",
+      "skill": "채집",
+      "threshold": 80,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.work_output",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "채석"
+        },
+        {
+          "type": "mod",
+          "var": "char.work_output",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "채광"
+        }
+      ],
+      "note": "채석, 채광 산출 +50%. 수치는 16번 5절 '큼'."
+    },
+    {
+      "id": "mastery.hunter",
+      "name": "사냥꾼",
+      "kind": "숙련",
+      "tier": "없음",
+      "skill": "사냥",
+      "threshold": 50,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.work_output",
+          "op": "mul",
+          "value": 1.5,
+          "arg": "사냥"
+        }
+      ],
+      "note": "01번 6절 예시. 사냥 산출 +50%."
+    },
+    {
+      "id": "mastery.tracker",
+      "name": "추적자",
+      "kind": "숙련",
+      "tier": "없음",
+      "skill": "사냥",
+      "threshold": 80,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.track_fugitive",
+          "op": "mul",
+          "value": 1.5
+        },
+        {
+          "type": "mod",
+          "var": "char.ambush",
+          "op": "mul",
+          "value": 1.5
+        }
+      ],
+      "note": "도주자 추적과 숲 매복 전투 +50%. 수치는 16번 5절 '큼'."
+    },
+    {
+      "id": "mastery.blacksmith",
+      "name": "대장장이",
+      "kind": "숙련",
+      "tier": "없음",
+      "skill": "제작",
+      "threshold": 50,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.metal_yield",
+          "op": "mul",
+          "value": 1.5
+        }
+      ],
+      "note": "01번 6절 예시. 금속 제품을 만들 때 금속 효율 +50%."
+    },
+    {
+      "id": "mastery.master_artisan",
+      "name": "명인",
+      "kind": "숙련",
+      "tier": "없음",
+      "skill": "제작",
+      "threshold": 80,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.masterwork",
+          "op": "mul",
+          "value": 2.0
+        }
+      ],
+      "note": "명품 확률 2배(16번 5절 매우 큼). 손재주 재능과 곱해진다."
+    },
+    {
+      "id": "mastery.veteran",
+      "name": "고참병",
+      "kind": "숙련",
+      "tier": "없음",
+      "skill": "전투",
+      "threshold": 50,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.injury",
+          "op": "mul",
+          "value": 0.75
+        }
+      ],
+      "note": "부상 확률 0.75배(16번 5절 보통). 실전 생존(01번 6절 전투 +2)을 돕는다."
+    },
+    {
+      "id": "mastery.weapon_master",
+      "name": "무예 달인",
+      "kind": "숙련",
+      "tier": "없음",
+      "skill": "전투",
+      "threshold": 80,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.combat",
+          "op": "mul",
+          "value": 1.5
+        }
+      ],
+      "note": "개인 전투력(14번 9-1) 1.5배. 수치는 16번 5절 '큼'."
+    },
+    {
+      "id": "mastery.captain",
+      "name": "부대장",
+      "kind": "숙련",
+      "tier": "없음",
+      "skill": "지휘",
+      "threshold": 50,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.command_range",
+          "op": "add",
+          "value": 5
+        }
+      ],
+      "note": "직접 거느릴 부하 +5명(통솔 재능과 같은 크기)."
+    },
+    {
+      "id": "mastery.strategist",
+      "name": "전략가",
+      "kind": "숙련",
+      "tier": "없음",
+      "skill": "지휘",
+      "threshold": 80,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 20,
+          "arg": "부대 전투"
+        }
+      ],
+      "note": "부대 전투 판정 +20. 수치는 16번 5절 '큼'."
+    },
+    {
+      "id": "mastery.tax_collector",
+      "name": "징세관",
+      "kind": "숙련",
+      "tier": "없음",
+      "skill": "관리",
+      "threshold": 50,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 20,
+          "arg": "세금"
+        }
+      ],
+      "note": "세금 판정 +20. 수치는 16번 5절 '큼'."
+    },
+    {
+      "id": "mastery.lawgiver",
+      "name": "입법가",
+      "kind": "숙련",
+      "tier": "없음",
+      "skill": "관리",
+      "threshold": 80,
+      "effects": [
+        {
+          "type": "slot",
+          "slot": "trait",
+          "value": 1
+        }
+      ],
+      "note": "01번 6절 관리의 법 슬롯 확장. 자기가 수장인 집단의 특성 슬롯을 1 늘린다."
+    },
+    {
+      "id": "mastery.haggler",
+      "name": "흥정꾼",
+      "kind": "숙련",
+      "tier": "없음",
+      "skill": "교역",
+      "threshold": 50,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 20,
+          "arg": "매매"
+        }
+      ],
+      "note": "매매 판정 +20. 수치는 16번 5절 '큼'."
+    },
+    {
+      "id": "mastery.merchant_prince",
+      "name": "거상",
+      "kind": "숙련",
+      "tier": "없음",
+      "skill": "교역",
+      "threshold": 80,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.trade_price",
+          "op": "mul",
+          "value": 1.25
+        }
+      ],
+      "note": "매매 가격을 1.25배(16번 5절 보통)로 유리하게 받는다."
+    },
+    {
+      "id": "mastery.orator",
+      "name": "웅변가",
+      "kind": "숙련",
+      "tier": "없음",
+      "skill": "언변",
+      "threshold": 50,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 20,
+          "arg": "설득"
+        }
+      ],
+      "note": "01번 6절 예시. 설득 판정 +20."
+    },
+    {
+      "id": "mastery.agitator",
+      "name": "선동가",
+      "kind": "숙련",
+      "tier": "없음",
+      "skill": "언변",
+      "threshold": 80,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 20,
+          "arg": "반란 선동"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 20,
+          "arg": "지지 요청"
+        }
+      ],
+      "note": "반란 선동, 지지 요청 판정 +20. 수치는 16번 5절 '큼'."
+    },
+    {
+      "id": "mastery.instructor",
+      "name": "교관",
+      "kind": "숙련",
+      "tier": "없음",
+      "skill": "학문",
+      "threshold": 50,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.teach_mult",
+          "op": "set",
+          "value": 2.0
+        }
+      ],
+      "note": "01번 6절 예시. 가르치는 기술 습득 2배로, 스승 배수를 상한 2로 정한다."
+    },
+    {
+      "id": "mastery.sage",
+      "name": "현자",
+      "kind": "숙련",
+      "tier": "없음",
+      "skill": "학문",
+      "threshold": 80,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.book_speed",
+          "op": "mul",
+          "value": 1.5
+        }
+      ],
+      "note": "경전, 법전 저술 속도 1.5배. 수치는 16번 5절 '큼'."
+    },
+    {
+      "id": "mastery.preacher",
+      "name": "설교자",
+      "kind": "숙련",
+      "tier": "없음",
+      "skill": "신학",
+      "threshold": 50,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 20,
+          "arg": "개종 권유"
+        }
+      ],
+      "note": "개종 권유 판정 +20. 수치는 16번 5절 '큼'."
+    },
+    {
+      "id": "mastery.theologian",
+      "name": "신학자",
+      "kind": "숙련",
+      "tier": "없음",
+      "skill": "신학",
+      "threshold": 80,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.faith_influence",
+          "op": "mul",
+          "value": 1.5
+        }
+      ],
+      "note": "신앙 영향력 획득 1.5배. 수치는 16번 5절 '큼'."
+    },
+    {
+      "id": "mastery.spy",
+      "name": "첩보원",
+      "kind": "숙련",
+      "tier": "없음",
+      "skill": "은밀",
+      "threshold": 50,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.secret_detect",
+          "op": "mul",
+          "value": 1.25
+        }
+      ],
+      "note": "01번 6절 예시. 비밀 캐기 +25%는 05번 3절 인지 경로의 비밀 인지 배수로 준다."
+    },
+    {
+      "id": "mastery.assassin",
+      "name": "암살자",
+      "kind": "숙련",
+      "tier": "없음",
+      "skill": "은밀",
+      "threshold": 80,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 20,
+          "arg": "암살"
+        },
+        {
+          "type": "mod",
+          "var": "char.crime_witness",
+          "op": "mul",
+          "value": 0.75
+        }
+      ],
+      "note": "암살 판정 +20, 범죄 목격률 0.75배(16번 5절 큼, 보통)."
+    },
+    {
+      "id": "mastery.healer",
+      "name": "치료사",
+      "kind": "숙련",
+      "tier": "없음",
+      "skill": "의술",
+      "threshold": 50,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 20,
+          "arg": "치료"
+        }
+      ],
+      "note": "치료 판정 +20. 수치는 16번 5절 '큼'."
+    },
+    {
+      "id": "mastery.physician",
+      "name": "명의",
+      "kind": "숙련",
+      "tier": "없음",
+      "skill": "의술",
+      "threshold": 80,
+      "effects": [
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 20,
+          "arg": "진단"
+        },
+        {
+          "type": "enable",
+          "action": "carrier_diagnosis",
+          "who": "self"
+        }
+      ],
+      "note": "진단 판정 +20. 01번 3절대로 의술로 형질 보인자를 진단한다."
+    }
+  ]
+}

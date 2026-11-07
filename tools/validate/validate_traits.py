@@ -7,6 +7,7 @@ data/registry.json 과 data/traits/*.json 을 읽어 형식과 참조를 검사�
 import glob
 import json
 import os
+import re
 import sys
 from collections import Counter
 
@@ -186,6 +187,28 @@ def main():
             elif typ == "slot":
                 if e.get("slot") not in ("trait", "succession"):
                     errors.append(f"{ew}: slot '{e.get('slot')}'")
+
+    # 문자열 어디에든 들어 있는 특성 id 참조가 실제로 있는지
+    id_pat = re.compile(r"(law|doctrine|family|band|custom|tribe|city|league|merc|order|revolt|trade|guild|crime|cabal|cabal_goal|school|faction|pers|gene|talent|hist|mastery)\.[a-z_0-9]+")
+
+    def walk(o, where):
+        if isinstance(o, dict):
+            for k, v in o.items():
+                if k != "id":
+                    walk(v, where)
+        elif isinstance(o, list):
+            for v in o:
+                walk(v, where)
+        elif isinstance(o, str) and id_pat.fullmatch(o) and o not in all_ids:
+            errors.append(f"{where}: 없는 특성 id '{o}' 참조")
+
+    for fname, t in traits:
+        walk(t, f"{fname}:{t.get('id')}")
+        for u in t.get("unlock", []) or []:
+            if u.get("metric") == "cond.any":
+                for sub in u.get("arg", []) or []:
+                    if sub.get("metric") not in known["metrics"]:
+                        errors.append(f"{fname}:{t.get('id')}: cond.any 안의 지표 '{sub.get('metric')}' 없음")
 
     # 배타 대칭
     ex = {t["id"]: set(t.get("exclusive", []) or []) for _, t in traits if "id" in t}

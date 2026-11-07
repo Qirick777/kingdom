@@ -43,9 +43,33 @@
           "var": "ai.leak",
           "op": "mul",
           "value": 1.3
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": 5,
+          "if": [
+            "has_personality:정직"
+          ]
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": -10,
+          "if": [
+            "has_personality:기만"
+          ]
+        },
+        {
+          "type": "mod",
+          "var": "char.privilege_resentment",
+          "op": "mul",
+          "value": 2.0
         }
       ],
-      "note": "15번 S3 도덕 배수 2.5, 05번 발설 배수 1.3, 03번 뇌물 거절. 거짓말을 못 한다"
+      "note": "15번 S3 도덕 배수 2.5, 05번 발설 배수 1.3, 03번 뇌물 거절. 거짓말을 못 한다. 04번 3-1의 공개 특권 충성 감소 2배"
     },
     {
       "id": "pers.deceitful",
@@ -87,6 +111,24 @@
           "type": "ai",
           "action": "forgery",
           "weight": 1.5
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": 5,
+          "if": [
+            "has_personality:기만"
+          ]
+        },
+        {
+          "type": "opinion",
+          "from": "others",
+          "to": "self",
+          "value": -10,
+          "if": [
+            "has_personality:정직"
+          ]
         }
       ],
       "note": "15번 S3 도덕 배수 0.8, 05번 발설 배수 0.8"
@@ -182,6 +224,11 @@
           "arg": "언변"
         },
         {
+          "type": "enable",
+          "action": "feast",
+          "who": "self"
+        },
+        {
           "type": "mod",
           "var": "char.check",
           "op": "add",
@@ -189,9 +236,25 @@
           "arg": "설득"
         },
         {
-          "type": "enable",
-          "action": "feast",
-          "who": "self"
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "칭찬"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "지지 요청"
+        },
+        {
+          "type": "mod",
+          "var": "char.check",
+          "op": "add",
+          "value": 10,
+          "arg": "반란 선동"
         }
       ],
       "note": "천재는 재능 효과에 더해진다(습득 2 × 1.5 = 3배, 최대치 150). 연설은 연회 행동을 군중 설득으로 쓴다"

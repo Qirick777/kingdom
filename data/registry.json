@@ -1,6 +1,5 @@
 {
-  "_doc": "특성 효과가 참조할 수 있는 모든 키. 설명은 docs/design/16_trait_effects.md. 여기에 없는 키를 쓰면 검증기가 오류를 낸다.",
-
+  "_doc": "특성 효과가 참조할 수 있는 모든 키. 설명은 docs/design/16_trait_effects.md. 여기에 없는 키를 쓰면 검증기가 오류를 낸다. 2026-11 특성 변환에서 제안된 키 189개를 합쳤다.",
   "scopes": {
     "self": "특성을 가진 인물 자신",
     "spouse": "그 인물의 배우자",
@@ -22,9 +21,12 @@
     "land": "집단이 소유하거나 점유한 토지",
     "residents": "집단 토지에 사는 모든 인물",
     "vassals": "봉신 집단과 그 수장",
-    "liege": "상위 군주"
+    "liege": "상위 군주",
+    "others": "특성 보유자를 뺀 모든 인물. opinion의 from과 rel.* 변수에서는 그 인물이 보유자를 향한 값",
+    "region_land": "집단 토지와 그 반경 3셀 안의 토지(14번 8-2의 반경)",
+    "parent_head": "파벌이 속한 모집단의 수장",
+    "target_person": "파벌 요구가 지정한 인물(후계자 후보)"
   },
-
   "predicates": {
     "same_religion": "대상이 같은 교단",
     "other_religion": "대상이 다른 교단",
@@ -52,9 +54,35 @@
     "public": "행위가 공개적(목격자 3명 이상 또는 공식 행사)",
     "on_own_land": "자기 집단 토지 안",
     "trade_route": "교역로 특성 토지",
-    "city": "읍 이상 토지"
+    "city": "읍 이상 토지",
+    "former_religion": "대상이 이 인물이 개종하기 전 교단의 신도",
+    "sex_behavior": "판단하는 행위가 성 관련 행위(multiple_wives, multiple_husbands, concubinage, adultery, premarital_sex, sex_among_believers, prostitution, marry_cousin, marry_kin6)",
+    "has_law": "이 인물이 사는 나라가 인자 이름의 법을 가짐",
+    "history_counterpart": "대상이 이 이력을 만든 사건의 상대(해방노예: 해방한 사람, 은인: 목숨을 구해 준 사람, 고문 생존자: 고문한 사람)",
+    "punished_with": "이 인물이 인자 이름의 형벌(09번 5절)을 받았음",
+    "children_below": "대상이 혼인 5년 이상이고 자녀 수가 인자 미만",
+    "has_talent": "대상이 인자로 준 재능을 가짐",
+    "owns_slaves": "대상이 노예를 1명 이상 소유",
+    "persecuted": "최근 1년 안에 신도가 신앙 때문에 처형되었거나 교단이 탄압받음",
+    "sacred_site": "성지 특성 토지",
+    "is_landlord": "대상이 실질 계층 지주(가구 노동력보다 많은 필지를 소작 줌)",
+    "is_lender": "대상이 받을 곡식 빚이 있음",
+    "is_debtor": "대상이 갚을 곡식 빚이 있음",
+    "parent_children_max": "대상의 가문원 부모가 둔 자녀가 인자 수 이하",
+    "educated": "대상이 학문 스승에게 교육받음(01번 2절 성장기 보정 '교육')",
+    "succession_rule": "집단의 현재 승계 규칙이 인자 규칙",
+    "child_of_head": "대상이 수장의 자녀",
+    "eldest_son": "대상이 부모의 맏아들",
+    "sibling": "대상이 형제자매",
+    "has_occupation": "대상의 생업이 인자(14번 7-1: 농사, 장인, 상인, 병사, 도적, 사제, 대금업, 채집)",
+    "age_min": "대상이 인자 나이 이상",
+    "retired": "대상이 이 집단에서 은퇴한 옛 구성원",
+    "target_younger": "대상이 행위자보다 나이가 적음",
+    "ancestor_has_history": "대상의 직계 조상(부모, 조부모 이상)이 인자 이력을 가짐",
+    "nearby": "대상이 집단 토지 반경 3셀 안에 삶(14번 8-2의 반경)",
+    "owes_this_group": "대상 집단이 이 집단에 갚을 빚이 있음(대여 잔액 > 0)",
+    "liege_type": "상위 군주 집단이 인자 유형(교단, 나라 등)"
   },
-
   "metrics": {
     "group.members": "구성원 수",
     "group.followers": "신도 수",
@@ -110,9 +138,43 @@
     "region.revolt_won_recent": "최근 10년 안에 봉기 승리(0/1)",
     "self.age": "본인 나이",
     "self.skill": "본인 기술(인자: 기술 이름)",
-    "self.prestige": "본인 위신"
+    "self.prestige": "본인 위신",
+    "group.clergy": "사제 수",
+    "cond.any": "인자로 준 해금 조건 목록 중 하나라도 참이면 1(0/1)",
+    "head.house_grade": "수장 집 등급(0 노숙, 1 움막, 2 가옥, 3 저택, 4 왕궁)",
+    "group.years_since_repeal": "인자 특성을 폐지한 뒤 지난 연수(가진 적 없으면 0)",
+    "group.treasury_item": "금고의 인자 품목 수량",
+    "group.trade_route_lands": "교역로 특성 토지 보유 수",
+    "group.fiefs": "기사에게 준 봉토 수",
+    "group.silver_income": "연 은화 수입",
+    "group.members_aged": "인자 나이 이상인 생존 구성원 수",
+    "group.titled_members": "작위(법적 귀족 신분) 보유 구성원 수",
+    "group.member_head_years": "구성원(사망자 포함)이 인자 유형 집단의 수장을 지낸 최장 연수",
+    "group.members_canonized": "성인으로 선포된 구성원 수(사망자 포함)",
+    "head.known_bastard_kin": "수장이 아는 사생아 혈족 수",
+    "group.avg_loyalty_years": "구성원 평균 충성이 인자 값 이상으로 이어진 연수",
+    "group.groups_of_type": "집단 토지에 본거지를 둔 인자 유형 집단 수",
+    "group.treasury_of_type": "집단 토지에 본거지를 둔 인자 유형 집단의 금고 합계(곡식 환산)",
+    "group.allies_of_type": "동맹 관계(04번 7절)인 인자 유형 집단 수",
+    "group.members_with_trait": "인자 특성을 가진 회원 집단 수(연맹)",
+    "group.members_state_religion_share": "회원 집단 중 맹주 나라와 같은 국교를 가진 비율(0~1)",
+    "group.sieges_won": "함락시킨 요새, 성채 수",
+    "group.contract_years_same_employer": "같은 고용주와 끊김 없이 이어진 계약 연수(인자: 고용주 집단 유형, 없으면 전체)",
+    "group.knights": "구성원 중 기사 수",
+    "liege.concentration": "상위 군주(공인 주체) 집단의 권력 집중도(0~1)",
+    "group.branches_under_law": "인자 법을 가진 나라 안의 지점 수",
+    "group.contracts_with": "인자 집단 유형과 맺은 계약, 특허 수(비밀 계약 포함. 쉼표로 여러 유형이면 그중 하나)",
+    "group.part_of": "이 집단이 인자 유형 집단에 소속됨(종속 또는 그 토지 안에 본거지)(0/1)",
+    "group.bribed_officials": "뇌물로 매수한 인자 직위(판관 등) 인물 수",
+    "group.members_in_post": "인자 조직(치안대 등)에 들어가 있는 구성원 수",
+    "group.officers_kin_share": "간부(권력 지분 상위 5명) 중 수장과 같은 가문 비율(0~1)",
+    "group.members_killed": "살해당한 구성원 수(누적)",
+    "group.members_magnates": "인자 유형 집단 하나에서 유력자(권력 지분 보유)인 구성원 수의 최대값",
+    "group.documents_read": "구성원이 열람한 인자 종류 문서 수",
+    "group.seat_stage": "본거지 토지가 인자 단계 이상(0/1)",
+    "group.share_in_parent": "구성원 권력 지분 합이 모집단 유력자 권력에서 차지하는 비율(0~1)",
+    "group.members_land_share": "구성원 필지가 한 토지(셀)의 필지에서 차지하는 비율의 최대값(0~1)"
   },
-
   "behaviors": {
     "multiple_wives": "남성의 다수 배우자",
     "multiple_husbands": "여성의 다수 배우자",
@@ -159,9 +221,17 @@
     "break_contract": "계약 위반",
     "duel_refusal": "결투 거부",
     "fail_childbearing": "자녀 3명 미만(다산 의무 아래)",
-    "skip_tithe": "헌물 미납"
+    "skip_tithe": "헌물 미납",
+    "withhold_child": "출가 의무 거부(자녀 2명 이상 가정이 1명도 바치지 않음)",
+    "marry_same_dynasty": "같은 가문 인물과 혼인",
+    "marry_other_dynasty": "다른 가문 인물과 혼인",
+    "hold_private_property": "개인 재산(곡식, 은화, 필지) 보유",
+    "marry": "혼인(배우자를 둠)",
+    "war_on_member": "같은 연맹 회원 집단에 전쟁 선포",
+    "refuse_verdict": "연맹 법정 판결 거부",
+    "take_apprentice": "도제 1명 이상 두기(도제 의무 아래. 없으면 위반)",
+    "shoddy_craft": "조잡 품질 제작"
   },
-
   "actions": {
     "confession": "고해 듣기",
     "excommunicate": "파문",
@@ -209,9 +279,24 @@
     "ordain_women": "여성 사제 서임",
     "buy_indulgence": "면죄부 구입",
     "secede": "분리 독립",
-    "ultimatum": "최후통첩"
+    "ultimatum": "최후통첩",
+    "hoard": "사재기: 한 품목을 사 모아 그 지역 가격(econ.price)을 1.5배로 올림",
+    "create_artwork": "작품 제작: 가보 1점을 만들고 가문 명성(group.prestige) +10",
+    "annul_marriage": "혼인 무효(이혼). 사제 승인 필요(03 2절)",
+    "offer_child": "출가: 자녀 1명을 교단에 바친다. 그 자녀는 수도사(사제)가 된다",
+    "buy_office": "은화로 성직을 산다",
+    "found_knight_order": "기사단 창설(10 5절). 기사 5명 필요",
+    "reconcile": "화해(가문 간 원한 해소 판정)",
+    "retire": "은퇴(탈주가 아닌 정식 탈퇴)",
+    "buy_citizenship": "시민권 구입",
+    "found_league": "연맹 창설",
+    "hire_mercenary": "용병단 고용",
+    "absorb_member": "회원 집단 흡수(맹주 나라에 병합)",
+    "member_trial": "회원 간 분쟁 재판",
+    "back_claimant": "승계 분쟁에서 후보 지지(자기 병력을 15번 S6 힘에 더함)",
+    "punish_named": "지목 인물 처형 또는 추방(09번 5절 형벌)",
+    "abdicate": "수장 퇴위. 지정 후보에게 수장 자리 이양"
   },
-
   "events": {
     "miracle": "기적 사건",
     "harem_plot": "후궁 음모 사건",
@@ -221,238 +306,1622 @@
     "succession_crisis": "계승 위기",
     "pilgrim_arrival": "순례자 도착"
   },
-
   "vars": {
-    "char.strength": {"label": "체격", "unit": "0~20 가산", "ref": "01 2절"},
-    "char.constitution": {"label": "체력", "unit": "0~20 가산", "ref": "01 2절"},
-    "char.agility": {"label": "민첩", "unit": "0~20 가산", "ref": "01 2절"},
-    "char.intellect": {"label": "지능", "unit": "0~20 가산", "ref": "01 2절"},
-    "char.will": {"label": "의지", "unit": "0~20 가산", "ref": "01 2절"},
-    "char.charm": {"label": "매력", "unit": "0~20 가산", "ref": "01 2절"},
-    "char.skill_gain": {"label": "기술 습득 배수", "unit": "배수. 인자 skill로 기술 지정, 없으면 전체", "ref": "01 6절"},
-    "char.skill_cap": {"label": "기술 최대치", "unit": "가산. 인자 skill", "ref": "01 5절"},
-    "char.skill": {"label": "기술 수치", "unit": "가산. 인자 skill", "ref": "01 6절"},
-    "char.mastery_slots": {"label": "숙련 슬롯 수", "unit": "가산", "ref": "01 6절"},
-    "char.labor": {"label": "노동량 배수", "unit": "배수", "ref": "14 2절"},
-    "char.food_need": {"label": "식량 소비 배수", "unit": "배수", "ref": "02 4절"},
-    "char.conception": {"label": "1회당 임신 확률 배수", "unit": "배수", "ref": "01 8절"},
-    "char.relations_per_week": {"label": "주당 관계 횟수", "unit": "가산", "ref": "01 8절"},
-    "char.maternal_mortality": {"label": "출산 사망률 배수", "unit": "배수", "ref": "01 8절"},
-    "char.infant_survival": {"label": "영아 생존율 가산", "unit": "확률 가산", "ref": "01 8절"},
-    "char.aging_start": {"label": "노화 시작 나이", "unit": "가산(년)", "ref": "01 2절"},
-    "char.disease_resist": {"label": "질병 사망률 배수", "unit": "배수", "ref": "01 7절"},
-    "char.injury": {"label": "부상 확률 배수", "unit": "배수", "ref": "15 9절"},
-    "char.wound_death": {"label": "부상 사망률 배수", "unit": "배수", "ref": "01 3절"},
-    "char.stress_gain": {"label": "스트레스 증가 배수", "unit": "배수", "ref": "01 7절"},
-    "char.combat": {"label": "개인 전투력 배수", "unit": "배수", "ref": "14 9-1"},
-    "char.armor_penalty": {"label": "갑옷 감속", "unit": "set false로 없앰", "ref": "01 5절"},
-    "char.first_strike": {"label": "결투 선공", "unit": "set true", "ref": "01 5절"},
-    "char.secret_detect": {"label": "비밀 인지 확률 배수", "unit": "배수", "ref": "05 3절"},
-    "char.lie_detect": {"label": "거짓말 간파 판정 가산", "unit": "판정 가산", "ref": "03 2절"},
-    "char.deceive": {"label": "거짓말이 기만 판정을 피할 확률", "unit": "확률", "ref": "01 5절"},
-    "char.crime_witness": {"label": "내가 저지른 범죄의 목격률 배수", "unit": "배수", "ref": "09 2절"},
-    "char.leave_no_evidence": {"label": "범죄 현장 증거 없음", "unit": "set true", "ref": "09 3절"},
-    "char.torture_resist": {"label": "고문 저항 판정 가산", "unit": "판정 가산", "ref": "03 3절"},
-    "char.torture_immune": {"label": "고문으로 비밀을 내주지 않음", "unit": "set true", "ref": "01 5절"},
-    "char.first_impression": {"label": "첫인상 호감 가산", "unit": "호감 가산", "ref": "03 1절"},
-    "char.prestige": {"label": "위신 가산", "unit": "가산", "ref": "14 12-1"},
-    "char.legitimacy": {"label": "정통성 가산", "unit": "가산", "ref": "04 8절"},
-    "char.marriage_value": {"label": "혼인 효용 가산(상대가 볼 때)", "unit": "가산", "ref": "14 12-4"},
-    "char.rumor_spread": {"label": "소문 전파 배수", "unit": "배수", "ref": "05 4절"},
-    "char.norm_internalization": {"label": "규범 내면화 가산", "unit": "가산(기본 0.6)", "ref": "16 3절"},
-    "char.grievance_decay": {"label": "원한 감소 배수", "unit": "배수", "ref": "03 1절"},
-    "char.loyalty_decay": {"label": "충성 감소 배수", "unit": "배수", "ref": "03 1절"},
-    "char.fear_resist": {"label": "위협 저항 판정 가산", "unit": "판정 가산", "ref": "03 3절"},
-    "char.charm_check": {"label": "구애, 설득 판정 가산", "unit": "판정 가산", "ref": "03 2절"},
-    "char.check": {"label": "판정 가산(인자 check: 행동 이름)", "unit": "판정 가산", "ref": "03 2절"},
-    "char.trade_price": {"label": "매매 가격 유리 배수", "unit": "배수", "ref": "03 3절"},
-    "char.command_range": {"label": "직접 거느릴 부하 수", "unit": "가산", "ref": "01 5절"},
-    "char.track_fugitive": {"label": "도주자 추적 성공 배수", "unit": "배수", "ref": "01 5절"},
-    "char.see_prices": {"label": "이웃 지역 가격을 앎", "unit": "set true", "ref": "01 5절"},
-    "char.see_blackmail": {"label": "나를 협박하려는 사람을 미리 앎", "unit": "set true", "ref": "01 5절"},
-    "char.auto_rumor": {"label": "주변 비밀 소문 매주 자동 인지", "unit": "set true", "ref": "01 5절"},
-    "char.lover_decay": {"label": "연인 호감 감소 배수", "unit": "배수", "ref": "01 5절"},
-    "char.ignore_temperance": {"label": "상대 절제 보정 무시", "unit": "set true", "ref": "01 5절"},
-    "char.craft_time": {"label": "제작 시간 배수", "unit": "배수", "ref": "02 3절"},
-    "char.masterwork": {"label": "명품 확률 배수", "unit": "배수", "ref": "02 3절"},
-    "char.harvest": {"label": "맡은 필지 수확 배수", "unit": "배수", "ref": "14 2-2"},
-    "char.famine_damage": {"label": "흉년 피해 배수", "unit": "배수", "ref": "14 2-2"},
-    "char.faith_influence": {"label": "신앙 영향력 획득 배수", "unit": "배수", "ref": "03 3절"},
-    "char.feast_effect": {"label": "연회 호감 배수", "unit": "배수", "ref": "15 1-2"},
-    "char.jurisdiction_cap": {"label": "관할 인구 상한 배수", "unit": "배수", "ref": "01 5절"},
-    "char.ambush": {"label": "숲 매복 전투 배수", "unit": "배수", "ref": "01 5절"},
-    "char.work_output": {"label": "인자 작업 산출 배수(인자 work: 벌목, 채석, 채광, 사냥, 어로, 농사, 제작, 건축)", "unit": "배수", "ref": "02 2절"},
-
-    "ai.moral": {"label": "도덕 비용 배수", "unit": "배수", "ref": "15 S3"},
-    "ai.gain": {"label": "직위 가치 배수", "unit": "배수", "ref": "15 S2"},
-    "ai.risk": {"label": "위험 회피 배수(손실 항에 곱함)", "unit": "배수", "ref": "15 S3"},
-    "ai.utility": {"label": "행동 효용 배수(인자 action)", "unit": "배수", "ref": "16 2절"},
-    "ai.occupation": {"label": "생업 효용 보정(인자 occ: 농사, 장인, 상인, 병사, 도적, 사제, 대금업, 채집)", "unit": "가산(곡식/년)", "ref": "14 7-1"},
-    "ai.surplus_use": {"label": "잉여 3순위 지출 선택 가중(인자 use: 대여, 땅매입, 무장, 연회, 헌금, 개간, 저장, 지참금)", "unit": "배수", "ref": "14 7-2"},
-    "ai.clear_extra": {"label": "개간 목표 추가 필지", "unit": "가산", "ref": "econ_sim spring"},
-    "ai.face": {"label": "체면 계수", "unit": "배수", "ref": "14 7-1"},
-    "ai.tax_horizon": {"label": "세율 결정 시야(년)", "unit": "set", "ref": "15 2-3"},
-    "ai.leak": {"label": "알고 있는 비밀을 퍼뜨릴 확률 배수", "unit": "배수", "ref": "05 4절"},
-    "ai.blackmail": {"label": "협박 선택 가중", "unit": "배수", "ref": "05 4절"},
-    "ai.expose": {"label": "폭로 선택 가중", "unit": "배수", "ref": "05 4절"},
-    "ai.sell_secret": {"label": "비밀 매매 선택 가중", "unit": "배수", "ref": "05 4절"},
-    "ai.warn_owner": {"label": "비밀 주인에게 알림 선택 가중", "unit": "배수", "ref": "05 4절"},
-    "ai.bribe_accept": {"label": "뇌물 수락 판정 가산", "unit": "판정 가산", "ref": "03 3절"},
-    "ai.punish_harshness": {"label": "처벌 강도 선택 가중", "unit": "배수", "ref": "09 5절"},
-    "ai.mercy_captive": {"label": "포로 석방, 몸값 선호", "unit": "배수", "ref": "03 3절"},
-    "ai.courtship": {"label": "구애 시도 빈도 배수", "unit": "배수", "ref": "03 5절"},
-    "ai.adultery_accept": {"label": "유혹 요구 크기 가산(음수면 쉽게 넘어감)", "unit": "가산", "ref": "03 3절"},
-    "ai.revenge_target": {"label": "원한 대상 제거 목표 가중", "unit": "배수", "ref": "03 5절"},
-    "ai.convert_resist": {"label": "개종 저항 판정 가산", "unit": "판정 가산", "ref": "03 3절"},
-    "ai.join_combat": {"label": "전투 참여 수락 가중", "unit": "배수", "ref": "03 4절"},
-    "ai.lend_rate": {"label": "대여 이자율 가산", "unit": "가산(비율)", "ref": "14 7-3"},
-    "ai.emigrate": {"label": "이주 효용 배수", "unit": "배수", "ref": "15 S3"},
-    "ai.revolt": {"label": "반란 효용 배수", "unit": "배수", "ref": "15 S3"},
-    "ai.murder_try": {"label": "암살 효용 양수일 때 연 시도 확률 배수", "unit": "배수", "ref": "15 S3"},
-    "ai.plan_patience": {"label": "계획 음모 성공률 가산", "unit": "판정 가산", "ref": "01 4절"},
-    "ai.desert": {"label": "탈주 확률 배수", "unit": "배수", "ref": "08 규율"},
-    "ai.goal": {"label": "장기 목표 고정(인자 goal: 지위, 재산, 연인, 복수, 신앙, 가족)", "unit": "set", "ref": "03 5절"},
-
-    "rel.opinion_decay": {"label": "호감이 0으로 돌아가는 속도 배수", "unit": "배수", "ref": "03 1절"},
-    "rel.fear_decay": {"label": "두려움 감소 배수", "unit": "배수", "ref": "03 1절"},
-    "rel.fear": {"label": "두려움 가산", "unit": "가산", "ref": "03 1절"},
-    "rel.trust_cap": {"label": "신뢰 상한", "unit": "set", "ref": "03 1절"},
-    "rel.debt": {"label": "빚 가산", "unit": "가산", "ref": "03 1절"},
-    "rel.grievance_share": {"label": "구성원이 살해되면 다른 구성원이 가해자에게 원한 공유", "unit": "가산", "ref": "08 가훈"},
-
-    "econ.harvest": {"label": "수확 배수", "unit": "배수", "ref": "14 2-2"},
-    "econ.famine_damage": {"label": "흉년 작황 배수의 피해 배수", "unit": "배수", "ref": "14 2-2"},
-    "econ.clear_cost": {"label": "개간 노동 배수", "unit": "배수", "ref": "14 2-1"},
-    "econ.labor": {"label": "노동량 배수", "unit": "배수", "ref": "14 2절"},
-    "econ.food_need": {"label": "식량 소비 배수", "unit": "배수", "ref": "02 4절"},
-    "econ.storage_loss": {"label": "곡식 저장 손실 배수", "unit": "배수", "ref": "15 1-2"},
-    "econ.hunt": {"label": "사냥 산출 배수", "unit": "배수", "ref": "02 2절"},
-    "econ.forage": {"label": "채집 산출 배수", "unit": "배수", "ref": "02 2절"},
-    "econ.trade": {"label": "교역 이익 배수", "unit": "배수", "ref": "14 7-1"},
-    "econ.price": {"label": "인자 품목 지역 가격 배수", "unit": "배수", "ref": "02 5절"},
-    "econ.sell_price": {"label": "인자 품목을 팔 때 받는 가격 배수", "unit": "배수", "ref": "02 5절"},
-    "econ.rent_cap": {"label": "소작료 상한", "unit": "set(비율)", "ref": "14 7-4"},
-    "econ.interest_cap": {"label": "이자율 상한", "unit": "set(비율)", "ref": "14 7-3"},
-    "econ.tithe": {"label": "헌물 비율", "unit": "set(순수확 비율)", "ref": "15 2절"},
-    "econ.land_tax": {"label": "토지세 비율", "unit": "set", "ref": "15 2-2"},
-    "econ.land_tax_exempt": {"label": "토지세 면제 비율", "unit": "set(0~1)", "ref": "15 2-6"},
-    "econ.poll_tax": {"label": "인두세(곡식/성인/년)", "unit": "set", "ref": "15 2-2"},
-    "econ.house_tax": {"label": "가옥세 부과", "unit": "set true", "ref": "15 2-2"},
-    "econ.tariff": {"label": "관세 비율", "unit": "set", "ref": "15 2-2"},
-    "econ.market_tax": {"label": "시장세 비율", "unit": "set", "ref": "15 2-2"},
-    "econ.inheritance_tax": {"label": "상속세 비율", "unit": "set", "ref": "15 2-2"},
-    "econ.corvee_days": {"label": "부역(주당 일)", "unit": "set", "ref": "15 2-2"},
-    "econ.tribute_up": {"label": "상위로 바치는 공납 비율", "unit": "set", "ref": "15 2-5"},
-    "econ.tax_compliance": {"label": "자발 납부율 가산", "unit": "가산(비율)", "ref": "14 3-4"},
-    "econ.collect_cost": {"label": "징수 비용 배수", "unit": "배수", "ref": "14 3-4"},
-    "econ.wage": {"label": "품삯, 녹봉 비용 배수", "unit": "배수", "ref": "14 9-4"},
-    "econ.loot": {"label": "약탈 수익 배수", "unit": "배수", "ref": "14 8-2"},
-    "econ.protection_income": {"label": "보호비, 공물 수입(수확 대비 비율)", "unit": "set", "ref": "14 8-2"},
-    "econ.toll_income": {"label": "통행세 수입(교역량 대비 비율)", "unit": "set", "ref": "15 2-2"},
-    "econ.mint_ratio": {"label": "금속 1당 은화", "unit": "set", "ref": "02 5절"},
-    "econ.monetization": {"label": "화폐화율 가산", "unit": "가산(비율)", "ref": "14 9-4"},
-    "econ.church_donation": {"label": "헌금, 유증 비율", "unit": "가산(비율)", "ref": "14 11-2"},
-    "econ.share_split": {"label": "약탈품 중 수장 몫", "unit": "set(비율)", "ref": "08 규율"},
-    "econ.ransom": {"label": "몸값 수익 배수", "unit": "배수", "ref": "03 3절"},
-    "econ.craft_price": {"label": "조합 제품 가격 배수", "unit": "배수", "ref": "10 8절"},
-    "econ.craft_monopoly": {"label": "조합 외 제작 금지", "unit": "set true", "ref": "10 8절"},
-    "econ.credit_volume": {"label": "외상 거래량 배수", "unit": "배수", "ref": "10 7절"},
-    "econ.default_risk": {"label": "떼일 위험 배수", "unit": "배수", "ref": "10 7절"},
-    "econ.convoy_loss": {"label": "호송 중 약탈 손실 배수", "unit": "배수", "ref": "10 7절"},
-    "econ.upkeep": {"label": "유지비 배수", "unit": "배수", "ref": "15 1-1"},
-    "econ.pre_gift": {"label": "생전 분재 사용", "unit": "set true/false", "ref": "15 3-3"},
-    "econ.dowry": {"label": "지참금 비율 배수", "unit": "배수", "ref": "15 3-5"},
-
-    "demo.marriage_rate": {"label": "혼인 확률 배수", "unit": "배수", "ref": "01 8절"},
-    "demo.conception": {"label": "임신 확률 배수(집단 전체)", "unit": "배수", "ref": "01 8절"},
-    "demo.infant_survival": {"label": "영아 생존율 가산", "unit": "확률 가산", "ref": "01 8절"},
-    "demo.child_food": {"label": "아동 식량 소비 배수", "unit": "배수", "ref": "02 4절"},
-    "demo.growth_childhood": {"label": "성장기 보정(인자 stat)", "unit": "가산", "ref": "01 2절"},
-    "demo.education": {"label": "학당 없이 교육 가능", "unit": "set true", "ref": "08 가훈"},
-    "demo.migration_in": {"label": "인구 유입 배수", "unit": "배수", "ref": "14 7-6"},
-    "demo.migration_out": {"label": "인구 유출 배수", "unit": "배수", "ref": "14 7-6"},
-    "demo.serf_bound": {"label": "소작농 이주 금지", "unit": "set true", "ref": "14 7-4"},
-    "demo.freedom_after_year": {"label": "도망 노예, 농노가 1년 살면 자유", "unit": "set true", "ref": "10 2절"},
-    "demo.slave_offspring_free": {"label": "노예 자녀가 자유민", "unit": "set true/false", "ref": "16"},
-
-    "group.slots": {"label": "특성 슬롯 가산", "unit": "가산", "ref": "04 2절"},
-    "group.legitimacy": {"label": "수장 정통성 가산", "unit": "가산", "ref": "04 8절"},
-    "group.legitimacy_per_year": {"label": "정통성 연 증가", "unit": "가산", "ref": "04 8절"},
-    "group.concentration": {"label": "권력 집중도 가산", "unit": "가산(비율)", "ref": "04 6절"},
-    "group.concentration_cap": {"label": "권력 집중도 상한", "unit": "set", "ref": "04 6절"},
-    "group.loyalty": {"label": "구성원 충성 가산", "unit": "가산", "ref": "04 1절"},
-    "group.desertion": {"label": "탈주율 배수", "unit": "배수", "ref": "08 규율"},
-    "group.split_on_death": {"label": "수장 사망 시 분열 확률", "unit": "set", "ref": "15 4-12"},
-    "group.faction_rate": {"label": "파벌 생성 확률 배수", "unit": "배수", "ref": "10 12절"},
-    "group.independence": {"label": "봉신 독립 판정 배수", "unit": "배수", "ref": "15 S5"},
-    "group.growth": {"label": "구성원, 신도 증가 배수", "unit": "배수", "ref": "08"},
-    "group.leave": {"label": "구성원, 신도 이탈 배수", "unit": "배수", "ref": "08"},
-    "group.infiltration": {"label": "첩자 침투 확률 배수", "unit": "배수", "ref": "08 규율"},
-    "group.detection": {"label": "은신처, 조직 발각 확률 배수", "unit": "배수", "ref": "06 4절"},
-    "group.defense": {"label": "방어 배수", "unit": "배수", "ref": "06 5절"},
-    "group.combat": {"label": "집단 전투력 배수", "unit": "배수", "ref": "14 9-1"},
-    "group.morale": {"label": "사기 가산", "unit": "가산", "ref": "08"},
-    "group.levy_ratio": {"label": "징집 가능 성인 남성 비율", "unit": "set", "ref": "08 법"},
-    "group.evasion": {"label": "토벌 회피 배수", "unit": "배수", "ref": "08 규율"},
-    "group.hostility": {"label": "인자 대상(영주, 마을, 이교도) 적대 의지 배수", "unit": "배수", "ref": "08 규율"},
-    "group.hire_check": {"label": "고용 판정 가산", "unit": "판정 가산", "ref": "10 4절"},
-    "group.betray_in_battle": {"label": "전투 중 더 높은 값에 변절 가능", "unit": "set true", "ref": "10 4절"},
-    "group.siege": {"label": "공성 배수", "unit": "배수", "ref": "10 4절"},
-    "group.conviction": {"label": "재판 유죄 점수 가산(구성원이 피고일 때)", "unit": "가산", "ref": "09 4절"},
-    "group.trial_bribe": {"label": "판결 뇌물 판정 가산", "unit": "판정 가산", "ref": "08 법"},
-    "group.crime_witness": {"label": "지역 범죄 목격률 배수", "unit": "배수", "ref": "09 2절"},
-    "group.punishment": {"label": "범죄별 형벌 고정(인자 crime, 형벌)", "unit": "set", "ref": "09 5절"},
-    "group.collective_punishment": {"label": "연좌", "unit": "set true", "ref": "09 5절"},
-    "group.noble_punishment_step": {"label": "귀족 형벌 단계 경감", "unit": "가산(단계)", "ref": "08 법"},
-    "group.status_rigid": {"label": "신분 고정", "unit": "set true", "ref": "14 12-3"},
-    "group.state_religion_doctrines": {"label": "국교 교리 중 국내 효력 개수", "unit": "set", "ref": "04 5절"},
-    "group.heathen_loyalty_penalty": {"label": "이교도 구성원 충성 감소 적용", "unit": "set true/false", "ref": "08 법"},
-    "group.officials_cap": {"label": "관직 수 배수", "unit": "배수", "ref": "08 법"},
-    "group.tax_base": {"label": "과세 기반 배수", "unit": "배수", "ref": "15 2-6"},
-    "group.secret_weight": {"label": "인자 비밀 종류 무게 배수", "unit": "배수", "ref": "05 2절"},
-    "group.secret_leak": {"label": "구성원의 집단 비밀 발설 확률 배수", "unit": "배수", "ref": "05 4절"},
-    "group.conversion": {"label": "개종 속도 배수", "unit": "배수", "ref": "03 3절"},
-    "group.heresy_detect": {"label": "배교, 이단 비밀 인지 배수", "unit": "배수", "ref": "08 교리"},
-    "group.miracle_chance": {"label": "기적 사건 연 확률 가산", "unit": "확률 가산", "ref": "01 5절"},
-    "group.pilgrims": {"label": "순례자 유입(인/년)", "unit": "가산", "ref": "08 교리"},
-    "group.prestige": {"label": "집단 명성 가산(연)", "unit": "가산", "ref": "04"},
-    "group.relation": {"label": "인자 집단 유형과 관계 가산", "unit": "가산", "ref": "04 7절"},
-    "group.trade_ban": {"label": "인자 상대와 교역 금지", "unit": "set true", "ref": "16"},
-    "group.vote_weight": {"label": "입법 투표 지분 가산(인자 대상 집단)", "unit": "가산(비율)", "ref": "04 6절"},
-    "group.veto": {"label": "인자 대상 집단 입법 거부권", "unit": "set true", "ref": "08 교리"},
-    "group.council_seats": {"label": "인자 대상 의회 의석", "unit": "set", "ref": "10 2절"},
-    "group.law_exempt": {"label": "상위 나라 법 면제 개수", "unit": "가산", "ref": "10 2절"},
-    "group.raid_season": {"label": "계절마다 원정 가능", "unit": "set true", "ref": "10 1절"},
-    "group.mobile": {"label": "이동 생활", "unit": "set true/false", "ref": "08 규율"},
-    "group.can_build": {"label": "시설 건설 가능", "unit": "set true/false", "ref": "08 규율"},
-    "group.legit_on_join": {"label": "가입 시 정통성", "unit": "가산", "ref": "10"},
-    "group.inheritance_gift_kin": {"label": "구성원 가문 간 혼인 판정 가산", "unit": "판정 가산", "ref": "10 10절"},
-    "group.evidence_strength": {"label": "집단 문서가 증거로 쓰일 때 강도 배수", "unit": "배수", "ref": "09 4절"},
-    "group.hide_identity": {"label": "집단이 드러나도 구성원 정체 숨김", "unit": "set true", "ref": "10 10절"},
-    "group.stipend": {"label": "구성원 연금, 녹봉(곡식/년)", "unit": "가산", "ref": "10"},
-    "group.education_bonus": {"label": "도제, 제자 습득 배수", "unit": "배수", "ref": "10 8절"},
-    "group.book_speed": {"label": "저술 속도 배수", "unit": "배수", "ref": "10 11절"},
-    "group.official_check": {"label": "관직 임명 판정 가산(구성원)", "unit": "판정 가산", "ref": "10 11절"},
-    "group.succession_rule_allowed": {"label": "승계 슬롯에 인자 규칙 허용", "unit": "set true", "ref": "15 4-2"},
-
-    "land.harvest": {"label": "토지 수확 배수", "unit": "배수", "ref": "06 4절"},
-    "land.defense": {"label": "토지 방어 배수", "unit": "배수", "ref": "06 5절"},
-    "land.trade": {"label": "토지 교역 판정 가산", "unit": "판정 가산", "ref": "06 4절"},
-    "land.bandit_spawn": {"label": "도적 출몰 배수", "unit": "배수", "ref": "06 4절"},
-    "land.commons_protected": {"label": "공유지 점유 금지", "unit": "set true", "ref": "08 법"},
-
-    "justify.base": {"label": "정당화 값(타입 justify 효과가 쓴다)", "unit": "0~1", "ref": "16 3절"}
+    "char.strength": {
+      "label": "체격",
+      "unit": "0~20 가산",
+      "ref": "01 2절"
+    },
+    "char.constitution": {
+      "label": "체력",
+      "unit": "0~20 가산",
+      "ref": "01 2절"
+    },
+    "char.agility": {
+      "label": "민첩",
+      "unit": "0~20 가산",
+      "ref": "01 2절"
+    },
+    "char.intellect": {
+      "label": "지능",
+      "unit": "0~20 가산",
+      "ref": "01 2절"
+    },
+    "char.will": {
+      "label": "의지",
+      "unit": "0~20 가산",
+      "ref": "01 2절"
+    },
+    "char.charm": {
+      "label": "매력",
+      "unit": "0~20 가산",
+      "ref": "01 2절"
+    },
+    "char.skill_gain": {
+      "label": "기술 습득 배수",
+      "unit": "배수. 인자 skill로 기술 지정, 없으면 전체",
+      "ref": "01 6절"
+    },
+    "char.skill_cap": {
+      "label": "기술 최대치",
+      "unit": "가산. 인자 skill",
+      "ref": "01 5절"
+    },
+    "char.skill": {
+      "label": "기술 수치",
+      "unit": "가산. 인자 skill",
+      "ref": "01 6절"
+    },
+    "char.mastery_slots": {
+      "label": "숙련 슬롯 수",
+      "unit": "가산",
+      "ref": "01 6절"
+    },
+    "char.labor": {
+      "label": "노동량 배수",
+      "unit": "배수",
+      "ref": "14 2절"
+    },
+    "char.food_need": {
+      "label": "식량 소비 배수",
+      "unit": "배수",
+      "ref": "02 4절"
+    },
+    "char.conception": {
+      "label": "1회당 임신 확률 배수",
+      "unit": "배수",
+      "ref": "01 8절"
+    },
+    "char.relations_per_week": {
+      "label": "주당 관계 횟수",
+      "unit": "가산",
+      "ref": "01 8절"
+    },
+    "char.maternal_mortality": {
+      "label": "출산 사망률 배수",
+      "unit": "배수",
+      "ref": "01 8절"
+    },
+    "char.infant_survival": {
+      "label": "영아 생존율 가산",
+      "unit": "확률 가산",
+      "ref": "01 8절"
+    },
+    "char.aging_start": {
+      "label": "노화 시작 나이",
+      "unit": "가산(년)",
+      "ref": "01 2절"
+    },
+    "char.disease_resist": {
+      "label": "질병 사망률 배수",
+      "unit": "배수",
+      "ref": "01 7절"
+    },
+    "char.injury": {
+      "label": "부상 확률 배수",
+      "unit": "배수",
+      "ref": "15 9절"
+    },
+    "char.wound_death": {
+      "label": "부상 사망률 배수",
+      "unit": "배수",
+      "ref": "01 3절"
+    },
+    "char.stress_gain": {
+      "label": "스트레스 증가 배수",
+      "unit": "배수",
+      "ref": "01 7절"
+    },
+    "char.combat": {
+      "label": "개인 전투력 배수",
+      "unit": "배수",
+      "ref": "14 9-1"
+    },
+    "char.armor_penalty": {
+      "label": "갑옷 감속",
+      "unit": "set false로 없앰",
+      "ref": "01 5절"
+    },
+    "char.first_strike": {
+      "label": "결투 선공",
+      "unit": "set true",
+      "ref": "01 5절"
+    },
+    "char.secret_detect": {
+      "label": "비밀 인지 확률 배수",
+      "unit": "배수",
+      "ref": "05 3절"
+    },
+    "char.lie_detect": {
+      "label": "거짓말 간파 판정 가산",
+      "unit": "판정 가산",
+      "ref": "03 2절"
+    },
+    "char.deceive": {
+      "label": "거짓말이 기만 판정을 피할 확률",
+      "unit": "확률",
+      "ref": "01 5절"
+    },
+    "char.crime_witness": {
+      "label": "내가 저지른 범죄의 목격률 배수",
+      "unit": "배수",
+      "ref": "09 2절"
+    },
+    "char.leave_no_evidence": {
+      "label": "범죄 현장 증거 없음",
+      "unit": "set true",
+      "ref": "09 3절"
+    },
+    "char.torture_resist": {
+      "label": "고문 저항 판정 가산",
+      "unit": "판정 가산",
+      "ref": "03 3절"
+    },
+    "char.torture_immune": {
+      "label": "고문으로 비밀을 내주지 않음",
+      "unit": "set true",
+      "ref": "01 5절"
+    },
+    "char.first_impression": {
+      "label": "첫인상 호감 가산",
+      "unit": "호감 가산",
+      "ref": "03 1절"
+    },
+    "char.prestige": {
+      "label": "위신 가산",
+      "unit": "가산",
+      "ref": "14 12-1"
+    },
+    "char.legitimacy": {
+      "label": "정통성 가산",
+      "unit": "가산",
+      "ref": "04 8절"
+    },
+    "char.marriage_value": {
+      "label": "혼인 효용 가산(상대가 볼 때)",
+      "unit": "가산",
+      "ref": "14 12-4"
+    },
+    "char.rumor_spread": {
+      "label": "소문 전파 배수",
+      "unit": "배수",
+      "ref": "05 4절"
+    },
+    "char.norm_internalization": {
+      "label": "규범 내면화 가산",
+      "unit": "가산(기본 0.6)",
+      "ref": "16 3절"
+    },
+    "char.grievance_decay": {
+      "label": "원한 감소 배수",
+      "unit": "배수",
+      "ref": "03 1절"
+    },
+    "char.loyalty_decay": {
+      "label": "충성 감소 배수",
+      "unit": "배수",
+      "ref": "03 1절"
+    },
+    "char.fear_resist": {
+      "label": "위협 저항 판정 가산",
+      "unit": "판정 가산",
+      "ref": "03 3절"
+    },
+    "char.charm_check": {
+      "label": "구애, 설득 판정 가산",
+      "unit": "판정 가산",
+      "ref": "03 2절"
+    },
+    "char.check": {
+      "label": "판정 가산(인자 check: 행동 이름)",
+      "unit": "판정 가산",
+      "ref": "03 2절"
+    },
+    "char.trade_price": {
+      "label": "매매 가격 유리 배수",
+      "unit": "배수",
+      "ref": "03 3절"
+    },
+    "char.command_range": {
+      "label": "직접 거느릴 부하 수",
+      "unit": "가산",
+      "ref": "01 5절"
+    },
+    "char.track_fugitive": {
+      "label": "도주자 추적 성공 배수",
+      "unit": "배수",
+      "ref": "01 5절"
+    },
+    "char.see_prices": {
+      "label": "이웃 지역 가격을 앎",
+      "unit": "set true",
+      "ref": "01 5절"
+    },
+    "char.see_blackmail": {
+      "label": "나를 협박하려는 사람을 미리 앎",
+      "unit": "set true",
+      "ref": "01 5절"
+    },
+    "char.auto_rumor": {
+      "label": "주변 비밀 소문 매주 자동 인지",
+      "unit": "set true",
+      "ref": "01 5절"
+    },
+    "char.lover_decay": {
+      "label": "연인 호감 감소 배수",
+      "unit": "배수",
+      "ref": "01 5절"
+    },
+    "char.ignore_temperance": {
+      "label": "상대 절제 보정 무시",
+      "unit": "set true",
+      "ref": "01 5절"
+    },
+    "char.craft_time": {
+      "label": "제작 시간 배수",
+      "unit": "배수",
+      "ref": "02 3절"
+    },
+    "char.masterwork": {
+      "label": "명품 확률 배수",
+      "unit": "배수",
+      "ref": "02 3절"
+    },
+    "char.harvest": {
+      "label": "맡은 필지 수확 배수",
+      "unit": "배수",
+      "ref": "14 2-2"
+    },
+    "char.famine_damage": {
+      "label": "흉년 피해 배수",
+      "unit": "배수",
+      "ref": "14 2-2"
+    },
+    "char.faith_influence": {
+      "label": "신앙 영향력 획득 배수",
+      "unit": "배수",
+      "ref": "03 3절"
+    },
+    "char.feast_effect": {
+      "label": "연회 호감 배수",
+      "unit": "배수",
+      "ref": "15 1-2"
+    },
+    "char.jurisdiction_cap": {
+      "label": "관할 인구 상한 배수",
+      "unit": "배수",
+      "ref": "01 5절"
+    },
+    "char.ambush": {
+      "label": "숲 매복 전투 배수",
+      "unit": "배수",
+      "ref": "01 5절"
+    },
+    "char.work_output": {
+      "label": "인자 작업 산출 배수(인자 work: 벌목, 채석, 채광, 사냥, 어로, 농사, 제작, 건축)",
+      "unit": "배수",
+      "ref": "02 2절"
+    },
+    "ai.moral": {
+      "label": "도덕 비용 배수",
+      "unit": "배수",
+      "ref": "15 S3"
+    },
+    "ai.gain": {
+      "label": "직위 가치 배수",
+      "unit": "배수",
+      "ref": "15 S2"
+    },
+    "ai.risk": {
+      "label": "위험 회피 배수(손실 항에 곱함)",
+      "unit": "배수",
+      "ref": "15 S3"
+    },
+    "ai.utility": {
+      "label": "행동 효용 배수(인자 action)",
+      "unit": "배수",
+      "ref": "16 2절"
+    },
+    "ai.occupation": {
+      "label": "생업 효용 보정(인자 occ: 농사, 장인, 상인, 병사, 도적, 사제, 대금업, 채집)",
+      "unit": "가산(곡식/년)",
+      "ref": "14 7-1"
+    },
+    "ai.surplus_use": {
+      "label": "잉여 3순위 지출 선택 가중(인자 use: 대여, 땅매입, 무장, 연회, 헌금, 개간, 저장, 지참금)",
+      "unit": "배수",
+      "ref": "14 7-2"
+    },
+    "ai.clear_extra": {
+      "label": "개간 목표 추가 필지",
+      "unit": "가산",
+      "ref": "econ_sim spring"
+    },
+    "ai.face": {
+      "label": "체면 계수",
+      "unit": "배수",
+      "ref": "14 7-1"
+    },
+    "ai.tax_horizon": {
+      "label": "세율 결정 시야(년)",
+      "unit": "set",
+      "ref": "15 2-3"
+    },
+    "ai.leak": {
+      "label": "알고 있는 비밀을 퍼뜨릴 확률 배수",
+      "unit": "배수",
+      "ref": "05 4절"
+    },
+    "ai.blackmail": {
+      "label": "협박 선택 가중",
+      "unit": "배수",
+      "ref": "05 4절"
+    },
+    "ai.expose": {
+      "label": "폭로 선택 가중",
+      "unit": "배수",
+      "ref": "05 4절"
+    },
+    "ai.sell_secret": {
+      "label": "비밀 매매 선택 가중",
+      "unit": "배수",
+      "ref": "05 4절"
+    },
+    "ai.warn_owner": {
+      "label": "비밀 주인에게 알림 선택 가중",
+      "unit": "배수",
+      "ref": "05 4절"
+    },
+    "ai.bribe_accept": {
+      "label": "뇌물 수락 판정 가산",
+      "unit": "판정 가산",
+      "ref": "03 3절"
+    },
+    "ai.punish_harshness": {
+      "label": "처벌 강도 선택 가중",
+      "unit": "배수",
+      "ref": "09 5절"
+    },
+    "ai.mercy_captive": {
+      "label": "포로 석방, 몸값 선호",
+      "unit": "배수",
+      "ref": "03 3절"
+    },
+    "ai.courtship": {
+      "label": "구애 시도 빈도 배수",
+      "unit": "배수",
+      "ref": "03 5절"
+    },
+    "ai.adultery_accept": {
+      "label": "유혹 요구 크기 가산(음수면 쉽게 넘어감)",
+      "unit": "가산",
+      "ref": "03 3절"
+    },
+    "ai.revenge_target": {
+      "label": "원한 대상 제거 목표 가중",
+      "unit": "배수",
+      "ref": "03 5절"
+    },
+    "ai.convert_resist": {
+      "label": "개종 저항 판정 가산",
+      "unit": "판정 가산",
+      "ref": "03 3절"
+    },
+    "ai.join_combat": {
+      "label": "전투 참여 수락 가중",
+      "unit": "배수",
+      "ref": "03 4절"
+    },
+    "ai.lend_rate": {
+      "label": "대여 이자율 가산",
+      "unit": "가산(비율)",
+      "ref": "14 7-3"
+    },
+    "ai.emigrate": {
+      "label": "이주 효용 배수",
+      "unit": "배수",
+      "ref": "15 S3"
+    },
+    "ai.revolt": {
+      "label": "반란 효용 배수",
+      "unit": "배수",
+      "ref": "15 S3"
+    },
+    "ai.murder_try": {
+      "label": "암살 효용 양수일 때 연 시도 확률 배수",
+      "unit": "배수",
+      "ref": "15 S3"
+    },
+    "ai.plan_patience": {
+      "label": "계획 음모 성공률 가산",
+      "unit": "판정 가산",
+      "ref": "01 4절"
+    },
+    "ai.desert": {
+      "label": "탈주 확률 배수",
+      "unit": "배수",
+      "ref": "08 규율"
+    },
+    "ai.goal": {
+      "label": "장기 목표 고정(인자 goal: 지위, 재산, 연인, 복수, 신앙, 가족, 지식)",
+      "unit": "set",
+      "ref": "03 5절"
+    },
+    "rel.opinion_decay": {
+      "label": "호감이 0으로 돌아가는 속도 배수",
+      "unit": "배수",
+      "ref": "03 1절"
+    },
+    "rel.fear_decay": {
+      "label": "두려움 감소 배수",
+      "unit": "배수",
+      "ref": "03 1절"
+    },
+    "rel.fear": {
+      "label": "두려움 가산",
+      "unit": "가산",
+      "ref": "03 1절"
+    },
+    "rel.trust_cap": {
+      "label": "신뢰 상한",
+      "unit": "set",
+      "ref": "03 1절"
+    },
+    "rel.debt": {
+      "label": "빚 가산",
+      "unit": "가산",
+      "ref": "03 1절"
+    },
+    "rel.grievance_share": {
+      "label": "구성원이 살해되면 다른 구성원이 가해자에게 원한 공유",
+      "unit": "가산",
+      "ref": "08 가훈"
+    },
+    "econ.harvest": {
+      "label": "수확 배수",
+      "unit": "배수",
+      "ref": "14 2-2"
+    },
+    "econ.famine_damage": {
+      "label": "흉년 작황 배수의 피해 배수",
+      "unit": "배수",
+      "ref": "14 2-2"
+    },
+    "econ.clear_cost": {
+      "label": "개간 노동 배수",
+      "unit": "배수",
+      "ref": "14 2-1"
+    },
+    "econ.labor": {
+      "label": "노동량 배수",
+      "unit": "배수",
+      "ref": "14 2절"
+    },
+    "econ.food_need": {
+      "label": "식량 소비 배수",
+      "unit": "배수",
+      "ref": "02 4절"
+    },
+    "econ.storage_loss": {
+      "label": "곡식 저장 손실 배수",
+      "unit": "배수",
+      "ref": "15 1-2"
+    },
+    "econ.hunt": {
+      "label": "사냥 산출 배수",
+      "unit": "배수",
+      "ref": "02 2절"
+    },
+    "econ.forage": {
+      "label": "채집 산출 배수",
+      "unit": "배수",
+      "ref": "02 2절"
+    },
+    "econ.trade": {
+      "label": "교역 이익 배수",
+      "unit": "배수",
+      "ref": "14 7-1"
+    },
+    "econ.price": {
+      "label": "인자 품목 지역 가격 배수",
+      "unit": "배수",
+      "ref": "02 5절"
+    },
+    "econ.sell_price": {
+      "label": "인자 품목을 팔 때 받는 가격 배수",
+      "unit": "배수",
+      "ref": "02 5절"
+    },
+    "econ.rent_cap": {
+      "label": "소작료 상한",
+      "unit": "set(비율)",
+      "ref": "14 7-4"
+    },
+    "econ.interest_cap": {
+      "label": "이자율 상한",
+      "unit": "set(비율)",
+      "ref": "14 7-3"
+    },
+    "econ.tithe": {
+      "label": "헌물 비율",
+      "unit": "set(순수확 비율)",
+      "ref": "15 2절"
+    },
+    "econ.land_tax": {
+      "label": "토지세 비율",
+      "unit": "set",
+      "ref": "15 2-2"
+    },
+    "econ.land_tax_exempt": {
+      "label": "토지세 면제 비율",
+      "unit": "set(0~1)",
+      "ref": "15 2-6"
+    },
+    "econ.poll_tax": {
+      "label": "인두세(곡식/성인/년)",
+      "unit": "set",
+      "ref": "15 2-2"
+    },
+    "econ.house_tax": {
+      "label": "가옥세 부과",
+      "unit": "set true",
+      "ref": "15 2-2"
+    },
+    "econ.tariff": {
+      "label": "관세 비율",
+      "unit": "set",
+      "ref": "15 2-2"
+    },
+    "econ.market_tax": {
+      "label": "시장세 비율",
+      "unit": "set",
+      "ref": "15 2-2"
+    },
+    "econ.inheritance_tax": {
+      "label": "상속세 비율",
+      "unit": "set",
+      "ref": "15 2-2"
+    },
+    "econ.corvee_days": {
+      "label": "부역(주당 일)",
+      "unit": "set",
+      "ref": "15 2-2"
+    },
+    "econ.tribute_up": {
+      "label": "상위로 바치는 공납 비율",
+      "unit": "set",
+      "ref": "15 2-5"
+    },
+    "econ.tax_compliance": {
+      "label": "자발 납부율 가산",
+      "unit": "가산(비율)",
+      "ref": "14 3-4"
+    },
+    "econ.collect_cost": {
+      "label": "징수 비용 배수",
+      "unit": "배수",
+      "ref": "14 3-4"
+    },
+    "econ.wage": {
+      "label": "품삯, 녹봉 비용 배수",
+      "unit": "배수",
+      "ref": "14 9-4"
+    },
+    "econ.loot": {
+      "label": "약탈 수익 배수",
+      "unit": "배수",
+      "ref": "14 8-2"
+    },
+    "econ.protection_income": {
+      "label": "보호비, 공물 수입(수확 대비 비율)",
+      "unit": "set",
+      "ref": "14 8-2"
+    },
+    "econ.toll_income": {
+      "label": "통행세 수입(교역량 대비 비율)",
+      "unit": "set",
+      "ref": "15 2-2"
+    },
+    "econ.mint_ratio": {
+      "label": "금속 1당 은화",
+      "unit": "set",
+      "ref": "02 5절"
+    },
+    "econ.monetization": {
+      "label": "화폐화율 가산",
+      "unit": "가산(비율)",
+      "ref": "14 9-4"
+    },
+    "econ.church_donation": {
+      "label": "헌금, 유증 비율",
+      "unit": "가산(비율)",
+      "ref": "14 11-2"
+    },
+    "econ.share_split": {
+      "label": "약탈품 중 수장 몫",
+      "unit": "set(비율)",
+      "ref": "08 규율"
+    },
+    "econ.ransom": {
+      "label": "몸값 수익 배수",
+      "unit": "배수",
+      "ref": "03 3절"
+    },
+    "econ.craft_price": {
+      "label": "조합 제품 가격 배수",
+      "unit": "배수",
+      "ref": "10 8절"
+    },
+    "econ.craft_monopoly": {
+      "label": "조합 외 제작 금지",
+      "unit": "set true",
+      "ref": "10 8절"
+    },
+    "econ.credit_volume": {
+      "label": "외상 거래량 배수",
+      "unit": "배수",
+      "ref": "10 7절"
+    },
+    "econ.default_risk": {
+      "label": "떼일 위험 배수",
+      "unit": "배수",
+      "ref": "10 7절"
+    },
+    "econ.convoy_loss": {
+      "label": "호송 중 약탈 손실 배수",
+      "unit": "배수",
+      "ref": "10 7절"
+    },
+    "econ.upkeep": {
+      "label": "유지비 배수",
+      "unit": "배수",
+      "ref": "15 1-1"
+    },
+    "econ.pre_gift": {
+      "label": "생전 분재 사용",
+      "unit": "set true/false",
+      "ref": "15 3-3"
+    },
+    "econ.dowry": {
+      "label": "지참금 비율 배수",
+      "unit": "배수",
+      "ref": "15 3-5"
+    },
+    "demo.marriage_rate": {
+      "label": "혼인 확률 배수",
+      "unit": "배수",
+      "ref": "01 8절"
+    },
+    "demo.conception": {
+      "label": "임신 확률 배수(집단 전체)",
+      "unit": "배수",
+      "ref": "01 8절"
+    },
+    "demo.infant_survival": {
+      "label": "영아 생존율 가산",
+      "unit": "확률 가산",
+      "ref": "01 8절"
+    },
+    "demo.child_food": {
+      "label": "아동 식량 소비 배수",
+      "unit": "배수",
+      "ref": "02 4절"
+    },
+    "demo.growth_childhood": {
+      "label": "성장기 보정(인자 stat)",
+      "unit": "가산",
+      "ref": "01 2절"
+    },
+    "demo.education": {
+      "label": "학당 없이 교육 가능",
+      "unit": "set true",
+      "ref": "08 가훈"
+    },
+    "demo.migration_in": {
+      "label": "인구 유입 배수",
+      "unit": "배수",
+      "ref": "14 7-6"
+    },
+    "demo.migration_out": {
+      "label": "인구 유출 배수",
+      "unit": "배수",
+      "ref": "14 7-6"
+    },
+    "demo.serf_bound": {
+      "label": "소작농 이주 금지",
+      "unit": "set true",
+      "ref": "14 7-4"
+    },
+    "demo.freedom_after_year": {
+      "label": "도망 노예, 농노가 1년 살면 자유",
+      "unit": "set true",
+      "ref": "10 2절"
+    },
+    "demo.slave_offspring_free": {
+      "label": "노예 자녀가 자유민",
+      "unit": "set true/false",
+      "ref": "16"
+    },
+    "group.slots": {
+      "label": "특성 슬롯 가산",
+      "unit": "가산",
+      "ref": "04 2절"
+    },
+    "group.legitimacy": {
+      "label": "수장 정통성 가산",
+      "unit": "가산",
+      "ref": "04 8절"
+    },
+    "group.legitimacy_per_year": {
+      "label": "정통성 연 증가",
+      "unit": "가산",
+      "ref": "04 8절"
+    },
+    "group.concentration": {
+      "label": "권력 집중도 가산",
+      "unit": "가산(비율)",
+      "ref": "04 6절"
+    },
+    "group.concentration_cap": {
+      "label": "권력 집중도 상한",
+      "unit": "set",
+      "ref": "04 6절"
+    },
+    "group.loyalty": {
+      "label": "구성원 충성 가산",
+      "unit": "가산",
+      "ref": "04 1절"
+    },
+    "group.desertion": {
+      "label": "탈주율 배수",
+      "unit": "배수",
+      "ref": "08 규율"
+    },
+    "group.split_on_death": {
+      "label": "수장 사망 시 분열 확률",
+      "unit": "set",
+      "ref": "15 4-12"
+    },
+    "group.faction_rate": {
+      "label": "파벌 생성 확률 배수",
+      "unit": "배수",
+      "ref": "10 12절"
+    },
+    "group.independence": {
+      "label": "봉신 독립 판정 배수",
+      "unit": "배수",
+      "ref": "15 S5"
+    },
+    "group.growth": {
+      "label": "구성원, 신도 증가 배수",
+      "unit": "배수",
+      "ref": "08"
+    },
+    "group.leave": {
+      "label": "구성원, 신도 이탈 배수",
+      "unit": "배수",
+      "ref": "08"
+    },
+    "group.infiltration": {
+      "label": "첩자 침투 확률 배수",
+      "unit": "배수",
+      "ref": "08 규율"
+    },
+    "group.detection": {
+      "label": "은신처, 조직 발각 확률 배수",
+      "unit": "배수",
+      "ref": "06 4절"
+    },
+    "group.defense": {
+      "label": "방어 배수",
+      "unit": "배수",
+      "ref": "06 5절"
+    },
+    "group.combat": {
+      "label": "집단 전투력 배수",
+      "unit": "배수",
+      "ref": "14 9-1"
+    },
+    "group.morale": {
+      "label": "사기 가산",
+      "unit": "가산",
+      "ref": "08"
+    },
+    "group.levy_ratio": {
+      "label": "징집 가능 성인 남성 비율",
+      "unit": "set",
+      "ref": "08 법"
+    },
+    "group.evasion": {
+      "label": "토벌 회피 배수",
+      "unit": "배수",
+      "ref": "08 규율"
+    },
+    "group.hostility": {
+      "label": "인자 대상(영주, 마을, 이교도) 적대 의지 배수",
+      "unit": "배수",
+      "ref": "08 규율"
+    },
+    "group.hire_check": {
+      "label": "고용 판정 가산",
+      "unit": "판정 가산",
+      "ref": "10 4절"
+    },
+    "group.betray_in_battle": {
+      "label": "전투 중 더 높은 값에 변절 가능",
+      "unit": "set true",
+      "ref": "10 4절"
+    },
+    "group.siege": {
+      "label": "공성 배수",
+      "unit": "배수",
+      "ref": "10 4절"
+    },
+    "group.conviction": {
+      "label": "재판 유죄 점수 가산(구성원이 피고일 때)",
+      "unit": "가산",
+      "ref": "09 4절"
+    },
+    "group.trial_bribe": {
+      "label": "판결 뇌물 판정 가산",
+      "unit": "판정 가산",
+      "ref": "08 법"
+    },
+    "group.crime_witness": {
+      "label": "지역 범죄 목격률 배수",
+      "unit": "배수",
+      "ref": "09 2절"
+    },
+    "group.punishment": {
+      "label": "범죄별 형벌 고정(인자 crime, 형벌)",
+      "unit": "set",
+      "ref": "09 5절"
+    },
+    "group.collective_punishment": {
+      "label": "연좌",
+      "unit": "set true",
+      "ref": "09 5절"
+    },
+    "group.noble_punishment_step": {
+      "label": "귀족 형벌 단계 경감",
+      "unit": "가산(단계)",
+      "ref": "08 법"
+    },
+    "group.status_rigid": {
+      "label": "신분 고정",
+      "unit": "set true",
+      "ref": "14 12-3"
+    },
+    "group.state_religion_doctrines": {
+      "label": "국교 교리 중 국내 효력 개수",
+      "unit": "set",
+      "ref": "04 5절"
+    },
+    "group.heathen_loyalty_penalty": {
+      "label": "이교도 구성원 충성 감소 적용",
+      "unit": "set true/false",
+      "ref": "08 법"
+    },
+    "group.officials_cap": {
+      "label": "관직 수 배수",
+      "unit": "배수",
+      "ref": "08 법"
+    },
+    "group.tax_base": {
+      "label": "과세 기반 배수",
+      "unit": "배수",
+      "ref": "15 2-6"
+    },
+    "group.secret_weight": {
+      "label": "인자 비밀 종류 무게 배수",
+      "unit": "배수",
+      "ref": "05 2절"
+    },
+    "group.secret_leak": {
+      "label": "구성원의 집단 비밀 발설 확률 배수",
+      "unit": "배수",
+      "ref": "05 4절"
+    },
+    "group.conversion": {
+      "label": "개종 속도 배수",
+      "unit": "배수",
+      "ref": "03 3절"
+    },
+    "group.heresy_detect": {
+      "label": "배교, 이단 비밀 인지 배수",
+      "unit": "배수",
+      "ref": "08 교리"
+    },
+    "group.miracle_chance": {
+      "label": "기적 사건 연 확률 가산",
+      "unit": "확률 가산",
+      "ref": "01 5절"
+    },
+    "group.pilgrims": {
+      "label": "순례자 유입(인/년)",
+      "unit": "가산",
+      "ref": "08 교리"
+    },
+    "group.prestige": {
+      "label": "집단 명성 가산(연)",
+      "unit": "가산",
+      "ref": "04"
+    },
+    "group.relation": {
+      "label": "인자 집단 유형과 관계 가산",
+      "unit": "가산",
+      "ref": "04 7절"
+    },
+    "group.trade_ban": {
+      "label": "인자 상대와 교역 금지",
+      "unit": "set true",
+      "ref": "16"
+    },
+    "group.vote_weight": {
+      "label": "입법 투표 지분 가산(인자 대상 집단)",
+      "unit": "가산(비율)",
+      "ref": "04 6절"
+    },
+    "group.veto": {
+      "label": "인자 대상 집단 입법 거부권",
+      "unit": "set true",
+      "ref": "08 교리"
+    },
+    "group.council_seats": {
+      "label": "인자 대상 의회 의석",
+      "unit": "set",
+      "ref": "10 2절"
+    },
+    "group.law_exempt": {
+      "label": "상위 나라 법 면제 개수",
+      "unit": "가산",
+      "ref": "10 2절"
+    },
+    "group.raid_season": {
+      "label": "계절마다 원정 가능",
+      "unit": "set true",
+      "ref": "10 1절"
+    },
+    "group.mobile": {
+      "label": "이동 생활",
+      "unit": "set true/false",
+      "ref": "08 규율"
+    },
+    "group.can_build": {
+      "label": "시설 건설 가능",
+      "unit": "set true/false",
+      "ref": "08 규율"
+    },
+    "group.legit_on_join": {
+      "label": "가입 시 정통성",
+      "unit": "가산",
+      "ref": "10"
+    },
+    "group.inheritance_gift_kin": {
+      "label": "구성원 가문 간 혼인 판정 가산",
+      "unit": "판정 가산",
+      "ref": "10 10절"
+    },
+    "group.evidence_strength": {
+      "label": "집단 문서가 증거로 쓰일 때 강도 배수",
+      "unit": "배수",
+      "ref": "09 4절"
+    },
+    "group.hide_identity": {
+      "label": "집단이 드러나도 구성원 정체 숨김",
+      "unit": "set true",
+      "ref": "10 10절"
+    },
+    "group.stipend": {
+      "label": "구성원 연금, 녹봉(곡식/년)",
+      "unit": "가산",
+      "ref": "10"
+    },
+    "group.education_bonus": {
+      "label": "도제, 제자 습득 배수",
+      "unit": "배수",
+      "ref": "10 8절"
+    },
+    "group.book_speed": {
+      "label": "저술 속도 배수",
+      "unit": "배수",
+      "ref": "10 11절"
+    },
+    "group.official_check": {
+      "label": "관직 임명 판정 가산(구성원)",
+      "unit": "판정 가산",
+      "ref": "10 11절"
+    },
+    "group.succession_rule_allowed": {
+      "label": "승계 슬롯에 인자 규칙 허용",
+      "unit": "set true",
+      "ref": "15 4-2"
+    },
+    "land.harvest": {
+      "label": "토지 수확 배수",
+      "unit": "배수",
+      "ref": "06 4절"
+    },
+    "land.defense": {
+      "label": "토지 방어 배수",
+      "unit": "배수",
+      "ref": "06 5절"
+    },
+    "land.trade": {
+      "label": "토지 교역 판정 가산",
+      "unit": "판정 가산",
+      "ref": "06 4절"
+    },
+    "land.bandit_spawn": {
+      "label": "도적 출몰 배수",
+      "unit": "배수",
+      "ref": "06 4절"
+    },
+    "land.commons_protected": {
+      "label": "공유지 점유 금지",
+      "unit": "set true",
+      "ref": "08 법"
+    },
+    "justify.base": {
+      "label": "정당화 값(타입 justify 효과가 쓴다)",
+      "unit": "0~1",
+      "ref": "16 3절"
+    },
+    "char.justify_accept": {
+      "label": "관찰자로서 정당화 j에 곱하는 배수(곱한 뒤 최대 0.95)",
+      "unit": "배수",
+      "ref": "16 3-3"
+    },
+    "char.privilege_resentment": {
+      "label": "공개 특권 불공정 비용(연 충성 감소)에 곱하는 배수",
+      "unit": "배수",
+      "ref": "04 3-1, 16 3-4"
+    },
+    "char.paternity_suspicion": {
+      "label": "사생아 의심 점수와 외형 닮음 추론 확률 배수",
+      "unit": "배수",
+      "ref": "09 6절, 05 3절"
+    },
+    "char.first_trust": {
+      "label": "첫인상 신뢰 가산(남이 이 인물을 처음 알게 되거나 이력이 공개될 때 신뢰에 더함)",
+      "unit": "가산",
+      "ref": "03 1절"
+    },
+    "char.book_speed": {
+      "label": "본인 저술(경전, 법전 편찬) 속도 배수",
+      "unit": "배수",
+      "ref": "01 5절, 6절"
+    },
+    "char.masterwork_fame": {
+      "label": "명품 1개를 만들 때 제작자 위신 가산. 0보다 크면 가보 이름에 제작자가 남음",
+      "unit": "가산",
+      "ref": "01 5절"
+    },
+    "char.midwife_mortality": {
+      "label": "이 인물이 출산을 도울 때 산모 사망률 배수",
+      "unit": "배수",
+      "ref": "01 5절, 8절"
+    },
+    "char.teach_mult": {
+      "label": "이 인물이 가르칠 때 제자의 스승 배수(01번 6절, 최대 2)",
+      "unit": "set",
+      "ref": "01 6절"
+    },
+    "char.metal_yield": {
+      "label": "금속 제품(무기, 갑옷, 상급 도구)을 만들 때 금속 1단위당 산출 배수",
+      "unit": "배수",
+      "ref": "01 6절, 02 3절"
+    },
+    "char.inheritance_right": {
+      "label": "재산 상속 순서(15번 3-1)에 오름. 직위 승계 후보는 char.succession_candidate",
+      "unit": "set true/false",
+      "ref": "15 3-1"
+    },
+    "char.wanted": {
+      "label": "체포 대상(인자: 범죄 이름). 관할 수장과 피해자가 체포 후보로 삼고 형벌은 09번 5절을 따름",
+      "unit": "set true",
+      "ref": "09 3절"
+    },
+    "char.church_barred": {
+      "label": "파문한 교단 안의 판정(개종 권유, 축복, 고해 듣기, 교단 가입)을 하거나 받을 수 없음",
+      "unit": "set true",
+      "ref": "03 3절"
+    },
+    "char.personality_bias": {
+      "label": "아직 비어 있는 성격 슬롯(12세, 16세)을 정할 때 인자 성격이 뽑힐 가중",
+      "unit": "배수",
+      "ref": "01 4절"
+    },
+    "char.testimony_weight": {
+      "label": "이 인물 증언의 증거 강도 배수",
+      "unit": "배수",
+      "ref": "09 4절"
+    },
+    "ai.civil_war": {
+      "label": "승계 분쟁 2위일 때 내전을 일으킴(1위 주장 강도가 2위의 1.5배 미만이면)",
+      "unit": "set true",
+      "ref": "15 4-4 S6"
+    },
+    "ai.expected_share": {
+      "label": "승계 기대 몫 배수",
+      "unit": "배수",
+      "ref": "15 4-4 S4"
+    },
+    "ai.expected_share_floor": {
+      "label": "승계 기대 몫 하한. 능력이 승계자보다 10 이상 높을 때만 적용",
+      "unit": "set",
+      "ref": "15 4-4 S4"
+    },
+    "ai.rule_weight": {
+      "label": "승계 규칙 평가 지표 가중 배수(인자: 영토, 가문, 혈통, 평화, 안전)",
+      "unit": "배수(기본 가중 1.0, 1.0, 0.5, 1.0, 0.5에 곱함)",
+      "ref": "15 4-11"
+    },
+    "ai.rule_bias": {
+      "label": "승계 규칙 평가 U 가산(인자: 승계 규칙)",
+      "unit": "가산",
+      "ref": "15 4-11"
+    },
+    "ai.rule_change_cost": {
+      "label": "승계 규칙 변경 비용 배수",
+      "unit": "배수",
+      "ref": "15 4-11"
+    },
+    "ai.house_payback": {
+      "label": "집 등급 올리기 회수 한도(년, 기본 10)",
+      "unit": "set",
+      "ref": "15 1-3 H1"
+    },
+    "ai.tax_rate": {
+      "label": "징세권자가 고르는 세율 배수",
+      "unit": "배수",
+      "ref": "15 2-3"
+    },
+    "char.stress_per_year": {
+      "label": "연 스트레스 가산",
+      "unit": "가산(스트레스 0~100 척도)",
+      "ref": "01 7절"
+    },
+    "rel.marriage_alliance_break": {
+      "label": "혼인 동맹 파기 확률 배수",
+      "unit": "배수",
+      "ref": "04 7절"
+    },
+    "group.scope_allowed": {
+      "label": "적용 범위 인자(특정 신분, 수장 가문, 수장 1인)를 집중도 조건 없이 허용",
+      "unit": "set true",
+      "ref": "04 3-1"
+    },
+    "group.office_hereditary": {
+      "label": "인자 직위(사제 등)와 거기 딸린 토지가 자녀에게 세습",
+      "unit": "set true",
+      "ref": "14 11-2"
+    },
+    "econ.collateral_seizure": {
+      "label": "미상환 2회째 담보(필지, 도구) 집행",
+      "unit": "set true/false",
+      "ref": "14 7-3"
+    },
+    "char.pilgrimage_conversion": {
+      "label": "순례 완수 시 성격 슬롯 하나가 인자 성격으로 바뀔 확률",
+      "unit": "확률",
+      "ref": "01 4절"
+    },
+    "group.law_conflict": {
+      "label": "국교 교리와 나라 법이 충돌할 때 교단 수장→나라 수장 호감 연 감소(기본 10)",
+      "unit": "set",
+      "ref": "04 5절"
+    },
+    "econ.estate_rule": {
+      "label": "재산 상속법(값: 균분, 장자, 장자우대, 말자)",
+      "unit": "set",
+      "ref": "15 3-2"
+    },
+    "econ.estate_heirs": {
+      "label": "재산 상속 순위에 넣는 대상(인자: 딸, 인지 사생아)",
+      "unit": "set true",
+      "ref": "15 3-2"
+    },
+    "group.punishment_allowed": {
+      "label": "형벌 종류 사용 가능(인자: 형벌 이름)",
+      "unit": "set true",
+      "ref": "09 5절"
+    },
+    "demo.interclass_child_status": {
+      "label": "다른 신분 부모 사이 자녀의 신분",
+      "unit": "set(값: 낮은 쪽, 높은 쪽, 아버지)",
+      "ref": "08 법"
+    },
+    "group.consort_rank_order": {
+      "label": "후궁 자녀의 승계 순서를 어머니 서열로 정함(15 S1 후보 순서)",
+      "unit": "set true",
+      "ref": "08 법"
+    },
+    "group.succession_war": {
+      "label": "승계 내전 발생 확률 배수(15 S6 내전 조건을 채웠을 때)",
+      "unit": "배수",
+      "ref": "15 S6"
+    },
+    "group.rank_grievance": {
+      "label": "후궁 자녀가 서열 1단계 낮을 때마다 수장과 서열 1위에게 갖는 원한",
+      "unit": "가산",
+      "ref": "08 법"
+    },
+    "char.max_spouses": {
+      "label": "최대 배우자 수(0이면 무제한)",
+      "unit": "set",
+      "ref": "08 법"
+    },
+    "demo.emancipate_all": {
+      "label": "채택 즉시 모든 노예 해방(해방노예 이력 부여)",
+      "unit": "set true",
+      "ref": "08 법"
+    },
+    "rel.grievance_to_head": {
+      "label": "특성 채택 때 수장에 대한 원한 가산(1회)",
+      "unit": "가산",
+      "ref": "03 1절"
+    },
+    "econ.military_service_weeks": {
+      "label": "병역(징집된 성인 남성 연 주)",
+      "unit": "set",
+      "ref": "15 2-2"
+    },
+    "econ.prostitution_tax": {
+      "label": "매춘 수입 세율",
+      "unit": "set(비율)",
+      "ref": "09 7절"
+    },
+    "econ.debt_cancel": {
+      "label": "채택 즉시 모든 곡식 빚 탕감",
+      "unit": "set true",
+      "ref": "14 7-3"
+    },
+    "group.fief_hereditary": {
+      "label": "봉토 자동 세습(기사 상속인이 봉토를 이음)",
+      "unit": "set true",
+      "ref": "15 4-17"
+    },
+    "group.verdict_legitimacy": {
+      "label": "공정한 판결 1건당 정통성 배수(기본 +1)",
+      "unit": "배수",
+      "ref": "14 8-3"
+    },
+    "group.confession_challenge": {
+      "label": "고문으로 받은 자백의 무효 주장 가능",
+      "unit": "set true",
+      "ref": "09 4절"
+    },
+    "econ.watch_cost": {
+      "label": "치안대 연 유지비(은화, 읍 이상 토지 1곳당)",
+      "unit": "set",
+      "ref": "09 2절"
+    },
+    "rel.pardon_debt": {
+      "label": "사면받은 자가 사면한 수장에게 지는 빚",
+      "unit": "set(빚 수치)",
+      "ref": "03 1절"
+    },
+    "group.standing_army": {
+      "label": "평시 상비군 유지(녹봉 은화로 병사를 고용해 해산하지 않음)",
+      "unit": "set true",
+      "ref": "14 9-4"
+    },
+    "group.bandit_amnesty": {
+      "label": "항복한 도적을 처벌 없이 병사로 편입",
+      "unit": "set true",
+      "ref": "08 법"
+    },
+    "group.privateer_vassals": {
+      "label": "도적단을 공개 봉신(사략단)으로 받음",
+      "unit": "set true",
+      "ref": "04 7절"
+    },
+    "group.loyalty_on_act": {
+      "label": "구성원이 인자 행위를 할 때마다 구성원 전원 충성 1회 가산",
+      "unit": "가산(인자 behavior)",
+      "ref": "08 가훈"
+    },
+    "rel.standing_grievance_to_head": {
+      "label": "조건을 만족하는 동안 구성원이 수장에게 갖는 상시 원한 가산(연 감소와 별개, 1회 가산인 rel.grievance_to_head와 다름)",
+      "unit": "가산",
+      "ref": "15 S3, S4"
+    },
+    "rel.grievance_gain": {
+      "label": "원한 증가 배수(상대는 if로 지정)",
+      "unit": "배수",
+      "ref": "03 1절"
+    },
+    "char.outside_loyalty": {
+      "label": "자기 가문이 아닌 소속 집단(나라, 교단, 도적단 등) 충성 가산",
+      "unit": "가산",
+      "ref": "04 1절"
+    },
+    "char.succession_candidate": {
+      "label": "인자 유형 집단의 승계 후보 자격(S1 후보 목록에 듦)",
+      "unit": "set true",
+      "ref": "15 S1"
+    },
+    "group.branch_needs_consent": {
+      "label": "분가에 가주 허락 필요",
+      "unit": "set true/false",
+      "ref": "04 8절"
+    },
+    "group.score_bastards": {
+      "label": "수장이 아는 사생아 혈족을 가문 점수에 셈",
+      "unit": "set true",
+      "ref": "07 2절"
+    },
+    "group.trait_secret_weight": {
+      "label": "특성 보유 사실 자체가 집단 비밀이 됨(값 = 기본 무게)",
+      "unit": "set",
+      "ref": "05 1절"
+    },
+    "group.mutual_secret": {
+      "label": "구성원 전원이 서로의 인자 종류 비밀을 증언 증거로 앎",
+      "unit": "set true",
+      "ref": "05 3절"
+    },
+    "group.family_residence": {
+      "label": "구성원 가족이 집단 거점(은신처)에 함께 삶",
+      "unit": "set true",
+      "ref": "08 규율"
+    },
+    "group.deputy_succession": {
+      "label": "부수장 자동 승계(S1에서 부수장 p = 1)",
+      "unit": "set true",
+      "ref": "15 S1"
+    },
+    "rel.victim_grievance": {
+      "label": "인자 행동 피해자의 가문이 가해자에게 갖는 원한(1회)",
+      "unit": "가산",
+      "ref": "03 1절"
+    },
+    "group.rumor_inflow": {
+      "label": "외부에서 집단 토지로 들어오는 소문 배수",
+      "unit": "배수",
+      "ref": "05 3절"
+    },
+    "group.tribute_accept": {
+      "label": "공물 요구를 판정 없이 수락(14번 8-1 '공물' 선택)",
+      "unit": "set true",
+      "ref": "14 8-1"
+    },
+    "land.facility_effect": {
+      "label": "인자 시설의 효과 배수",
+      "unit": "배수",
+      "ref": "06 5절"
+    },
+    "group.raid_grudge": {
+      "label": "약탈당하면 약탈한 집단과 영구 적대",
+      "unit": "set true",
+      "ref": "04 7절"
+    },
+    "econ.common_pool": {
+      "label": "공동 창고로 모으는 순수확 비율. 모은 곡식은 구성원 수대로 균등 분배",
+      "unit": "set(0~1)",
+      "ref": "14 3절"
+    },
+    "econ.clearing_allowed": {
+      "label": "개간 가능",
+      "unit": "set true/false",
+      "ref": "14 2-1"
+    },
+    "econ.price_swing": {
+      "label": "지역 가격 변동 지수. 지역 가격 = 기준가 × (수요/공급)^값",
+      "unit": "배수(기본 1)",
+      "ref": "02 5절"
+    },
+    "econ.ransom_split": {
+      "label": "포로 몸값 중 단원에게 균등 분배하는 비율(나머지는 금고)",
+      "unit": "set(0~1)",
+      "ref": "03 3절"
+    },
+    "char.assassination_defense": {
+      "label": "암살 방어 배수(암살 판정 요구 크기 '대상 경비'에 곱함)",
+      "unit": "배수",
+      "ref": "03 3절"
+    },
+    "char.cult_found_req": {
+      "label": "교단 창설 신학 요구치 가산(기본 30)",
+      "unit": "가산",
+      "ref": "04 8절"
+    },
+    "group.hereditary_membership": {
+      "label": "구성원 자녀만 정식 구성원이 됨",
+      "unit": "set true",
+      "ref": "10 8절"
+    },
+    "group.citizenship_price": {
+      "label": "시민권 가격(은화)",
+      "unit": "set",
+      "ref": "10 2절"
+    },
+    "group.call_to_arms": {
+      "label": "회원 집단이 공격받으면 나머지 회원 집단 자동 참전",
+      "unit": "set true",
+      "ref": "10 3절"
+    },
+    "group.expel_on": {
+      "label": "인자 행위를 한 회원 집단 자동 제명(인자: 행위 키)",
+      "unit": "set true",
+      "ref": "10 3절"
+    },
+    "group.pay_upfront": {
+      "label": "출동 전에 받아야 하는 계약금 선불 비율",
+      "unit": "set(0~1)",
+      "ref": "10 4절"
+    },
+    "group.pay_on_victory": {
+      "label": "승리 시 계약 보수 배수",
+      "unit": "set",
+      "ref": "10 4절"
+    },
+    "group.pay_on_defeat": {
+      "label": "패배 시 계약 보수 배수",
+      "unit": "set",
+      "ref": "10 4절"
+    },
+    "group.royal_contract": {
+      "label": "나라 수장과 직접 계약(왕실 계약) 가능",
+      "unit": "set true",
+      "ref": "10 4절"
+    },
+    "group.camp_plots": {
+      "label": "고용주 토지 중 숙영지로 받는 필지 수",
+      "unit": "set",
+      "ref": "14 9-5"
+    },
+    "group.loyalty_carryover": {
+      "label": "수장 자녀가 승계하면 옛 수장 호감을 새 수장 호감으로 옮기는 비율. 1이면 새 수장 첫 1년 충성 -10(15번 4-15)도 면제",
+      "unit": "set(0~1)",
+      "ref": "15 4-15"
+    },
+    "group.treasury_income": {
+      "label": "집단 금고 수입 배수",
+      "unit": "배수",
+      "ref": "04 1절"
+    },
+    "group.knight_hereditary": {
+      "label": "기사 자격 세습. 기사의 맏아들이 16세에 기사 자격을 받음",
+      "unit": "set true",
+      "ref": "14 9-5"
+    },
+    "group.can_hold_land": {
+      "label": "집단 명의 토지 보유와 소작(14번 7-4) 운영 가능",
+      "unit": "set true/false",
+      "ref": "14 7-4"
+    },
+    "group.share_access": {
+      "label": "출자 지분을 살 수 있는 사람",
+      "unit": "set: 0 가문원만, 1 구성원(기본), 2 외부인 포함",
+      "ref": "10 7절"
+    },
+    "group.exposure_prestige": {
+      "label": "구성원의 인자 행위가 공개될 때 집단 명성 변화(1건당)",
+      "unit": "가산",
+      "ref": "05 5절"
+    },
+    "econ.sale_monopoly": {
+      "label": "인자 품목 독점 판매권(다른 판매자 금지)",
+      "unit": "set true",
+      "ref": "10 7절"
+    },
+    "group.arm_from_stock": {
+      "label": "징집 때 집단 재고 무기, 갑옷으로 무장(구입 불필요)",
+      "unit": "set true",
+      "ref": "14 9-1"
+    },
+    "econ.pimp_share": {
+      "label": "매춘 수입 중 알선 집단 몫",
+      "unit": "set(비율)",
+      "ref": "09 7절"
+    },
+    "econ.gambling_income": {
+      "label": "도박장 수입(장악 구역 은화 거래액 대비 비율)",
+      "unit": "set",
+      "ref": "10 9절"
+    },
+    "group.investigation_alert": {
+      "label": "구성원 대상 수사가 시작되면 바로 앎",
+      "unit": "set true",
+      "ref": "09 3절"
+    },
+    "group.retaliation_fear": {
+      "label": "보복 살인 1건마다 지역 주민의 수장, 구성원에 대한 두려움 가산",
+      "unit": "가산(1건당)",
+      "ref": "03 1절"
+    },
+    "group.known_members": {
+      "label": "구성원 한 명이 정체를 아는 다른 구성원 수 상한",
+      "unit": "set(명)",
+      "ref": "10 10절"
+    },
+    "group.entry_secret": {
+      "label": "가입 때 신입의 비밀 하나를 수장이 증언 증거로 앎",
+      "unit": "set true",
+      "ref": "05 1절"
+    },
+    "group.bloc_vote": {
+      "label": "인자 집단의 유력자인 구성원들의 투표 지분을 합쳐 수장 방침대로 행사(합산 지분으로 안건 제출)",
+      "unit": "set true",
+      "ref": "04 6절"
+    },
+    "group.can_compile": {
+      "label": "인자 문서(경전, 법전, 의서, 족보) 편찬 가능. 완성본이 다른 집단 특성의 조건이 됨",
+      "unit": "set true",
+      "ref": "10 11절"
+    },
+    "group.forgery_nullify": {
+      "label": "구성원이 감정해 위조로 판별한 문서의 증거 강도 0",
+      "unit": "set true",
+      "ref": "09 4절"
+    }
   },
-
-  "personalities": ["용감", "겁많음", "탐욕", "관대", "야심", "만족", "정직", "기만", "잔인", "자비", "독실", "냉소", "근면", "게으름", "사교", "내향", "충직", "변덕", "성급", "인내", "색욕", "절제", "복수심", "관용"],
-
-  "skills": ["농사", "채집", "사냥", "제작", "전투", "지휘", "관리", "교역", "언변", "학문", "신학", "은밀", "의술"],
-
+  "personalities": [
+    "용감",
+    "겁많음",
+    "탐욕",
+    "관대",
+    "야심",
+    "만족",
+    "정직",
+    "기만",
+    "잔인",
+    "자비",
+    "독실",
+    "냉소",
+    "근면",
+    "게으름",
+    "사교",
+    "내향",
+    "충직",
+    "변덕",
+    "성급",
+    "인내",
+    "색욕",
+    "절제",
+    "복수심",
+    "관용"
+  ],
+  "skills": [
+    "농사",
+    "채집",
+    "사냥",
+    "제작",
+    "전투",
+    "지휘",
+    "관리",
+    "교역",
+    "언변",
+    "학문",
+    "신학",
+    "은밀",
+    "의술"
+  ],
   "kinds": {
-    "성격": "character", "형질": "character", "재능": "character", "이력": "character", "숙련": "character",
-    "가훈": "가문", "부족법": "부족", "관습": "마을", "시법": "자치 도시", "법": "나라", "헌장": "연맹",
-    "규율": "도적단", "계약 원칙": "용병단", "서약": "기사단", "요구": "봉기군", "상규": "상단",
-    "조합 규약": "장인 조합", "교리": "교단", "학풍": "학파", "불문율": "범죄 조직", "맹약": "비밀결사",
-    "파벌 요구": "파벌", "결사 목적": "비밀결사"
+    "성격": "character",
+    "형질": "character",
+    "재능": "character",
+    "이력": "character",
+    "숙련": "character",
+    "가훈": "가문",
+    "부족법": "부족",
+    "관습": "마을",
+    "시법": "자치 도시",
+    "법": "나라",
+    "헌장": "연맹",
+    "규율": "도적단",
+    "계약 원칙": "용병단",
+    "서약": "기사단",
+    "요구": "봉기군",
+    "상규": "상단",
+    "조합 규약": "장인 조합",
+    "교리": "교단",
+    "학풍": "학파",
+    "불문율": "범죄 조직",
+    "맹약": "비밀결사",
+    "파벌 요구": "파벌",
+    "결사 목적": "비밀결사"
   }
 }
