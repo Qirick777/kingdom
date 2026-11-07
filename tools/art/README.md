@@ -8,7 +8,7 @@ python3 make_materials.py   # 팔레트, 재료 텍스처 31종 × 2 → assets/
 python3 make_faces.py       # 얼굴 그림 31개 → assets/faces/face_atlas.png
 python3 make_icons.py       # 아이콘 51개, UI 틀 12장 → assets/ui/
 python3 preview_faces.py ../../docs/images/art_faces.png   # 얼굴 조립 미리보기
-python3 mockup.py ../../docs/images/mockup_village.png      # 480×270 장면 목업(정면)
+python3 iso_mockup.py ../../docs/images                       # 2.5D 아이소메트릭 장면 목업 두 장(640×360, 3배)
 ```
 
 필요: Python 3, Pillow, numpy.
