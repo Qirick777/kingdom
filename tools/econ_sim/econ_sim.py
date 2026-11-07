@@ -30,13 +30,18 @@ TERRAIN = {
     "구릉": (0.8, 16, 0.6, 1.0),
 }
 
-# 집: 등급 -> (이름, 재료비(곡식 환산), 노동(주), 수용, 연 손실률, 위신)
+# 집: 등급 -> (이름, 재료비(곡식 환산), 노동(인·주, 장인 포함), 수용, 곡식 연 손실률, 위신, 연 유지비)
+# 15_house_tax_inheritance.md 1절. 저택 = 지주 소작료 약 1.5년치, 왕궁 = 나라 세수 몇 년치
 HOUSES = {
-    0: ("노숙", 0, 0, 0, 0.50, -20),
-    1: ("움막", 10, 2, 4, 0.20, -5),
-    2: ("가옥", 48, 8, 6, 0.08, 5),
-    3: ("저택", 250, 30, 12, 0.03, 20),
+    0: ("노숙", 0, 0, 0, 0.30, -20, 0),
+    1: ("움막", 10, 2, 4, 0.10, -5, 1),
+    2: ("가옥", 40, 8, 6, 0.05, 5, 2),
+    3: ("저택", 1000, 290, 12, 0.02, 20, 26),
+    4: ("왕궁", 14800, 4350, 40, 0.01, 60, 380),
 }
+COLD = {0: 4.0, 1: 1.0, 2: 0.0, 3: 0.0, 4: 0.0}   # 1인당 연 추위 비용(곡식 환산)
+PAYBACK = {"탐욕": 6, "야심": 15}                  # 회수 한도(년). 나머지 10
+FACE = {"야심": 1.5, "만족": 0.7}                   # 체면 계수. 나머지 1.0
 
 PERSONALITIES = ["탐욕", "관대", "근면", "야심", "만족", "독실"]
 CLASS_TIER = {"무산": 0, "소작농": 1, "자영농": 2, "지주": 3}
@@ -98,7 +103,8 @@ class Person:
 class Household:
     __slots__ = ("id", "head", "members", "plots", "grain", "house", "loans",
                  "alive", "labor", "cap", "farm", "rented_out", "forage_labor",
-                 "hunger", "food_ratio", "bonded", "clients", "cls", "spare", "hunger_years")
+                 "hunger", "food_ratio", "bonded", "clients", "cls", "spare", "hunger_years",
+                 "upkeep_miss", "keep_bad")
 
     def __init__(self, hid):
         self.id = hid
@@ -121,6 +127,8 @@ class Household:
         self.cls = "자영농"
         self.spare = 0.0
         self.hunger_years = 0
+        self.upkeep_miss = 0
+        self.keep_bad = 0
 
 
 class Plot:
@@ -164,6 +172,8 @@ class World:
         self.seizures = 0
         self.emigrants = 0
         self.wages_paid = 0.0
+        self.house_downs = 0
+        self.house_sales = 0
         self.sales = 0
         self.houses_built = Counter()
         self.reports = []
@@ -266,6 +276,52 @@ class World:
         own = sum(1 for i in h.plots if self.plots[i].state == "경작지")
         plots = max(own, len(h.farm))
         return min(plots, int(self.labor_of(h) * self.p["cap_per_adult"])) * self.p["seed_per_plot"]
+
+    def house_cost(self, t):
+        return HOUSES[t][1] + HOUSES[t][2]
+
+    def house_gain(self, h, frm, to, stock):
+        """H1: 집을 frm에서 to로 바꿀 때 연 이득(곡식 환산)."""
+        members = self.living(h)
+        m = len(members)
+        storage = stock * (HOUSES[frm][4] - HOUSES[to][4])
+        crowd = (max(0, m - HOUSES[frm][3]) - max(0, m - HOUSES[to][3])) * 10
+        cold = m * (COLD[frm] - COLD[to])
+        head = self.persons.get(h.head)
+        marriageable = sum(1 for x in members if 14 <= self.age(x) <= 25 and x.spouse is None
+                           and head and (x.father == head.id or x.mother == head.id))
+        face = FACE.get(self.head_pers(h), 1.0)
+        stage = CLASS_TIER.get(h.cls, 1)
+        prestige = (HOUSES[to][5] - HOUSES[frm][5]) * 2 * face * (1 + stage / 3) * (1 + 0.5 * min(2, marriageable))
+        upkeep = HOUSES[to][6] - HOUSES[frm][6]
+        return storage + crowd + cold + prestige - upkeep
+
+    def house_decision(self, h, reserve):
+        """H1: 한 등급 위를 따져 회수 기간 안에 들면 짓는다. 쓴 곡식(품삯과 재료비)을 돌려준다."""
+        frm = h.house
+        to = frm + 1
+        if to > 3:
+            return 0.0
+        cost = self.house_cost(to) - 0.3 * self.house_cost(frm)
+        liquid = h.grain - reserve - self.need_of(h)   # 흉년 대비로 2년치 식량을 남긴다
+        if liquid < cost:
+            return 0.0
+        gain = self.house_gain(h, frm, to, h.grain - cost)
+        limit = PAYBACK.get(self.head_pers(h), 10)
+        if gain <= 0 or cost / gain > limit:
+            return 0.0
+        h.grain -= cost
+        h.house = to
+        self.houses_built[HOUSES[to][0]] += 1
+        return cost
+
+    def house_keep_ok(self, h):
+        """H2: 지금 집이 한 등급 아래보다 주는 연 이득이 보유 비용(팔면 받을 돈의 10%)을 넘는가."""
+        frm = h.house
+        if frm < 2:
+            return True
+        proceeds = 0.5 * (self.house_cost(frm) - self.house_cost(frm - 1))
+        return self.house_gain(h, frm - 1, frm, h.grain) >= 0.10 * proceeds
 
     def head_pers(self, h):
         hp = self.persons.get(h.head)
@@ -541,29 +597,36 @@ class World:
         p = self.p
         sellers = []
         buyers = []
+        build_pool = 0.0
+        distress_house = []
         for h in self.alive_hhs():
             need = self.need_of(h)
             reserve = need + len(h.farm) * p["seed_per_plot"]
             surplus = h.grain - reserve
             pers = self.head_pers(h)
             members = len(self.living(h))
-            # 집: 수용을 넘거나 움막이면 가옥을 원한다
-            if h.house < 2 and surplus >= HOUSES[2][1] + HOUSES[2][2] and h.labor >= 1:
-                h.grain -= HOUSES[2][1] + HOUSES[2][2] * 0.5
-                h.house = 2
-                self.houses_built["가옥"] += 1
-                surplus = h.grain - reserve
-            elif (h.house == 2 and h.cls == "지주" and h.rented_out >= 6
-                  and pers in ("야심", "탐욕", "관대")
-                  and surplus >= HOUSES[3][1] + HOUSES[3][2] + 100):
-                h.grain -= HOUSES[3][1] + HOUSES[3][2]
-                h.house = 3
-                self.houses_built["저택"] += 1
-                surplus = h.grain - reserve
-            elif h.house == 0 and surplus >= HOUSES[1][1]:
-                h.grain -= HOUSES[1][1]
-                h.house = 1
-                surplus = h.grain - reserve
+            # 집 (H1, H2): 유지비 → 몰락 매각 → 한 등급 위 판단
+            up = HOUSES[h.house][6]
+            if h.grain >= up:
+                h.grain -= up
+                build_pool += up
+                h.upkeep_miss = 0
+            else:
+                h.upkeep_miss += 1
+                if h.upkeep_miss >= 2 and h.house > 0:
+                    h.house -= 1          # 낡아서 한 등급 내려앉음
+                    h.upkeep_miss = 0
+                    self.house_downs += 1
+            if h.house >= 2 and not self.house_keep_ok(h):
+                h.keep_bad += 1
+            else:
+                h.keep_bad = 0
+            if h.house >= 2 and (h.hunger or h.keep_bad >= 3):
+                distress_house.append(h)
+                h.keep_bad = 0
+            else:
+                build_pool += self.house_decision(h, reserve)
+            surplus = h.grain - reserve
             if surplus > 0:
                 if pers == "관대":
                     gift = surplus * 0.3
@@ -579,13 +642,27 @@ class World:
                     self.church_gifts += surplus * 0.3
                 if pers in ("탐욕", "근면", "야심") or self.rng.random() < 0.3:
                     buyers.append(h)
-            if (h.hunger or any(l[3] >= 1 for l in h.loans)) and h.plots:
+            if (h.hunger or any(l[3] >= 1 for l in h.loans)) and h.plots and h not in distress_house:
                 sellers.append(h)
             if members > HOUSES[h.house][3]:
                 pass  # 과밀은 사망률에서 처리
 
+        # H2: 굶는 집은 땅보다 집을 먼저 판다. 값은 (지금 집 - 한 등급 아래) 가치의 50%, 부유한 집이 낸다
+        rich = sorted(self.alive_hhs(), key=lambda x: -(x.grain - self.need_of(x)))
+        for h in distress_house:
+            frm = h.house
+            proceeds = 0.5 * (self.house_cost(frm) - self.house_cost(frm - 1))
+            for b in rich:
+                if b.id != h.id and b.grain - self.need_of(b) * 1.5 >= proceeds:
+                    b.grain -= proceeds
+                    h.grain += proceeds
+                    h.house = frm - 1
+                    self.house_sales += 1
+                    break
+
         # 부업과 품팔이: 잉여 있는 집이 물건과 일손을 산다. 받는 쪽은 노동이 남거나 굶는 집
-        pool = 0.0
+        # 집 짓기와 유지비도 품삯과 재료값으로 같은 곳에 흘러간다
+        pool = build_pool
         for h in self.alive_hhs():
             surplus = h.grain - self.need_of(h) - len(h.farm) * p["seed_per_plot"]
             if surplus > 0:
@@ -888,8 +965,8 @@ class World:
             self.pre_gift(mh, nh, m)
         nh.grain = dowry + min(20.0, max(0.0, mh.grain * 0.05))
         mh.grain -= nh.grain - dowry
-        if mh.grain >= HOUSES[1][1]:
-            mh.grain -= HOUSES[1][1]
+        if mh.grain >= self.house_cost(1):
+            mh.grain -= self.house_cost(1)
             nh.house = 1
         else:
             nh.house = 0
@@ -982,7 +1059,15 @@ class World:
             s = self.surv_by_class[c]
             if b:
                 print(f"  {c}: 출생 {b}, 15세 도달 {s} ({s / b:.0%})")
-        print(f"담보 집행 필지: {self.seizures}, 땅 매매: {self.sales}, 이주 {self.emigrants}명, 지은 집: {dict(self.houses_built)}")
+        print(f"담보 집행 필지: {self.seizures}, 땅 매매: {self.sales}, 이주 {self.emigrants}명, 지은 집: {dict(self.houses_built)}, "
+              f"집 매각 {self.house_sales}, 낡아 내려앉음 {self.house_downs}")
+        tab = defaultdict(Counter)
+        for h in self.alive_hhs():
+            tab[h.cls][HOUSES[h.house][0]] += 1
+        for c in ("지주", "자영농", "소작농", "무산"):
+            n = sum(tab[c].values())
+            if n:
+                print(f"  {c} 집: " + ", ".join(f"{k} {v / n:.0%}" for k, v in sorted(tab[c].items())))
         print(f"누적 세금 {self.tax_total:.0f}, 헌물 {self.tithe_total:.0f}")
         hs = self.alive_hhs()
         clients = sorted((h.clients for h in hs), reverse=True)[:3]
