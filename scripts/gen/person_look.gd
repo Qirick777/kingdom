@@ -44,6 +44,10 @@ var accent := Color(0, 0, 0, 0)
 var hat := "없음"
 var prop := "없음"
 
+var base_eyes := "점 눈"
+var base_mouth := "기본"
+var base_overlays: Array = []
+var natural_blush := false
 var eyes_kind := "점 눈"
 var brow := "없음"
 var mouth := "기본"
@@ -138,39 +142,50 @@ static func make(pid: int, g: Genome, age_years: int, social_class: String, occ:
 			L.prop = "책" if adult else "없음"
 		"노예":
 			L.outfit = "거친 천"
-	if not adult and L.prop == "없음" and rng.randf() < 0.0:
-		L.prop = "없음"
 
-	# ---- 표정: 평소에는 얼굴형 후보에서 고르고, 감정이 있으면 감정이 정한다
-	L.eyes_kind = DetRng.pick(rng, L.face_shape["eyes"])
+	# ---- 표정: 평소 얼굴은 얼굴형 후보에서 고르고, 감정은 apply_mood가 덮어쓴다
+	L.base_eyes = DetRng.pick(rng, L.face_shape["eyes"])
 	if age_years < 3:
-		L.eyes_kind = "큰 눈"
-	L.mouth = DetRng.pick_weighted(rng, ["기본", "미소", "무표정"], [0.5, 0.3, 0.2])
+		L.base_eyes = "큰 눈"
+	L.base_mouth = DetRng.pick_weighted(rng, ["기본", "미소", "무표정"], [0.5, 0.3, 0.2])
+	if g.skin_value() <= 2 and rng.randf() < 0.18:
+		L.base_overlays.append("주근깨")
+	elif rng.randf() < 0.08 and age_years < 30:
+		L.natural_blush = true
+	if age_years >= 55:
+		L.base_overlays.append("주름")
+	L.apply_mood(mood_name)
+	return L
+
+
+func apply_mood(mood_name: String) -> void:
+	## 감정이 눈, 눈썹, 입, 덧그림을 정한다. 유전과 나이에서 온 덧그림(주근깨, 주름)은 유지한다.
+	mood = mood_name
+	eyes_kind = base_eyes
+	brow = "없음"
+	mouth = base_mouth
+	overlays = base_overlays.duplicate()
 	match mood_name:
 		"기쁨":
-			L.eyes_kind = "웃는 눈"
-			L.mouth = "활짝 웃음"
-			L.overlays.append("볼 홍조")
+			eyes_kind = "웃는 눈"
+			mouth = "활짝 웃음"
+			overlays.append("볼 홍조")
 		"화남":
-			L.brow = "치켜 올라간"
-			L.mouth = "찡그림"
+			brow = "치켜 올라간"
+			mouth = "찡그림"
 		"슬픔":
-			L.brow = "처진"
-			L.mouth = "찡그림"
-			L.overlays.append("눈물")
+			brow = "처진"
+			mouth = "찡그림"
+			overlays.append("눈물")
 		"놀람":
-			L.eyes_kind = "둥근 눈"
-			L.mouth = "놀람"
+			eyes_kind = "둥근 눈"
+			mouth = "놀람"
 		"잠":
-			L.eyes_kind = "감은 눈"
-			L.mouth = "없음"
-	if g.skin_value() <= 2 and rng.randf() < 0.18:
-		L.overlays.append("주근깨")
-	elif rng.randf() < 0.08 and age_years < 30 and mood_name == "평소":
-		L.overlays.append("볼 홍조")
-	if age_years >= 55:
-		L.overlays.append("주름")
-	return L
+			eyes_kind = "감은 눈"
+			mouth = "없음"
+		_:
+			if natural_blush:
+				overlays.append("볼 홍조")
 
 
 func signature() -> String:

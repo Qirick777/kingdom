@@ -69,3 +69,59 @@ def draw(name, rows, size=12):
     else:
         c.outline(hexc("#2f6f9f"))
     return c.px
+
+
+# ---- 행동 아이콘 (행동 큐, 말풍선 안에 쓴다)
+ACTIONS = {
+    "이동": ["............", ".GGGGGG.....", ".GGGGG......", ".GGGGGG.....", ".GGG.GGG....", ".GG...GGG...",
+             "......GGG...", ".......GGG..", "........GG.."],
+    "잡담": ["............", "..HHHHHHHH..", ".HHHHHHHHHH.", ".HHDHHDHHDH.", ".HHHHHHHHHH.", "..HHHHHHHH..",
+             "...HH.......", "..HH........"],
+    "칭찬": [".....Y......", ".....Y......", "....YYY.....", "YYYYYYYYYYY.", ".YYYYYYYYY..", "..YYYYYYY...",
+             "..YYYyYYY...", ".YYYy.yYYY..", ".YYy...yYY..", ".Yy.....yY.."],
+    "모욕": ["...RR..RR...", "...RR..RR...", ".RRRR..RRRR.", ".RRR....RRR.", "............", ".RRR....RRR.",
+             ".RRRR..RRRR.", "...RR..RR...", "...RR..RR..."],
+    "위로": [".....B......", ".....B......", "....BBB.....", "....BBB.....", "...BbBBB....", "..BbBBBBB...",
+             "..BbBBBBB...", "..BBBBBBB...", "...BBBBB....", "....BBB....."],
+    "유혹": ["..PP...PP...", ".PHPP.PPPP..", ".PPPPPPPPP..", ".PPPPPPPPP..", "..PPPPPPP...", "...PPPPP....",
+             "....PPP.....", ".....P......"],
+    "기다림": ["..wwwwwww...", "...YYYYY....", "...YYYYY....", "....YYY.....", ".....Y......", "....Y.Y.....",
+               "...Y...Y....", "...YYYYY....", "..wwwwwww..."],
+    "실패": ["............", ".RR.....RR..", "..RR...RR...", "...RR.RR....", "....RRR.....", "...RR.RR....",
+             "..RR...RR...", ".RR.....RR.."],
+}
+
+# 말풍선 18×18. 안쪽 (3,2)에 12px 아이콘을 얹는다.
+BUBBLE = ["....HHHHHHHHHH....", "..HHHHHHHHHHHHHH..", ".HHHHHHHHHHHHHHHH."] + \
+         [".HHHHHHHHHHHHHHHH."] * 10 + \
+         ["..HHHHHHHHHHHHHH..", "....HHHHHHHHHH....", "....HHH...........", "...HH.............",
+          "..H..............."]
+
+
+def main():
+    """행동 아이콘과 말풍선만 만든다. 기존 아틀라스(make_icons.py)는 건드리지 않는다."""
+    import json
+    import os
+    from PIL import Image
+    root = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    ui = os.path.join(root, "assets", "ui")
+    cols = 8
+    rows = (len(ACTIONS) + cols - 1) // cols
+    a = np.zeros((rows * 12, cols * 12, 4), dtype=np.uint8)
+    idx = {}
+    for k, (n, grid) in enumerate(ACTIONS.items()):
+        x, y = (k % cols) * 12, (k // cols) * 12
+        a[y:y + 12, x:x + 12] = draw(n, grid)
+        idx[n] = k
+    Image.fromarray(a, "RGBA").save(os.path.join(ui, "icons_action.png"))
+    Image.fromarray(draw("말풍선", BUBBLE, 18), "RGBA").save(os.path.join(ui, "bubble.png"))
+    path = os.path.join(root, "data", "visual", "ui_atlas.json")
+    meta = json.load(open(path, encoding="utf-8"))
+    meta["icons_action"] = {"cell": 12, "columns": 8, "index": idx}
+    meta["bubble"] = {"size": 18, "icon_at": [3, 2]}
+    json.dump(meta, open(path, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+    print("행동 아이콘", len(ACTIONS), "개, 말풍선 1장")
+
+
+if __name__ == "__main__":
+    main()

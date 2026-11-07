@@ -6,7 +6,7 @@ config_version=5
 
 config/name="Kingdom"
 config/description="혈통과 가문의 2.5D 왕조 시뮬레이션"
-run/main_scene="res://scenes/viewers/person_viewer.tscn"
+run/main_scene="res://scenes/proto/household_proto.tscn"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 
 [display]

@@ -361,7 +361,7 @@ res://
 
 ### 7-1. 1단계 주민 뷰어 (구현됨)
 
-- 장면: `scenes/viewers/person_viewer.tscn` (프로젝트 기본 장면). Godot 4.4, GL Compatibility.
+- 장면: `scenes/viewers/person_viewer.tscn` (편집기에서 열고 F6. 기본 장면은 12번 8절 조작 시험장). Godot 4.4, GL Compatibility.
 - 코드: `scripts/core/det_rng.gd`(결정적 난수), `scripts/core/data_db.gd`(JSON, 아틀라스), `scripts/gen/genome.gd`(대립유전자, 자녀 유전), `scripts/gen/person_look.gd`(2절 외형 파라미터), `scripts/gen/face_texture.gd`(8×8 얼굴 합성, `tools/art/face_compose.py`와 같은 규칙), `scripts/gen/person_builder.gd`(블록 모델, 뒤집은 껍질 외곽선), `scripts/ui/pixel_theme.gd`(UI 틀 3배, 나눔고딕).
 - 화면: 3D는 640×360 서브뷰포트에 그려 3배 최근접 확대, UI는 1920×1080 원래 해상도. 카메라는 직교, 수평 45°, 아래 30°. 주민은 모두 월드 +z를 보므로 화면에서는 얼굴과 옆면이 함께 보인다.
 - 모드: 무작위 48명(월드 격자 2m, 화면에서는 마름모), 가족 3대(조부모 4, 부모 2, 자녀 5). 계층, 나이 구간, 표정, 시드를 바꾼다.

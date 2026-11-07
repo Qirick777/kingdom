@@ -68,10 +68,14 @@ static func _proportions(age: int) -> Array:
 	return [7.0, 6.0, 1.0]
 
 
-static func build(look: PersonLook) -> Node3D:
+static func build(look: PersonLook, face_tex: ImageTexture = null) -> Node3D:
+	## 관절: Body(축소) → Pelvis(골반, 다리 위) → HipN/HipP(다리), Upper(몸통) → ArmN/ArmP(팔), Head.
+	## N은 -x쪽, P는 +x쪽. 도구는 ArmP 손에 든다. PersonRig가 이 관절들을 움직인다.
+	## face_tex를 넘기면 그 텍스처를 얼굴에 쓴다(표정이 바뀌면 같은 텍스처를 고쳐 그려 여러 모델에 한꺼번에 반영).
 	var root := Node3D.new()
 	root.name = "Person%d" % look.id
 	var body := Node3D.new()
+	body.name = "Body"
 	body.scale = Vector3.ONE * TEXEL * look.body_scale
 	root.add_child(body)
 
@@ -81,9 +85,12 @@ static func build(look: PersonLook) -> Node3D:
 	var head_s: float = pr[2]
 	var bw: float = look.build_w
 	var tw := 6.0 * bw
-	var dark := look.pants.darkened(0.35)
+	root.set_meta("leg_h", leg_h)
+	root.set_meta("torso_h", torso_h)
+	root.set_meta("height_m", (leg_h + torso_h + 8.0 * head_s) * TEXEL * look.body_scale)
+	root.set_meta("lean", 7.0 if look.age >= 60 else 0.0)
 
-	# 그림자 (반투명 원판)
+	# 그림자 (반투명 원판). 골반이 위아래로 움직여도 그림자는 땅에 남는다
 	var sh := MeshInstance3D.new()
 	var cyl := CylinderMesh.new()
 	cyl.top_radius = 5.0
@@ -99,25 +106,32 @@ static func build(look: PersonLook) -> Node3D:
 	sh.position = Vector3(0, 0.03, 0)
 	body.add_child(sh)
 
-	# 다리, 신발
+	var pelvis := Node3D.new()
+	pelvis.name = "Pelvis"
+	pelvis.position = Vector3(0, leg_h, 0)
+	body.add_child(pelvis)
+
+	# 다리, 신발 (엉덩이 관절에 매단다)
 	var robe := look.outfit == "긴 옷"
 	if not robe:
-		for sx in [-1.5, 1.5]:
-			_box(body, Vector3(2, leg_h, 2), Vector3(sx * bw, leg_h / 2.0, 0), look.pants)
-			_box(body, Vector3(2.2, 1, 2.6), Vector3(sx * bw, 0.5, 0.2), Color("#5a4040"), false)
+		for side in [-1, 1]:
+			var hip := Node3D.new()
+			hip.name = "HipN" if side < 0 else "HipP"
+			hip.position = Vector3(side * 1.5 * bw, 0, 0)
+			pelvis.add_child(hip)
+			_box(hip, Vector3(2, leg_h, 2), Vector3(0, -leg_h / 2.0, 0), look.pants)
+			_box(hip, Vector3(2.2, 1, 2.6), Vector3(0, -leg_h + 0.5, 0.2), Color("#5a4040"), false)
 
-	# 윗몸(몸통, 팔, 머리)은 노인이면 앞으로 굽힌다
 	var upper := Node3D.new()
-	upper.position = Vector3(0, leg_h, 0)
-	body.add_child(upper)
-	if look.age >= 60:
-		upper.rotation_degrees.x = 7.0
+	upper.name = "Upper"
+	upper.rotation_degrees.x = root.get_meta("lean")   # 노인은 앞으로 굽는다. PersonRig도 이 값을 기본으로 쓴다
+	pelvis.add_child(upper)
 
 	var shirt := look.shirt
 	if look.outfit == "갑옷":
 		shirt = Color("#cfd8e0")
 	if robe:
-		_box(body, Vector3(tw + 0.6, leg_h + torso_h, 4.6), Vector3(0, (leg_h + torso_h) / 2.0, 0), shirt)
+		_box(pelvis, Vector3(tw + 0.6, leg_h + torso_h, 4.6), Vector3(0, (torso_h - leg_h) / 2.0, 0), shirt)
 	else:
 		_box(upper, Vector3(tw, torso_h, 4), Vector3(0, torso_h / 2.0, 0), shirt)
 	# 허리띠
@@ -138,15 +152,21 @@ static func build(look: PersonLook) -> Node3D:
 		"거친 천":
 			_box(upper, Vector3(2, 2, 0.4), Vector3(-1.2, torso_h * 0.6, 2.05), shirt.darkened(0.2), false)
 
-	# 팔, 손
+	# 팔, 손 (어깨 관절에 매단다)
 	var arm_h := torso_h - 1.0
-	for sx in [-1, 1]:
-		var ax: float = sx * (tw / 2.0 + 1.0)
-		_box(upper, Vector3(2, arm_h, 2), Vector3(ax, torso_h - arm_h / 2.0, 0), shirt)
-		_box(upper, Vector3(2, 1, 2), Vector3(ax, torso_h - arm_h - 0.5, 0), look.skin, false)
+	var arms := {}
+	for side in [-1, 1]:
+		var arm := Node3D.new()
+		arm.name = "ArmN" if side < 0 else "ArmP"
+		arm.position = Vector3(side * (tw / 2.0 + 1.0), torso_h - 0.5, 0)
+		upper.add_child(arm)
+		_box(arm, Vector3(2, arm_h, 2), Vector3(0, -arm_h / 2.0 + 0.5, 0), shirt)
+		_box(arm, Vector3(2, 1, 2), Vector3(0, -arm_h, 0), look.skin, false)
+		arms[side] = arm
 
 	# 머리
 	var head := Node3D.new()
+	head.name = "Head"
 	head.position = Vector3(0, torso_h, 0)
 	head.scale = Vector3.ONE * head_s
 	upper.add_child(head)
@@ -154,13 +174,14 @@ static func build(look: PersonLook) -> Node3D:
 	var hh: float = 8.0 * float(look.face_shape.get("head_h", 1.0))
 	_box(head, Vector3(hw, hh, 8), Vector3(0, hh / 2.0, 0), look.skin)
 	var bald := look.hairstyle == "대머리"
-	var face_img := FaceTexture.compose(look, 0 if bald else 2)
+	if face_tex == null:
+		face_tex = ImageTexture.create_from_image(FaceTexture.compose(look, 0 if bald else 2))
 	var quad := MeshInstance3D.new()
 	var qm := QuadMesh.new()
 	qm.size = Vector2(hw, hh)
 	quad.mesh = qm
 	var fm := StandardMaterial3D.new()
-	fm.albedo_texture = ImageTexture.create_from_image(face_img)
+	fm.albedo_texture = face_tex
 	fm.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 	fm.roughness = 1.0
 	fm.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
@@ -171,10 +192,17 @@ static func build(look: PersonLook) -> Node3D:
 		_hair(head, look, hw, hh)
 	_beard(head, look, hw, hh)
 	_hat(head, look, hw, hh)
-	_prop(upper, look, tw, torso_h)
+	_prop(arms[1], look, arm_h)
 	if look.age >= 70:
-		_box(body, Vector3(1, leg_h + torso_h * 0.7, 1), Vector3(tw / 2.0 + 2.5, (leg_h + torso_h * 0.7) / 2.0, 1.5), Color("#a26a3a"))
+		# 지팡이: N쪽 손에서 땅까지
+		var top := -arm_h + 0.5
+		var bottom := -(torso_h - 0.5) - leg_h
+		_box(arms[-1], Vector3(1, top - bottom, 1), Vector3(0, (top + bottom) / 2.0, 1.5), Color("#a26a3a"))
 	return root
+
+
+static func face_image(look: PersonLook) -> Image:
+	return FaceTexture.compose(look, 0 if look.hairstyle == "대머리" else 2)
 
 
 static func _hair(head: Node3D, look: PersonLook, hw: float, hh: float) -> void:
@@ -249,21 +277,21 @@ static func _hat(head: Node3D, look: PersonLook, hw: float, hh: float) -> void:
 			_box(head, Vector3(1.2, 1.2, 1.2), Vector3(0, hh + 2.2, 2.6), Color("#5f9ad6"), false)
 
 
-static func _prop(upper: Node3D, look: PersonLook, tw: float, torso_h: float) -> void:
-	var hx := tw / 2.0 + 1.0
-	var y := torso_h - (torso_h - 1.0) - 0.5
+static func _prop(arm: Node3D, look: PersonLook, arm_h: float) -> void:
+	## 손 위치(어깨 기준 y = -arm_h)를 기준으로 도구를 붙인다.
+	var y := -arm_h
 	match look.prop:
 		"낫":
-			_box(upper, Vector3(1, 7, 1), Vector3(hx, y + 2.5, 1.5), Color("#a26a3a"))
-			_box(upper, Vector3(1, 1, 4), Vector3(hx, y + 6, 3), Color("#cfd8e0"))
+			_box(arm, Vector3(1, 7, 1), Vector3(0, y + 2.5, 1.5), Color("#a26a3a"))
+			_box(arm, Vector3(1, 1, 4), Vector3(0, y + 6, 3), Color("#cfd8e0"))
 		"망치":
-			_box(upper, Vector3(1, 5, 1), Vector3(hx, y + 1.5, 1.5), Color("#a26a3a"))
-			_box(upper, Vector3(2, 2, 3), Vector3(hx, y + 4, 1.5), Color("#8d8780"))
+			_box(arm, Vector3(1, 5, 1), Vector3(0, y + 1.5, 1.5), Color("#a26a3a"))
+			_box(arm, Vector3(2, 2, 3), Vector3(0, y + 4, 1.5), Color("#8d8780"))
 		"창":
-			_box(upper, Vector3(1, 22, 1), Vector3(hx, y + 6, 1.5), Color("#a26a3a"))
-			_box(upper, Vector3(1.2, 3, 1.2), Vector3(hx, y + 18.5, 1.5), Color("#cfd8e0"))
+			_box(arm, Vector3(1, 22, 1), Vector3(0, y + 6, 1.5), Color("#a26a3a"))
+			_box(arm, Vector3(1.2, 3, 1.2), Vector3(0, y + 18.5, 1.5), Color("#cfd8e0"))
 		"칼":
-			_box(upper, Vector3(1, 9, 1), Vector3(hx, y + 3.5, 2.0), Color("#dfe7ee"))
-			_box(upper, Vector3(3, 1, 1), Vector3(hx, y - 0.5, 2.0), Color("#ffd34d"), false)
+			_box(arm, Vector3(1, 9, 1), Vector3(0, y + 3.5, 2.0), Color("#dfe7ee"))
+			_box(arm, Vector3(3, 1, 1), Vector3(0, y - 0.5, 2.0), Color("#ffd34d"), false)
 		"책":
-			_box(upper, Vector3(1.5, 4, 3), Vector3(hx, y + 1, 1.5), Color("#7a3fb3"))
+			_box(arm, Vector3(1.5, 4, 3), Vector3(0, y + 1, 1.5), Color("#7a3fb3"))

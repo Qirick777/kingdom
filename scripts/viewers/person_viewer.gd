@@ -24,7 +24,6 @@ var social_opt := 0
 var age_opt := 0
 var mood_opt := 0
 var zoom := 0                  ## 0이면 모드 기본값(무작위 1, 가족 2)
-const NATURAL := ["풀", "흙", "흙길", "모래", "눈"]   ## 뒤집어도 티가 안 나는 바닥
 
 var _svc: SubViewportContainer
 var _sv: SubViewport
@@ -119,12 +118,6 @@ func _build_world() -> void:
 	sun.rotation_degrees = Vector3(-62, 20, 0)
 	sun.light_energy = 0.62
 	_world.add_child(sun)
-
-	_ground = MeshInstance3D.new()
-	var pm := PlaneMesh.new()
-	pm.size = Vector2(GROUND_M, GROUND_M)
-	_ground.mesh = pm
-	_world.add_child(_ground)
 
 	_hl = MeshInstance3D.new()
 	var hm := PlaneMesh.new()
@@ -280,48 +273,12 @@ func _regenerate() -> void:
 
 
 func _make_ground(plaza: Rect2) -> void:
-	## 0.5m 칸마다 변형을 고르고, 자연 바닥은 뒤집기까지 섞어 반복 무늬를 지운다.
 	## plaza(월드 x,z 사각형)는 흙길. 사각형 모서리가 마름모로 보이면 아이소 시점이 맞다.
-	## 뷰어 배경이므로 칸마다 평균색 쪽으로 대비를 줄여 사람이 먼저 보이게 한다.
-	var n := int(GROUND_M * 2.0)
-	var img := Image.create(n * 8, n * 8, false, Image.FORMAT_RGBA8)
-	var meta := DataDB.material_meta()
-	var rng := DetRng.make([world_seed, "ground"])
-	var cache := {}
-	for cz in n:
-		for cx in n:
-			var w := Vector2(-GROUND_M / 2.0 + (cx + 0.5) * 0.5, -GROUND_M / 2.0 + (cz + 0.5) * 0.5)
-			var mname := "흙길" if plaza.has_point(w) else "풀"
-			var v := rng.randi_range(0, meta["materials"][mname].size() - 1)
-			var key := "%s%d" % [mname, v]
-			if not cache.has(key):
-				cache[key] = _soften(DataDB.material_image(mname, v), GROUND_CONTRAST)
-			var cell: Image = (cache[key] as Image).duplicate()
-			if NATURAL.has(mname):
-				if rng.randf() < 0.5:
-					cell.flip_x()
-				if rng.randf() < 0.5:
-					cell.flip_y()
-			img.blit_rect(cell, Rect2i(0, 0, 8, 8), Vector2i(cx * 8, cz * 8))
-	var gm := StandardMaterial3D.new()
-	gm.albedo_texture = ImageTexture.create_from_image(img)
-	gm.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-	gm.roughness = 1.0
-	gm.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
-	_ground.material_override = gm
-
-
-static func _soften(img: Image, keep: float) -> Image:
-	## 각 픽셀을 칸 평균색 쪽으로 당긴다. keep=1이면 원본, 0이면 단색.
-	var avg := Color(0, 0, 0, 0)
-	var n := img.get_width() * img.get_height()
-	for y in img.get_height():
-		for x in img.get_width():
-			avg += img.get_pixel(x, y) / n
-	for y in img.get_height():
-		for x in img.get_width():
-			img.set_pixel(x, y, avg.lerp(img.get_pixel(x, y), keep))
-	return img
+	## 뷰어 배경이므로 대비를 줄여 사람이 먼저 보이게 한다.
+	if _ground != null:
+		_ground.queue_free()
+	_ground = GroundBuilder.build(world_seed, GROUND_M, [[plaza, "흙길"]], "풀", GROUND_CONTRAST)
+	_world.add_child(_ground)
 
 
 func _place(look: PersonLook, pos: Vector3) -> void:

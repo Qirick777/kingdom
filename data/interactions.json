@@ -1,0 +1,26 @@
+{
+  "_note": "03_interaction.md 3절에서 지금 결과를 표현할 수 있는 행동만 옮겼다. 판정 공식(2절)의 능력, 성격, 권력 항은 인물 능력치가 아직 없어 0으로 둔다. 관계 보정은 대상이 행동자에게 가진 수치를 쓴다.",
+  "seconds_per_slot": 4.0,
+  "seconds_per_slot_note": "12번 4절은 1x에서 1초 = 1시간대다. 걸어가 말을 거는 장면을 보이려면 너무 짧아 시험장에서는 1시간대를 4초로 보인다. 정식 시간 비율은 미정.",
+  "front_distance_m": 0.9,
+  "categories": ["대화", "구애"],
+  "actions": [
+    {"id": "chat", "name": "잡담", "category": "대화", "icon": "잡담", "relation": "호감", "demand": 0, "slots": 1,
+     "success": {"target": {"호감": 5, "신뢰": 2}}, "fail": {},
+     "show_success": {"target": "기쁨"}, "show_fail": {}},
+    {"id": "praise", "name": "칭찬", "category": "대화", "icon": "칭찬", "relation": "호감", "demand": 5, "slots": 1,
+     "success": {"target": {"호감": 8}}, "fail": {"target": {"호감": -5}}, "fail_text": "기만으로 보였다",
+     "show_success": {"target": "기쁨"}, "show_fail": {"target": "화남"}},
+    {"id": "insult", "name": "모욕", "category": "대화", "icon": "모욕", "relation": "", "demand": 0, "slots": 1,
+     "success": {"target": {"호감": -20, "원한": 10}}, "fail": {}, "fail_text": "내 명성 하락(명성 미구현)",
+     "show_success": {"target": "화남"}, "show_fail": {"actor": "슬픔"}},
+    {"id": "comfort", "name": "위로", "category": "대화", "icon": "위로", "relation": "호감", "demand": 5, "slots": 1,
+     "success": {"target": {"빚": 1}}, "success_text": "스트레스 -15(스트레스 미구현)", "fail": {},
+     "show_success": {"target": "기쁨"}, "show_fail": {}},
+    {"id": "seduce", "name": "유혹", "category": "구애", "icon": "유혹", "relation": "호감", "demand": 20, "slots": 2,
+     "cond": ["both_adult", "not_household"],
+     "success": {"link": "연인"}, "success_text_married": "혼외 관계: 비밀 생성(05번 미구현)",
+     "fail": {"target": {"호감": -10}}, "fail_text_married": "상대가 배우자에게 말할 수 있다",
+     "show_success": {"target": "기쁨", "actor": "기쁨"}, "show_fail": {"actor": "슬픔"}}
+  ]
+}
