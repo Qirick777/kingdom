@@ -3,7 +3,6 @@ __pycache__/
 .godot/
 native/build/
 bin/*.so
-bin/*.dll
 bin/*.framework/
 native/gdext/.sconsign.dblite
 native/gdext/src/*.os
