@@ -6,3 +6,6 @@ bin/*.so
 bin/*.framework/
 native/gdext/.sconsign.dblite
 native/gdext/src/*.os
+native/core/*.os
+native/core/*.o
+native/gdext/src/*.o
